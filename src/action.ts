@@ -6,8 +6,8 @@ import { getAdapter } from "./helpers";
  * Action does some real actions, e.g. insert / replace / delete code.
  */
 abstract class ActionObject {
-  public start: number;
-  public end: number;
+  protected start: number;
+  protected end: number;
 
   /**
    * Create an Action.
