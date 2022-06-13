@@ -1,12 +1,11 @@
 import { Node } from "typescript";
+import type { Action } from "./types";
 import { getAdapter } from "./helpers";
-
-const DEFAULT_INDENT = 2;
 
 /**
  * Action does some real actions, e.g. insert / replace / delete code.
  */
-abstract class Action {
+abstract class ActionObject {
   public beginPos: number;
   public endPos: number;
 
@@ -31,9 +30,14 @@ abstract class Action {
    * Calculate begin and end positions, and return this.
    * @returns {Action} this
    */
-  process(): this {
+  process(): Action {
     this.calculatePositions();
-    return this;
+
+    return {
+      start: this.beginPos,
+      end: this.endPos,
+      rewrittenCode: this.rewrittenCode,
+    };
   }
 
   /**
@@ -180,4 +184,4 @@ abstract class Action {
   }
 }
 
-export default Action;
+export default ActionObject;

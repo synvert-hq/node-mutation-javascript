@@ -1,14 +1,14 @@
 import { Node } from "typescript";
-import Action from "../action";
+import ActionObject from "../action";
 import { getAdapter } from "../helpers";
 
 const DEFAULT_INDENT = 2;
 
 /**
  * RemoveAction to remove current node.
- * @extends Action
+ * @extends ActionObject
  */
-class RemoveAction extends Action {
+class RemoveAction extends ActionObject {
   /**
    * Create a RemoveAction
    * @param {Node} node

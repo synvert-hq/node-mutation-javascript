@@ -1,4 +1,4 @@
-import type { NodeExt, NodeArrayExt } from "./types/node-ext";
+import type { NodeExt, NodeArrayExt } from "./types";
 import { PropertyAccessExpression, Node, SyntaxKind } from "typescript";
 import Adapter from "./adapter";
 import { NotSupportedError } from "./error";

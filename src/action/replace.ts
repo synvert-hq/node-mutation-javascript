@@ -1,5 +1,5 @@
 import { Node } from "typescript";
-import Action from "../action";
+import ActionObject from "../action";
 import { getAdapter } from "../helpers";
 
 interface ReplaceActionOptions {
@@ -8,9 +8,9 @@ interface ReplaceActionOptions {
 
 /**
  * ReplaceAction to replace child node with code.
- * @extends Action
+ * @extends ActionObject
  */
-class ReplaceAction extends Action {
+class ReplaceAction extends ActionObject {
   private selectors: string[];
 
   /**

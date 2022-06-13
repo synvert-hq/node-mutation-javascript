@@ -1,5 +1,5 @@
 import { Node } from "typescript";
-import Action from "../action";
+import ActionObject from "../action";
 import { getAdapter } from "../helpers";
 
 interface ReplaceWithActionOptions {
@@ -8,9 +8,9 @@ interface ReplaceWithActionOptions {
 
 /**
  * ReplaceWithAction to replace code.
- * @extends Action
+ * @extends ActionObject
  */
-class ReplaceWithAction extends Action {
+class ReplaceWithAction extends ActionObject {
   private autoIndent: boolean;
 
   /**

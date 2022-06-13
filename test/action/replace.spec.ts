@@ -1,25 +1,15 @@
 import ReplaceAction from "../../src/action/replace";
 import { parseCode } from "../helper";
 
-describe("Action", () => {
-  describe("ReplaceAction", () => {
-    const node = parseCode("class FooBar {}");
-    let action: ReplaceAction;
+describe("ReplaceAction", () => {
+  const node = parseCode("class FooBar {}");
 
-    beforeEach(() => {
-      action = new ReplaceAction(node, "name", { with: "Synvert" }).process();
-    });
-
-    it("gets beginPos", function () {
-      expect(action.beginPos).toBe(6);
-    });
-
-    it("gets endPos", function () {
-      expect(action.endPos).toBe(12);
-    });
-
-    it("gets rewrittenCode", function () {
-      expect(action.rewrittenCode).toBe("Synvert");
+  it("gets range and rewritten code", () => {
+    const action = new ReplaceAction(node, "name", { with: "Synvert" });
+    expect(action.process()).toEqual({
+      start: "class ".length,
+      end: "class FooBar".length,
+      rewrittenCode: "Synvert",
     });
   });
 });

@@ -1,12 +1,12 @@
 import { Node } from "typescript";
-import Action from "../action";
+import ActionObject from "../action";
 import { getAdapter } from "../helpers";
 
 /**
  * DeleteAction to delete child node.
- * @extends Action
+ * @extends ActionObject
  */
-class DeleteAction extends Action {
+class DeleteAction extends ActionObject {
   private selectors: string[];
 
   /**

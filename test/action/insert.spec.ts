@@ -1,50 +1,26 @@
 import InsertAction from "../../src/action/insert";
 import { parseCode } from "../helper";
 
-describe("Action", () => {
-  describe("InsertAction", () => {
-    const node = parseCode("this.foo");
-    let action: InsertAction;
+describe("InsertAction", () => {
+  const node = parseCode("this.foo");
+  let action: InsertAction;
 
-    describe("at beginning", () => {
-      beforeEach(() => {
-        action = new InsertAction(node, "::", {
-          at: "beginning",
-        }).process();
+  describe("at beginning", () => {
+    it("get range and rewritten code", () => {
+      const action = new InsertAction(node, "::", {
+        at: "beginning",
       });
-
-      it("gets beginPos", function () {
-        expect(action.beginPos).toBe(0);
-      });
-
-      it("gets endPos", function () {
-        expect(action.endPos).toBe(0);
-      });
-
-      it("gets rewrittenCode", function () {
-        expect(action.rewrittenCode).toBe("::");
-      });
+      expect(action.process()).toEqual({ start: 0, end: 0, rewrittenCode: "::" });
     });
+  });
 
-    describe("at end of object", () => {
-      beforeEach(() => {
-        action = new InsertAction(node, ".bar", {
-          to: "expression.expression",
-          at: "end",
-        }).process();
+  describe("at end of object", () => {
+    it("get range and rewritten code", () => {
+      const action = new InsertAction(node, ".bar", {
+        to: "expression.expression",
+        at: "end",
       });
-
-      it("gets beginPos", function () {
-        expect(action.beginPos).toBe("this".length);
-      });
-
-      it("gets endPos", function () {
-        expect(action.beginPos).toBe("this".length);
-      });
-
-      it("gets rewrittenCode", function () {
-        expect(action.rewrittenCode).toBe(".bar");
-      });
+      expect(action.process()).toEqual({ start: "this".length, end: "this".length, rewrittenCode: ".bar" });
     });
   });
 });

@@ -1,5 +1,5 @@
 import { Node } from "typescript";
-import Action from "../action";
+import ActionObject from "../action";
 import { getAdapter } from "../helpers";
 
 interface InsertActionOptions {
@@ -9,9 +9,9 @@ interface InsertActionOptions {
 
 /**
  * InsertAction to add code to the node.
- * @extends Action
+ * @extends ActionObject
  */
-class InsertAction extends Action {
+class InsertAction extends ActionObject {
   private at: string;
   private selector?: string;
 
