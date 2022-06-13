@@ -33,12 +33,12 @@ class ReplaceAction extends ActionObject {
    * @protected
    */
   calculatePositions(): void {
-    this.beginPos = Math.min(
+    this.start = Math.min(
       ...this.selectors.map(
         (selector) => getAdapter<Node>().childNodeRange(this.node, selector).start
       )
     );
-    this.endPos = Math.max(
+    this.end = Math.max(
       ...this.selectors.map(
         (selector) => getAdapter<Node>().childNodeRange(this.node, selector).end
       )

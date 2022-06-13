@@ -34,11 +34,11 @@ class ReplaceWithAction extends ActionObject {
    */
   calculatePositions(): void {
     if (this.autoIndent) {
-      this.beginPos = getAdapter<Node>().getStart(this.node);
+      this.start = getAdapter<Node>().getStart(this.node);
     } else {
-      this.beginPos = getAdapter<Node>().getStart(this.node) - getAdapter<Node>().getStartLoc(this.node).column;
+      this.start = getAdapter<Node>().getStart(this.node) - getAdapter<Node>().getStartLoc(this.node).column;
     }
-    this.endPos = getAdapter<Node>().getEnd(this.node);
+    this.end = getAdapter<Node>().getEnd(this.node);
   }
 
   /**

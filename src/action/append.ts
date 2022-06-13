@@ -12,8 +12,8 @@ class AppendAction extends ActionObject {
    * @protected
    */
   calculatePositions() {
-    this.beginPos = getAdapter<Node>().getEnd(this.node) - getAdapter<Node>().getIndent(this.node) - "}".length;
-    this.endPos = this.beginPos;
+    this.start = getAdapter<Node>().getEnd(this.node) - getAdapter<Node>().getIndent(this.node) - "}".length;
+    this.end = this.start;
   }
 
   /**

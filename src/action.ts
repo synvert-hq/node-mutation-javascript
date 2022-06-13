@@ -6,8 +6,8 @@ import { getAdapter } from "./helpers";
  * Action does some real actions, e.g. insert / replace / delete code.
  */
 abstract class ActionObject {
-  public beginPos: number;
-  public endPos: number;
+  public start: number;
+  public end: number;
 
   /**
    * Create an Action.
@@ -15,8 +15,8 @@ abstract class ActionObject {
    * @param {string} code - new code to insert, replace or delete
    */
   constructor(protected node: Node, protected code: string) {
-    this.beginPos = -1;
-    this.endPos = -1;
+    this.start = -1;
+    this.end = -1;
   }
 
   /**
@@ -34,8 +34,8 @@ abstract class ActionObject {
     this.calculatePositions();
 
     return {
-      start: this.beginPos,
-      end: this.endPos,
+      start: this.start,
+      end: this.end,
       rewrittenCode: this.rewrittenCode,
     };
   }
@@ -69,10 +69,10 @@ abstract class ActionObject {
    * @protected
    */
   protected squeezeSpaces(): void {
-    const beforeCharIsSpace = this.source()[this.beginPos - 1] === " ";
-    const afterCharIsSpace = this.source()[this.endPos] == " ";
+    const beforeCharIsSpace = this.source()[this.start - 1] === " ";
+    const afterCharIsSpace = this.source()[this.end] == " ";
     if (beforeCharIsSpace && afterCharIsSpace) {
-      this.beginPos = this.beginPos - 1;
+      this.start = this.start - 1;
     }
   }
 
@@ -87,7 +87,7 @@ abstract class ActionObject {
     const beforeLineIsBlank = endLine === 1 || lines[beginLine - 2] === "";
     const afterLineIsBlank = lines[endLine] === "";
     if (lines.length > 1 && beforeLineIsBlank && afterLineIsBlank) {
-      this.endPos = this.endPos + "\n".length;
+      this.end = this.end + "\n".length;
     }
   }
 
@@ -98,17 +98,17 @@ abstract class ActionObject {
    */
   protected removeBraces(): void {
     if (this.prevTokenIs("{") && this.nextTokenIs("}")) {
-      this.beginPos = this.beginPos - 1;
-      this.endPos = this.endPos + 1;
+      this.start = this.start - 1;
+      this.end = this.end + 1;
     } else if (this.prevTokenIs("{ ") && this.nextTokenIs(" }")) {
-      this.beginPos = this.beginPos - 2;
-      this.endPos = this.endPos + 2;
+      this.start = this.start - 2;
+      this.end = this.end + 2;
     } else if (this.prevTokenIs("{") && this.nextTokenIs(" }")) {
-      this.beginPos = this.beginPos - 1;
-      this.endPos = this.endPos + 2;
+      this.start = this.start - 1;
+      this.end = this.end + 2;
     } else if (this.prevTokenIs("{ ") && this.nextTokenIs("}")) {
-      this.beginPos = this.beginPos - 2;
-      this.endPos = this.endPos + 1;
+      this.start = this.start - 2;
+      this.end = this.end + 1;
     }
   }
 
@@ -120,13 +120,13 @@ abstract class ActionObject {
    */
   protected removeComma(): void {
     if (this.prevTokenIs(",")) {
-      this.beginPos = this.beginPos - 1;
+      this.start = this.start - 1;
     } else if (this.prevTokenIs(", ")) {
-      this.beginPos = this.beginPos - 2;
+      this.start = this.start - 2;
     } else if (this.nextTokenIs(", ") && !this.startWith(":")) {
-      this.endPos = this.endPos + 2;
+      this.end = this.end + 2;
     } else if (this.nextTokenIs(",") && !this.startWith(":")) {
-      this.endPos = this.endPos + 1;
+      this.end = this.end + 1;
     }
   }
 
@@ -138,10 +138,10 @@ abstract class ActionObject {
    */
   protected removeSpace(): void {
     // this happens when removing a property in jsx element.
-    const beforeCharIsSpace = this.source()[this.beginPos - 1] === " ";
-    const afterCharIsGreatThan = this.source()[this.endPos] == ">";
+    const beforeCharIsSpace = this.source()[this.start - 1] === " ";
+    const afterCharIsGreatThan = this.source()[this.end] == ">";
     if (beforeCharIsSpace && afterCharIsGreatThan) {
-      this.beginPos = this.beginPos - 1;
+      this.start = this.start - 1;
     }
   }
 
@@ -153,7 +153,7 @@ abstract class ActionObject {
    */
   private nextTokenIs(substr: string): boolean {
     return (
-      this.source().slice(this.endPos, this.endPos + substr.length) === substr
+      this.source().slice(this.end, this.end + substr.length) === substr
     );
   }
 
@@ -165,7 +165,7 @@ abstract class ActionObject {
    */
   private prevTokenIs(substr: string): boolean {
     return (
-      this.source().slice(this.beginPos - substr.length, this.beginPos) ===
+      this.source().slice(this.start - substr.length, this.start) ===
       substr
     );
   }
@@ -178,7 +178,7 @@ abstract class ActionObject {
    */
   private startWith(substr: string): boolean {
     return (
-      this.source().slice(this.beginPos, this.beginPos + substr.length) ===
+      this.source().slice(this.start, this.start + substr.length) ===
       substr
     );
   }

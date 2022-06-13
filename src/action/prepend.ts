@@ -14,8 +14,8 @@ class PrependAction extends ActionObject {
    * @protected
    */
   calculatePositions(): void {
-    this.beginPos = getAdapter<Node>().getSource(this.node).indexOf("{") + "{\n".length;
-    this.endPos = this.beginPos;
+    this.start = getAdapter<Node>().getSource(this.node).indexOf("{") + "{\n".length;
+    this.end = this.start;
   }
 
   /**

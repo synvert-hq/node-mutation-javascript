@@ -26,17 +26,17 @@ class RemoveAction extends ActionObject {
       const lines = this.source().split("\n");
       const beginLine = getAdapter<Node>().getStartLoc(this.node).line;
       const endLine = getAdapter<Node>().getEndLoc(this.node).line;
-      this.beginPos =
+      this.start =
         lines.slice(0, beginLine - 1).join("\n").length +
         (beginLine === 1 ? 0 : "\n".length);
-      this.endPos = lines.slice(0, endLine).join("\n").length;
+      this.end = lines.slice(0, endLine).join("\n").length;
       if (lines.length > endLine) {
-        this.endPos = this.endPos + "\n".length;
+        this.end = this.end + "\n".length;
       }
       this.squeezeLines();
     } else {
-      this.beginPos = getAdapter<Node>().getStart(this.node);
-      this.endPos = getAdapter<Node>().getEnd(this.node);
+      this.start = getAdapter<Node>().getStart(this.node);
+      this.end = getAdapter<Node>().getEnd(this.node);
       this.squeezeSpaces();
       this.removeBraces();
       this.removeComma();

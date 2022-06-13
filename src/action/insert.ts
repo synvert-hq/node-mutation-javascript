@@ -35,8 +35,8 @@ class InsertAction extends ActionObject {
     const range = this.selector
       ? getAdapter<Node>().childNodeRange(this.node, this.selector)
       : { start: this.node.getStart(), end: this.node.getEnd() };
-    this.beginPos = this.at === "beginning" ? range.start : range.end;
-    this.endPos = this.beginPos;
+    this.start = this.at === "beginning" ? range.start : range.end;
+    this.end = this.start;
   }
 
   /**
