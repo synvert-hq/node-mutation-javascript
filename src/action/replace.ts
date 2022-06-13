@@ -1,10 +1,7 @@
 import { Node } from "typescript";
+import type { ReplaceOptions } from "../types";
 import ActionObject from "../action";
 import { getAdapter } from "../helpers";
-
-interface ReplaceActionOptions {
-  with: string;
-}
 
 /**
  * ReplaceAction to replace child node with code.
@@ -22,7 +19,7 @@ class ReplaceAction extends ActionObject {
   constructor(
     node: Node,
     selectors: string | string[],
-    options: ReplaceActionOptions
+    options: ReplaceOptions
   ) {
     super(node, options.with);
     this.selectors = Array.isArray(selectors) ? selectors : Array(selectors);

@@ -1,11 +1,7 @@
 import { Node } from "typescript";
+import type { InsertOptions } from "../types";
 import ActionObject from "../action";
 import { getAdapter } from "../helpers";
-
-interface InsertActionOptions {
-  at: string;
-  to?: string;
-}
 
 /**
  * InsertAction to add code to the node.
@@ -21,7 +17,7 @@ class InsertAction extends ActionObject {
    * @param {string} code - new code to be inserted
    * @param {Object} options - position to insert code
    */
-  constructor(node: Node, code: string, options: InsertActionOptions) {
+  constructor(node: Node, code: string, options: InsertOptions) {
     super(node, code);
     this.at = options.at;
     this.selector = options.to;

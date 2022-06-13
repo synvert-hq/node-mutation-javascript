@@ -1,10 +1,7 @@
 import { Node } from "typescript";
+import type { ReplaceWithOptions } from "../types";
 import ActionObject from "../action";
 import { getAdapter } from "../helpers";
-
-interface ReplaceWithActionOptions {
-  autoIndent: boolean;
-}
 
 /**
  * ReplaceWithAction to replace code.
@@ -22,7 +19,7 @@ class ReplaceWithAction extends ActionObject {
   constructor(
     node: Node,
     code: string,
-    options: ReplaceWithActionOptions = { autoIndent: true }
+    options: ReplaceWithOptions = { autoIndent: true }
   ) {
     super(node, code);
     this.autoIndent = options.autoIndent;

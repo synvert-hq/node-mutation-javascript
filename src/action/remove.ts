@@ -2,8 +2,6 @@ import { Node } from "typescript";
 import ActionObject from "../action";
 import { getAdapter } from "../helpers";
 
-const DEFAULT_INDENT = 2;
-
 /**
  * RemoveAction to remove current node.
  * @extends ActionObject

@@ -11,3 +11,16 @@ export type Action = {
   end: number,
   rewrittenCode: string
 };
+
+export type InsertOptions = {
+  at: string,
+  to?: string
+}
+
+export type ReplaceWithOptions = {
+  autoIndent: boolean
+}
+
+export type ReplaceOptions = {
+  with: string
+}

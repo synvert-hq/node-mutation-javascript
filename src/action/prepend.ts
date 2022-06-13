@@ -1,8 +1,6 @@
 import { Node } from "typescript";
 import ActionObject from "../action";
-import { getAdapter } from "../helpers";
-
-const DEFAULT_INDENT = 2;
+import { getAdapter, DEFAULT_INDENT } from "../helpers";
 
 /**
  * PrependAction to prepend code to the top of node body.
