@@ -11,7 +11,7 @@ describe("AppendAction", () => {
       expect(action.process()).toEqual({
         start: "class FooBar {\n".length,
         end: "class FooBar {\n".length,
-        rewrittenCode: `  foobar() {}\n`,
+        newCode: `  foobar() {}\n`,
       });
     });
   });
@@ -22,7 +22,7 @@ describe("AppendAction", () => {
       expect(action.process()).toEqual({
         start: "class FooBar {\n".length,
         end: "class FooBar {\n".length,
-        rewrittenCode: `  foo() {}\n  bar() {}\n`,
+        newCode: `  foo() {}\n  bar() {}\n`,
       });
     });
   });

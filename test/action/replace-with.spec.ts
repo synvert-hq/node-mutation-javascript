@@ -12,7 +12,7 @@ describe("ReplaceWithAction", () => {
     expect(action.process()).toEqual({
       start: 0,
       end: "!!foobar".length,
-      rewrittenCode: "Boolean(foobar)",
+      newCode: "Boolean(foobar)",
     });
   });
 });

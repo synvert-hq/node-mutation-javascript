@@ -14,7 +14,7 @@ describe("DeleteAction", () => {
     expect(action.process()).toEqual({
       start: "this.foo".length,
       end: "this.foo.bind(this)".length,
-      rewrittenCode: "",
+      newCode: "",
     });
   });
 });

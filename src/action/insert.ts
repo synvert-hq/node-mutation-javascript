@@ -39,7 +39,7 @@ class InsertAction extends ActionObject {
    * The rewritten source code.
    * @returns {string} rewritten code.
    */
-  get rewrittenCode(): string {
+  get newCode(): string {
     return this.rewrittenSource();
   }
 }

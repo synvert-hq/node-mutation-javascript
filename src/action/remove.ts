@@ -45,7 +45,7 @@ class RemoveAction extends ActionObject {
   /**
    * The rewritten code, always empty string.
    */
-  get rewrittenCode(): string {
+  get newCode(): string {
     return "";
   }
 

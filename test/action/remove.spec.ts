@@ -8,7 +8,7 @@ describe("RemoveAction", () => {
 
     it("gets range and rewritten code", () => {
       const action = new RemoveAction(node);
-      expect(action.process()).toEqual({ start: 0, end: code.length, rewrittenCode: "" });
+      expect(action.process()).toEqual({ start: 0, end: code.length, newCode: "" });
     });
   });
 
@@ -25,7 +25,7 @@ describe("RemoveAction", () => {
       expect(action.process()).toEqual({
         start: code.indexOf("{") + "{\n".length,
         end: code.indexOf(";") + ";\n".length,
-        rewrittenCode: "",
+        newCode: "",
       });
     });
   });

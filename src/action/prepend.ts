@@ -20,7 +20,7 @@ class PrependAction extends ActionObject {
    * The rewritten source code.
    * @returns {string} rewritten code.
    */
-  get rewrittenCode(): string {
+  get newCode(): string {
     const source = this.rewrittenSource();
     const indent = " ".repeat(getAdapter<Node>().getIndent(this.node) + DEFAULT_INDENT);
     if (source.split("\n").length > 1) {

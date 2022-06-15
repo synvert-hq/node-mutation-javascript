@@ -36,7 +36,7 @@ abstract class ActionObject {
     return {
       start: this.start,
       end: this.end,
-      rewrittenCode: this.rewrittenCode,
+      newCode: this.newCode,
     };
   }
 
@@ -44,7 +44,7 @@ abstract class ActionObject {
    * The rewritten source code.
    * @returns {string} rewritten code.
    */
-  abstract get rewrittenCode(): string;
+  abstract get newCode(): string;
 
   /**
    * The rewritten source code.

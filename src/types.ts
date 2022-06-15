@@ -9,7 +9,7 @@ export type NodeArrayExt = NodeExt[] & {
 export type Action = {
   start: number,
   end: number,
-  rewrittenCode: string
+  newCode: string
 };
 
 export type InsertOptions = {

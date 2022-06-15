@@ -42,7 +42,7 @@ class ReplaceWithAction extends ActionObject {
    * The rewritten source code.
    * @returns {string} rewritten code.
    */
-  get rewrittenCode(): string {
+  get newCode(): string {
     if (this.autoIndent && this.rewrittenSource().includes("\n")) {
       const newCode: string[] = [];
       this.rewrittenSource()

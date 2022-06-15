@@ -9,7 +9,7 @@ describe("ReplaceAction", () => {
     expect(action.process()).toEqual({
       start: "class ".length,
       end: "class FooBar".length,
-      rewrittenCode: "Synvert",
+      newCode: "Synvert",
     });
   });
 });
