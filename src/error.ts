@@ -9,4 +9,11 @@
   }
 }
 
-export { NotSupportedError };
+class ConflictActionError extends Error {
+  constructor() {
+    super("mutation actions are conflicted");
+    this.name = "ConflictActionError";
+  }
+}
+
+export { NotSupportedError, ConflictActionError };

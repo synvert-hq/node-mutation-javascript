@@ -27,8 +27,12 @@
   },
   "homepage": "https://github.com/xinminlabs/node-mutation-javascript#readme",
   "devDependencies": {
+    "@types/dedent": "^0.7.0",
     "@types/jest": "^28.1.1",
+    "@types/mock-fs": "^4.13.1",
+    "dedent": "^0.7.0",
     "jest": "^28.1.1",
+    "mock-fs": "^5.1.2",
     "nodemon": "^2.0.16",
     "ts-jest": "^28.0.4",
     "typescript": "^4.7.3"
