@@ -1,13 +1,13 @@
 import { Node } from "typescript";
 import type { InsertOptions } from "../types";
-import ActionObject from "../action";
+import { BaseAction } from "../action";
 import { getAdapter } from "../helpers";
 
 /**
  * InsertAction to add code to the node.
- * @extends ActionObject
+ * @extends BaseAction
  */
-class InsertAction extends ActionObject {
+export class InsertAction extends BaseAction {
   private at: string;
   private selector?: string;
 
@@ -43,5 +43,3 @@ class InsertAction extends ActionObject {
     return this.rewrittenSource();
   }
 }
-
-export default InsertAction;

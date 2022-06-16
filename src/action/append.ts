@@ -1,12 +1,12 @@
 import { Node } from "typescript";
-import ActionObject from "../action";
+import { BaseAction } from "../action";
 import { getAdapter, DEFAULT_INDENT } from "../helpers";
 
 /**
  * AppendAction to append code to the bottom of node body.
- * @extends ActionObject
+ * @extends BaseAction
  */
-class AppendAction extends ActionObject {
+export class AppendAction extends BaseAction {
   /**
    * Calculate the begin and end positions.
    * @protected
@@ -35,5 +35,3 @@ class AppendAction extends ActionObject {
     }
   }
 }
-
-export default AppendAction;

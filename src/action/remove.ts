@@ -1,12 +1,12 @@
 import { Node } from "typescript";
-import ActionObject from "../action";
+import { BaseAction } from "../action";
 import { getAdapter } from "../helpers";
 
 /**
  * RemoveAction to remove current node.
- * @extends ActionObject
+ * @extends BaseAction
  */
-class RemoveAction extends ActionObject {
+export class RemoveAction extends BaseAction {
   /**
    * Create a RemoveAction
    * @param {Node} node
@@ -68,5 +68,3 @@ class RemoveAction extends ActionObject {
     );
   }
 }
-
-export default RemoveAction;

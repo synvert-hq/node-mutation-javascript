@@ -1,4 +1,4 @@
-import PrependAction from "../../src/action/prepend";
+import { PrependAction } from "../../src/action";
 import { parseCode } from "../helper";
 
 describe("PrependAction", () => {

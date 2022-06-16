@@ -2,13 +2,7 @@ import fs from "fs";
 import { Node } from "typescript";
 import type { Action, InsertOptions, ReplaceOptions, ReplaceWithOptions } from "./types";
 import Adapter from "./adapter";
-import AppendAction from "./action/append";
-import DeleteAction from "./action/delete";
-import InsertAction from "./action/insert";
-import PrependAction from "./action/prepend";
-import RemoveAction from "./action/remove";
-import ReplaceWithAction from "./action/replace-with";
-import ReplaceAction from "./action/replace";
+import { AppendAction, DeleteAction, InsertAction, PrependAction, RemoveAction, ReplaceWithAction, ReplaceAction } from "./action";
 import { ConflictActionError } from "./error";
 
 export enum STRATEGY {

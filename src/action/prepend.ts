@@ -1,12 +1,12 @@
 import { Node } from "typescript";
-import ActionObject from "../action";
+import { BaseAction } from "../action";
 import { getAdapter, DEFAULT_INDENT } from "../helpers";
 
 /**
  * PrependAction to prepend code to the top of node body.
- * @extends ActionObject
+ * @extends BaseAction
  */
-class PrependAction extends ActionObject {
+export class PrependAction extends BaseAction {
   /**
    * Calculate the begin and end positions.
    * @protected
@@ -35,5 +35,3 @@ class PrependAction extends ActionObject {
     }
   }
 }
-
-export default PrependAction;

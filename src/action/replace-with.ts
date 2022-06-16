@@ -1,13 +1,13 @@
 import { Node } from "typescript";
 import type { ReplaceWithOptions } from "../types";
-import ActionObject from "../action";
+import { BaseAction } from "../action";
 import { getAdapter } from "../helpers";
 
 /**
  * ReplaceWithAction to replace code.
- * @extends ActionObject
+ * @extends BaseAction
  */
-class ReplaceWithAction extends ActionObject {
+export class ReplaceWithAction extends BaseAction {
   private autoIndent: boolean;
 
   /**
@@ -60,5 +60,3 @@ class ReplaceWithAction extends ActionObject {
     }
   }
 }
-
-export default ReplaceWithAction;

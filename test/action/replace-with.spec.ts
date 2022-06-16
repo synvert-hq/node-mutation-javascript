@@ -1,4 +1,4 @@
-import ReplaceWithAction from "../../src/action/replace-with";
+import { ReplaceWithAction } from "../../src/action";
 import { parseCode } from "../helper";
 
 describe("ReplaceWithAction", () => {

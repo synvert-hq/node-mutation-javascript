@@ -1,13 +1,13 @@
 import { Node } from "typescript";
 import type { ReplaceOptions } from "../types";
-import ActionObject from "../action";
+import { BaseAction } from "../action";
 import { getAdapter } from "../helpers";
 
 /**
  * ReplaceAction to replace child node with code.
- * @extends ActionObject
+ * @extends BaseAction
  */
-class ReplaceAction extends ActionObject {
+export class ReplaceAction extends BaseAction {
   private selectors: string[];
 
   /**
@@ -50,5 +50,3 @@ class ReplaceAction extends ActionObject {
     return this.rewrittenSource();
   }
 }
-
-export default ReplaceAction;

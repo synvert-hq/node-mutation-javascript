@@ -1,4 +1,4 @@
-import ReplaceAction from "../../src/action/replace";
+import { ReplaceAction } from "../../src/action";
 import { parseCode } from "../helper";
 
 describe("ReplaceAction", () => {

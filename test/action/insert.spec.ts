@@ -1,4 +1,4 @@
-import InsertAction from "../../src/action/insert";
+import { InsertAction } from "../../src/action";
 import { parseCode } from "../helper";
 
 describe("InsertAction", () => {

@@ -1,4 +1,4 @@
-import DeleteAction  from "../../src/action/delete";
+import { DeleteAction } from "../../src/action";
 import { parseCode } from "../helper";
 
 describe("DeleteAction", () => {
