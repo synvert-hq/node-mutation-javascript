@@ -26,8 +26,8 @@ export abstract class BaseAction<T> {
   protected abstract calculatePositions(): void;
 
   /**
-   * Calculate begin and end positions, and return this.
-   * @returns {Action} this
+   * Calculate begin and end positions, and return an action.
+   * @returns {Action} action
    */
   process(): Action {
     this.calculatePositions();

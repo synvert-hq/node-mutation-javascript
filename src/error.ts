@@ -9,6 +9,9 @@
   }
 }
 
+/**
+ * ConflictActionError is thrown when there is a conflict among actions.
+ */
 class ConflictActionError extends Error {
   constructor() {
     super("mutation actions are conflicted");
