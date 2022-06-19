@@ -1,4 +1,3 @@
-import { Node } from "typescript";
 import { BaseAction } from "../action";
 import { getAdapter } from "../helpers";
 
@@ -6,12 +5,12 @@ import { getAdapter } from "../helpers";
  * RemoveAction to remove current node.
  * @extends BaseAction
  */
-export class RemoveAction extends BaseAction {
+export class RemoveAction<T> extends BaseAction<T> {
   /**
    * Create a RemoveAction
-   * @param {Node} node
+   * @param {T} node
    */
-  constructor(node: Node) {
+  constructor(node: T) {
     super(node, "");
   }
 
@@ -22,8 +21,8 @@ export class RemoveAction extends BaseAction {
   calculatePositions(): void {
     if (this.takeWholeLine()) {
       const lines = this.source().split("\n");
-      const beginLine = getAdapter<Node>().getStartLoc(this.node).line;
-      const endLine = getAdapter<Node>().getEndLoc(this.node).line;
+      const beginLine = getAdapter<T>().getStartLoc(this.node).line;
+      const endLine = getAdapter<T>().getEndLoc(this.node).line;
       this.start =
         lines.slice(0, beginLine - 1).join("\n").length +
         (beginLine === 1 ? 0 : "\n".length);
@@ -33,8 +32,8 @@ export class RemoveAction extends BaseAction {
       }
       this.squeezeLines();
     } else {
-      this.start = getAdapter<Node>().getStart(this.node);
-      this.end = getAdapter<Node>().getEnd(this.node);
+      this.start = getAdapter<T>().getStart(this.node);
+      this.end = getAdapter<T>().getEnd(this.node);
       this.squeezeSpaces();
       this.removeBraces();
       this.removeComma();
@@ -57,10 +56,10 @@ export class RemoveAction extends BaseAction {
   private takeWholeLine(): boolean {
     const sourceFromFile = this.source()
       .split("\n")
-      .slice(getAdapter<Node>().getStartLoc(this.node).line - 1, getAdapter<Node>().getEndLoc(this.node).line)
+      .slice(getAdapter<T>().getStartLoc(this.node).line - 1, getAdapter<T>().getEndLoc(this.node).line)
       .join("\n")
       .trim();
-    const source = getAdapter<Node>().getSource(this.node);
+    const source = getAdapter<T>().getSource(this.node);
     return (
       source === sourceFromFile ||
       source + ";" === sourceFromFile ||

@@ -1,5 +1,4 @@
 import fs from "fs";
-import { Node } from "typescript";
 import type { Action, InsertOptions, ReplaceOptions, ReplaceWithOptions } from "./types";
 import Adapter from "./adapter";
 import { AppendAction, DeleteAction, InsertAction, PrependAction, RemoveAction, ReplaceWithAction, ReplaceAction } from "./action";
@@ -10,7 +9,7 @@ export enum STRATEGY {
   THROW_ERROR,
 }
 
-class NodeMutation {
+class NodeMutation<T> {
   private static adapter?: Adapter<any>;
   private static strategy?: STRATEGY = STRATEGY.THROW_ERROR;
   public actions: Action[] = [];
@@ -34,32 +33,32 @@ class NodeMutation {
 
   constructor(private filePath: string) {}
 
-  append(node: Node, code: string) {
-    this.actions.push(new AppendAction(node, code).process());
+  append(node: T, code: string) {
+    this.actions.push(new AppendAction<T>(node, code).process());
   }
 
-  delete(node: Node, selectors: string | string[]) {
-    this.actions.push(new DeleteAction(node, selectors).process());
+  delete(node: T, selectors: string | string[]) {
+    this.actions.push(new DeleteAction<T>(node, selectors).process());
   }
 
-  insert(node: Node, code: string, options: InsertOptions) {
-    this.actions.push(new InsertAction(node, code, options).process());
+  insert(node: T, code: string, options: InsertOptions) {
+    this.actions.push(new InsertAction<T>(node, code, options).process());
   }
 
-  prepend(node: Node, code: string) {
-    this.actions.push(new PrependAction(node, code).process());
+  prepend(node: T, code: string) {
+    this.actions.push(new PrependAction<T>(node, code).process());
   }
 
-  remove(node: Node) {
-    this.actions.push(new RemoveAction(node).process());
+  remove(node: T) {
+    this.actions.push(new RemoveAction<T>(node).process());
   }
 
-  replace(node: Node, selectors: string | string[], options: ReplaceOptions) {
-    this.actions.push(new ReplaceAction(node, selectors, options).process());
+  replace(node: T, selectors: string | string[], options: ReplaceOptions) {
+    this.actions.push(new ReplaceAction<T>(node, selectors, options).process());
   }
 
-  replaceWith(node: Node, code: string, options: ReplaceWithOptions = { autoIndent: true }) {
-    this.actions.push(new ReplaceWithAction(node, code, options).process());
+  replaceWith(node: T, code: string, options: ReplaceWithOptions = { autoIndent: true }) {
+    this.actions.push(new ReplaceWithAction<T>(node, code, options).process());
   }
 
   process(): { conflict: boolean } {

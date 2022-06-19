@@ -1,4 +1,3 @@
-import { Node } from "typescript";
 import type { InsertOptions } from "../types";
 import { BaseAction } from "../action";
 import { getAdapter } from "../helpers";
@@ -7,17 +6,17 @@ import { getAdapter } from "../helpers";
  * InsertAction to add code to the node.
  * @extends BaseAction
  */
-export class InsertAction extends BaseAction {
+export class InsertAction<T> extends BaseAction<T> {
   private at: string;
   private selector?: string;
 
   /**
    * Create an InsertAction
-   * @param {Node} node
+   * @param {T} node
    * @param {string} code - new code to be inserted
    * @param {Object} options - position to insert code
    */
-  constructor(node: Node, code: string, options: InsertOptions) {
+  constructor(node: T, code: string, options: InsertOptions) {
     super(node, code);
     this.at = options.at;
     this.selector = options.to;
@@ -29,8 +28,8 @@ export class InsertAction extends BaseAction {
    */
   calculatePositions(): void {
     const range = this.selector
-      ? getAdapter<Node>().childNodeRange(this.node, this.selector)
-      : { start: this.node.getStart(), end: this.node.getEnd() };
+      ? getAdapter<T>().childNodeRange(this.node, this.selector)
+      : { start: getAdapter<T>().getStart(this.node), end: getAdapter<T>().getEnd(this.node) };
     this.start = this.at === "beginning" ? range.start : range.end;
     this.end = this.start;
   }

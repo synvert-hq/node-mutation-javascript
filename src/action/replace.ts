@@ -1,4 +1,3 @@
-import { Node } from "typescript";
 import type { ReplaceOptions } from "../types";
 import { BaseAction } from "../action";
 import { getAdapter } from "../helpers";
@@ -7,17 +6,17 @@ import { getAdapter } from "../helpers";
  * ReplaceAction to replace child node with code.
  * @extends BaseAction
  */
-export class ReplaceAction extends BaseAction {
+export class ReplaceAction<T> extends BaseAction<T> {
   private selectors: string[];
 
   /**
    * Create a ReplaceAction
-   * @param {Node} node
+   * @param {T} node
    * @param {string|string[]} selectors - name of child nodes
    * @param {Object} options - { with } new code to be replaced
    */
   constructor(
-    node: Node,
+    node: T,
     selectors: string | string[],
     options: ReplaceOptions
   ) {
@@ -32,12 +31,12 @@ export class ReplaceAction extends BaseAction {
   calculatePositions(): void {
     this.start = Math.min(
       ...this.selectors.map(
-        (selector) => getAdapter<Node>().childNodeRange(this.node, selector).start
+        (selector) => getAdapter<T>().childNodeRange(this.node, selector).start
       )
     );
     this.end = Math.max(
       ...this.selectors.map(
-        (selector) => getAdapter<Node>().childNodeRange(this.node, selector).end
+        (selector) => getAdapter<T>().childNodeRange(this.node, selector).end
       )
     );
   }

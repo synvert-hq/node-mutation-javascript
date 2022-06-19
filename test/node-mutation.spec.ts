@@ -23,7 +23,7 @@ describe("NodeMutation", () => {
     });
 
     it("gets no conflict", () => {
-      const mutation = new NodeMutation(filePath);
+      const mutation = new NodeMutation<Node>(filePath);
       mutation.actions.push({
         start: 0,
         end: 0,
@@ -47,8 +47,8 @@ describe("NodeMutation", () => {
     });
 
     it("get conflict with KEEP_RUNNING strategy", () => {
-      NodeMutation.configure({ strategy: STRATEGY.KEEP_RUNNING });
-      const mutation = new NodeMutation(filePath);
+      NodeMutation<Node>.configure({ strategy: STRATEGY.KEEP_RUNNING });
+      const mutation = new NodeMutation<Node>(filePath);
       mutation.actions.push({
         start: "class ".length,
         end: "class FooBar".length,
@@ -76,8 +76,8 @@ describe("NodeMutation", () => {
     });
 
     it("get conflict with THROW_ERROR strategy", () => {
-      NodeMutation.configure({ strategy: STRATEGY.THROW_ERROR });
-      const mutation = new NodeMutation(filePath);
+      NodeMutation<Node>.configure({ strategy: STRATEGY.THROW_ERROR });
+      const mutation = new NodeMutation<Node>(filePath);
       mutation.actions.push({
         start: "class ".length,
         end: "class FooBar".length,

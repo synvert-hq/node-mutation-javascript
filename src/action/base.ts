@@ -1,20 +1,19 @@
-import { Node } from "typescript";
 import type { Action } from "../types";
 import { getAdapter } from "../helpers";
 
 /**
  * Action does some real actions, e.g. insert / replace / delete code.
  */
-export abstract class BaseAction {
+export abstract class BaseAction<T> {
   protected start: number;
   protected end: number;
 
   /**
    * Create an Action.
-   * @param {Node} node
+   * @param {T} node
    * @param {string} code - new code to insert, replace or delete
    */
-  constructor(protected node: Node, protected code: string) {
+  constructor(protected node: T, protected code: string) {
     this.start = -1;
     this.end = -1;
   }
@@ -52,7 +51,7 @@ export abstract class BaseAction {
    * @returns {string} rewritten source code.
    */
   protected rewrittenSource(): string {
-    return getAdapter<Node>().rewrittenSource(this.node, this.code);
+    return getAdapter<T>().rewrittenSource(this.node, this.code);
   }
 
   /**
@@ -61,7 +60,7 @@ export abstract class BaseAction {
    * @returns source code of this node.
    */
   protected source(): string {
-    return getAdapter<Node>().fileContent(this.node);
+    return getAdapter<T>().fileContent(this.node);
   }
 
   /**
@@ -83,8 +82,8 @@ export abstract class BaseAction {
    */
   protected squeezeLines(): void {
     const lines = this.source().split("\n");
-    const beginLine = getAdapter<Node>().getStartLoc(this.node).line;
-    const endLine = getAdapter<Node>().getEndLoc(this.node).line;
+    const beginLine = getAdapter<T>().getStartLoc(this.node).line;
+    const endLine = getAdapter<T>().getEndLoc(this.node).line;
     const beforeLineIsBlank = endLine === 1 || lines[beginLine - 2] === "";
     const afterLineIsBlank = lines[endLine] === "";
     if (lines.length > 1 && beforeLineIsBlank && afterLineIsBlank) {

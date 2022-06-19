@@ -1,3 +1,4 @@
+import { Node } from "typescript";
 import { ReplaceWithAction } from "../../src/action";
 import { parseCode } from "../helper";
 
@@ -5,7 +6,7 @@ describe("ReplaceWithAction", () => {
   const node = parseCode("!!foobar");
 
   it("gets range and rewritten code", () => {
-    const action = new ReplaceWithAction(
+    const action = new ReplaceWithAction<Node>(
       node,
       "Boolean({{expression.operand.operand}})"
     );

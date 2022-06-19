@@ -1,4 +1,3 @@
-import { Node } from "typescript";
 import { BaseAction } from "../action";
 import { getAdapter, DEFAULT_INDENT } from "../helpers";
 
@@ -6,13 +5,13 @@ import { getAdapter, DEFAULT_INDENT } from "../helpers";
  * PrependAction to prepend code to the top of node body.
  * @extends BaseAction
  */
-export class PrependAction extends BaseAction {
+export class PrependAction<T> extends BaseAction<T> {
   /**
    * Calculate the begin and end positions.
    * @protected
    */
   calculatePositions(): void {
-    this.start = getAdapter<Node>().getSource(this.node).indexOf("{") + "{\n".length;
+    this.start = getAdapter<T>().getSource(this.node).indexOf("{") + "{\n".length;
     this.end = this.start;
   }
 
@@ -22,7 +21,7 @@ export class PrependAction extends BaseAction {
    */
   get newCode(): string {
     const source = this.rewrittenSource();
-    const indent = " ".repeat(getAdapter<Node>().getIndent(this.node) + DEFAULT_INDENT);
+    const indent = " ".repeat(getAdapter<T>().getIndent(this.node) + DEFAULT_INDENT);
     if (source.split("\n").length > 1) {
       return (
         source
