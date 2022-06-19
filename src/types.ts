@@ -12,8 +12,10 @@ export type Action = {
   newCode: string
 };
 
+export type POSITION = "beginning" | "end";
+
 export type InsertOptions = {
-  at: string,
+  at?: POSITION,
   to?: string
 }
 

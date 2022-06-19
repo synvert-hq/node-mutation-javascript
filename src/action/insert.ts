@@ -1,4 +1,4 @@
-import type { InsertOptions } from "../types";
+import type { POSITION, InsertOptions } from "../types";
 import { BaseAction } from "../action";
 import { getAdapter } from "../helpers";
 
@@ -7,7 +7,7 @@ import { getAdapter } from "../helpers";
  * @extends BaseAction
  */
 export class InsertAction<T> extends BaseAction<T> {
-  private at: string;
+  private at?: POSITION;
   private selector?: string;
 
   /**

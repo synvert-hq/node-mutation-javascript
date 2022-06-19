@@ -18,8 +18,7 @@ describe("InsertAction", () => {
   describe("at end of object", () => {
     it("get range and rewritten code", () => {
       const action = new InsertAction<Node>(node, ".bar", {
-        to: "expression.expression",
-        at: "end",
+        to: "expression.expression"
       });
       expect(action.process()).toEqual({ start: "this".length, end: "this".length, newCode: ".bar" });
     });
