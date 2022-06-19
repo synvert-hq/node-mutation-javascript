@@ -1,6 +1,15 @@
 import NodeMutation, { STRATEGY } from "./node-mutation";
+import Adapter from "./adapter";
 import { NotSupportedError, ConflictActionError } from "./error";
 import { InsertOptions, ReplaceWithOptions, ReplaceOptions } from "./types";
 
 export default NodeMutation;
-export { STRATEGY, NotSupportedError, ConflictActionError, InsertOptions, ReplaceWithOptions, ReplaceOptions };
+export {
+  Adapter,
+  STRATEGY,
+  NotSupportedError,
+  ConflictActionError,
+  InsertOptions,
+  ReplaceWithOptions,
+  ReplaceOptions
+};
