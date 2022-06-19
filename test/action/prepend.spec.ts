@@ -19,7 +19,7 @@ describe("PrependAction", () => {
 
   describe("multiple lines", () => {
     it("gets range and rewritten code", () => {
-      const action = new PrependAction(<Node>node, "foo() {}\nbar() {}");
+      const action = new PrependAction<Node>(node, "foo() {}\nbar() {}");
       expect(action.process()).toEqual({
         start: "class Foobar {\n".length,
         end: "class Foobar {\n".length,
