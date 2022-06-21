@@ -1,5 +1,6 @@
 import type { Action } from "../types";
 import { getAdapter } from "../helpers";
+import debug from "debug";
 
 /**
  * Action does some real actions, e.g. insert / replace / delete code.
@@ -32,6 +33,7 @@ export abstract class BaseAction<T> {
   process(): Action {
     this.calculatePositions();
 
+    debug("node-mutation")(`${this.constructor.name}[${this.start}-${this.end}]:${this.newCode}`);
     return {
       start: this.start,
       end: this.end,
