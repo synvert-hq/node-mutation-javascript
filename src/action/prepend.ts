@@ -11,7 +11,7 @@ export class PrependAction<T> extends BaseAction<T> {
    * @protected
    */
   calculatePositions(): void {
-    this.start = getAdapter<T>().getSource(this.node).indexOf("{") + "{\n".length;
+    this.start = getAdapter<T>().getStart(this.node) + getAdapter<T>().getSource(this.node).indexOf("{") + "{\n".length;
     this.end = this.start;
   }
 
