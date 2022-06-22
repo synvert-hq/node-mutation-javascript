@@ -15,7 +15,7 @@ class TypescriptAdapter implements Adapter<Node> {
       const obj = this.actualValue(node, match.split("."));
       if (obj) {
         if (Array.isArray(obj)) {
-          return this.fileContent(node).slice(obj[0].start, obj[obj.length - 1].end);
+          return this.fileContent(node).slice(obj[0].getStart(), obj[obj.length - 1].getEnd());
         }
         const result = obj.hasOwnProperty("name") ? obj.name : obj;
         if (result.hasOwnProperty("kind")) {
