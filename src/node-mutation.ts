@@ -1,6 +1,7 @@
 import fs from "fs";
 import type { Action, InsertOptions, ReplaceOptions, ReplaceWithOptions } from "./types";
 import Adapter from "./adapter";
+import TypescriptAdapter from "./typescript-adapter";
 import { AppendAction, DeleteAction, InsertAction, PrependAction, RemoveAction, ReplaceWithAction, ReplaceAction } from "./action";
 import { ConflictActionError } from "./error";
 
@@ -32,7 +33,6 @@ class NodeMutation<T> {
 
   static getAdapter(): Adapter<any> {
     if (!this.adapter) {
-      const TypescriptAdapter = require("./typescript-adapter");
       this.adapter = new TypescriptAdapter();
     }
     return this.adapter!;
