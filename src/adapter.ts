@@ -74,6 +74,7 @@ interface Adapter<T> {
   /**
    * Get indent of ast node
    * @param node {T} ast node
+   * @returns {Number} indent
    */
   getIndent(node: T): number;
 }

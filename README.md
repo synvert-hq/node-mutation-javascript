@@ -33,10 +33,10 @@ yarn add @xinminlabs/node-mutation
 ```typescript
 import { Node } from "typescript"
 
-mutation = NodeMutation<Node>.new(filePath: string)
+mutation = new NodeMutation<Node>(filePath: string, source: string)
 ```
 
-2. rewrite the node source code:
+2. call the rewrite apis:
 
 ```typescript
 // append the code to the current node.
@@ -52,7 +52,7 @@ mutation.remove(node: Node)
 // replace child node of the ast node with new code
 mutation.replace(node: Node, selectors: string | string[], options: ReplaceOptions)
 // replace the ast node with new code
-mutation.replaceWith(node: T, code: string, options: ReplaceWithOptions = { autoIndent: true })
+mutation.replaceWith(node: Node, code: string, options: ReplaceWithOptions = { autoIndent: true })
 ```
 
 3. process actions and write the new source code to file:
@@ -63,7 +63,7 @@ mutation.process()
 
 ## Write Adapter
 
-Different parsers, like typescript, espree, will generate different AST nodes, to make NodeMutation work for them all,
+Different parsers, like typescript and espree, will generate different AST nodes, to make NodeMutation work for them all,
 we define an [Adapter](https://github.com/xinminlabs/node-mutation-javascript/blob/main/src/adapter.ts) interface,
 if you implement the Adapter interface, you can set it as NodeMutation's adapter.
 
