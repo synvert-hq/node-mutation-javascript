@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.1.0 (2022-07-02)
+
+* Return newSource instead of writing file
+
 ## 1.0.4 (2022-06-23)
 
 * Fix node array `getSource` result
