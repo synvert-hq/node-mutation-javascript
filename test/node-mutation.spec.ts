@@ -1,12 +1,9 @@
-import fs from "fs";
-import mock from "mock-fs";
 import dedent from "dedent";
 import NodeMutation, { STRATEGY } from "../src/node-mutation";
 import { ConflictActionError } from "../src/error";
 
 describe("NodeMutation", () => {
   describe("process", () => {
-    const filePath = "code.ts";
     const source = dedent`
       class FooBar {
         foo() {}
@@ -14,16 +11,14 @@ describe("NodeMutation", () => {
       }
     `;
 
-    beforeEach(() => {
-      mock({ [filePath]: source });
-    });
-
-    afterEach(() => {
-      mock.restore();
+    it("gets no action", () => {
+      const mutation = new NodeMutation<Node>(source);
+      const result = mutation.process();
+      expect(result.affected).toBeFalsy();
     });
 
     it("gets no conflict", () => {
-      const mutation = new NodeMutation<Node>(filePath);
+      const mutation = new NodeMutation<Node>(source);
       mutation.actions.push({
         start: 0,
         end: 0,
@@ -35,9 +30,9 @@ describe("NodeMutation", () => {
         newCode: "Synvert",
       });
       const result = mutation.process();
-      expect(result.conflict).toBeFalsy();
-      const newSource = fs.readFileSync(filePath, "utf-8");
-      expect(newSource).toEqual(dedent`
+      expect(result.affected).toBeTruthy();
+      expect(result.conflicted).toBeFalsy();
+      expect(result.newSource).toEqual(dedent`
         'use strict'
         class Synvert {
           foo() {}
@@ -48,7 +43,7 @@ describe("NodeMutation", () => {
 
     it("get conflict with KEEP_RUNNING strategy", () => {
       NodeMutation<Node>.configure({ strategy: STRATEGY.KEEP_RUNNING });
-      const mutation = new NodeMutation<Node>(filePath);
+      const mutation = new NodeMutation<Node>(source);
       mutation.actions.push({
         start: "class ".length,
         end: "class FooBar".length,
@@ -65,9 +60,9 @@ describe("NodeMutation", () => {
         newCode: "class Foobar extends Base",
       });
       const result = mutation.process();
-      expect(result.conflict).toBeTruthy();
-      const newSource = fs.readFileSync(filePath, "utf-8");
-      expect(newSource).toEqual(dedent`
+      expect(result.affected).toBeTruthy();
+      expect(result.conflicted).toBeTruthy();
+      expect(result.newSource).toEqual(dedent`
         class Synvert extends Base {
           foo() {}
           bar() {}
@@ -77,7 +72,7 @@ describe("NodeMutation", () => {
 
     it("get conflict with THROW_ERROR strategy", () => {
       NodeMutation<Node>.configure({ strategy: STRATEGY.THROW_ERROR });
-      const mutation = new NodeMutation<Node>(filePath);
+      const mutation = new NodeMutation<Node>(source);
       mutation.actions.push({
         start: "class ".length,
         end: "class FooBar".length,

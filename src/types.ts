@@ -26,3 +26,9 @@ export type ReplaceWithOptions = {
 export type ReplaceOptions = {
   with: string
 }
+
+export type ProcessResult = {
+  affected: boolean,
+  conflicted: boolean,
+  newSource?: string
+}

@@ -1,5 +1,4 @@
-import fs from "fs";
-import type { Action, InsertOptions, ReplaceOptions, ReplaceWithOptions } from "./types";
+import type { Action, InsertOptions, ReplaceOptions, ReplaceWithOptions, ProcessResult } from "./types";
 import Adapter from "./adapter";
 import TypescriptAdapter from "./typescript-adapter";
 import { AppendAction, DeleteAction, InsertAction, PrependAction, RemoveAction, ReplaceWithAction, ReplaceAction } from "./action";
@@ -40,9 +39,9 @@ class NodeMutation<T> {
 
   /**
    * Initialize a NodeMutation
-   * @param filePath {string} - file path to rewrite.
+   * @param source {string} - file source.
    */
-  constructor(private filePath: string) {}
+  constructor(private source: string) {}
 
   /**
    * Append code to the ast node.
@@ -234,26 +233,30 @@ class NodeMutation<T> {
    * if strategy is set to KEEP_RUNNING.
    * @returns {ProcessResult} if actions are conflicted
    */
-  process(): { conflict: boolean } {
-    let conflictActions = [];
-    let source = fs.readFileSync(this.filePath, "utf-8");
-    if (this.actions.length > 0) {
-      this.actions.sort(this.compareActions);
-      conflictActions = this.getConflictActions();
-      if (conflictActions.length > 0  && NodeMutation.strategy === STRATEGY.THROW_ERROR) {
-        throw new ConflictActionError();
-      }
-      this.actions.reverse().forEach((action) => {
-        source =
-          source.slice(0, action.start) +
-          action.newCode +
-          source.slice(action.end);
-      });
-      this.actions = [];
-
-      fs.writeFileSync(this.filePath, source);
+  process(): ProcessResult {
+    if (this.actions.length == 0) {
+      return { affected: false, conflicted: false };
     }
-    return { conflict: conflictActions.length !== 0};
+    let conflictActions = [];
+    this.actions.sort(this.compareActions);
+    conflictActions = this.getConflictActions();
+    if (conflictActions.length > 0  && NodeMutation.strategy === STRATEGY.THROW_ERROR) {
+      throw new ConflictActionError();
+    }
+    let newSource = this.source;
+    this.actions.reverse().forEach((action) => {
+      newSource =
+        newSource.slice(0, action.start) +
+        action.newCode +
+        newSource.slice(action.end);
+    });
+    this.actions = [];
+
+    return {
+      affected: true,
+      conflicted: conflictActions.length !== 0,
+      newSource
+    };
   }
 
   /**
