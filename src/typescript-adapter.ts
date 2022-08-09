@@ -9,7 +9,7 @@ class TypescriptAdapter implements Adapter<Node> {
   }
 
   rewrittenSource(node: Node, code: string): string {
-    return code.replace(/{{([a-zA-z0-9\.]+?)}}/gm, (_string, match, _offset) => {
+    return code.replace(/{{([a-zA-z0-9\.]+?)}}/gm, (string, match, _offset) => {
       if (!match) return null;
 
       const obj = this.actualValue(node, match.split("."));
@@ -17,14 +17,13 @@ class TypescriptAdapter implements Adapter<Node> {
         if (Array.isArray(obj)) {
           return this.fileContent(node).slice(obj[0].getStart(), obj[obj.length - 1].getEnd());
         }
-        const result = obj.hasOwnProperty("name") ? obj.name : obj;
-        if (result.hasOwnProperty("kind")) {
-          return this.getSource(result);
+        if (obj.hasOwnProperty("kind")) {
+          return this.getSource(obj);
         } else {
-          return result;
+          return obj;
         }
       } else {
-        return code;
+        return string;
       }
     });
   }
@@ -111,11 +110,10 @@ class TypescriptAdapter implements Adapter<Node> {
     multiKeys.forEach((key) => {
       if (!childNode) return;
 
-      const child: any = childNode;
       if (childNode.hasOwnProperty(key)) {
-        childNode = child[key];
-      } else if (typeof child[key] === "function") {
-        childNode = child[key].call(childNode);
+        childNode = childNode[key];
+      } else if (typeof childNode[key] === "function") {
+        childNode = childNode[key].call(childNode);
       } else {
         childNode = null;
       }
