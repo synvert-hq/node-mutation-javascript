@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.1.2 (2022-08-09)
+
+* Fix `TypescriptAdapter#rewrittenSource` if regex does not match
+
 ## 1.1.1 (2022-07-07)
 
 * Export `ProcessResult`
