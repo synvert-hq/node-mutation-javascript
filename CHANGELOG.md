@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.1.4 (2022-08-18)
+
+Add `actions` in `ProcessResult`
+
 ## 1.1.3 (2022-08-10)
 
 * Export `TypescriptAdapter`
