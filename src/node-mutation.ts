@@ -250,11 +250,11 @@ class NodeMutation<T> {
         action.newCode +
         newSource.slice(action.end);
     });
-    this.actions = [];
 
     return {
       affected: true,
       conflicted: conflictActions.length !== 0,
+      actions: this.actions,
       newSource
     };
   }

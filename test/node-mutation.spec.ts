@@ -32,6 +32,7 @@ describe("NodeMutation", () => {
       const result = mutation.process();
       expect(result.affected).toBeTruthy();
       expect(result.conflicted).toBeFalsy();
+      expect(result.actions).toEqual(mutation.actions);
       expect(result.newSource).toEqual(dedent`
         'use strict'
         class Synvert {
@@ -62,6 +63,7 @@ describe("NodeMutation", () => {
       const result = mutation.process();
       expect(result.affected).toBeTruthy();
       expect(result.conflicted).toBeTruthy();
+      expect(result.actions).toEqual(mutation.actions);
       expect(result.newSource).toEqual(dedent`
         class Synvert extends Base {
           foo() {}
