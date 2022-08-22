@@ -1,3 +1,4 @@
+import dedent from "dedent";
 import { Node } from "typescript";
 import { RemoveAction } from "../../src/action";
 import { parseCode } from "../helper";
@@ -14,7 +15,7 @@ describe("RemoveAction", () => {
   });
 
   describe("multiple lines", () => {
-    const code = `
+    const code = dedent`
       function foo(props) {
         this.bar = this.bar.bind(this);
       }

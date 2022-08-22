@@ -5,7 +5,8 @@ import { NotSupportedError } from "./error";
 
 class TypescriptAdapter implements Adapter<Node> {
   getSource(node: Node): string {
-    return node.getFullText().trim();
+    // typescript getText() may contain trailing whitespaces and newlines.
+    return node.getText().trimEnd();
   }
 
   rewrittenSource(node: Node, code: string): string {
@@ -15,7 +16,7 @@ class TypescriptAdapter implements Adapter<Node> {
       const obj = this.actualValue(node, match.split("."));
       if (obj) {
         if (Array.isArray(obj)) {
-          return this.fileContent(node).slice(obj[0].getStart(), obj[obj.length - 1].getEnd());
+          return this.fileContent(node).slice(this.getStart(obj[0]), this.getEnd(obj[obj.length - 1]));
         }
         if (obj.hasOwnProperty("kind")) {
           return this.getSource(obj);
@@ -34,9 +35,9 @@ class TypescriptAdapter implements Adapter<Node> {
 
   childNodeRange(node: Node, childName: string): { start: number, end: number } {
     if (["arguments", "parameters"].includes(childName)) {
-      return { start: ((node as any)[childName][0] as Node).getStart() - 1, end: ((node as any)[childName][0] as Node).getEnd() + 1 };
+      return { start: this.getStart((node as any)[childName][0] as Node) - 1, end: this.getEnd((node as any)[childName][0] as Node) + 1 };
     } else if (node.kind === SyntaxKind.PropertyAccessExpression && childName === "dot") {
-      return { start: (node as PropertyAccessExpression).name.getStart() - 1, end: (node as PropertyAccessExpression).name.getStart() };
+      return { start: this.getStart((node as PropertyAccessExpression).name) - 1, end: this.getStart((node as PropertyAccessExpression).name) };
     } else {
       const [directChildName, ...nestedChildName] = childName.split(".");
       if ((node as any)[directChildName]) {
@@ -51,15 +52,15 @@ class TypescriptAdapter implements Adapter<Node> {
 
           if (typeof childNode[childDirectChildName] === "function") {
             const childChildNode = (childNode[childDirectChildName] as () => NodeExt)();
-            return { start: childChildNode.getStart(), end: childChildNode.getEnd() };
+            return { start: this.getStart(childChildNode), end: this.getEnd(childChildNode) };
           } else if (!Number.isNaN(childDirectChildName)) {
             const childChildNode = childNode.at(
               Number.parseInt(childDirectChildName)
             ) as NodeExt;
             if (childChildNode) {
-              return { start: childChildNode.getStart(), end: childChildNode.getEnd() };
+              return { start: this.getStart(childChildNode), end: this.getEnd(childChildNode) };
             } else {
-              return { start: node.getEnd() - 1, end: node.getEnd() - 1 };
+              return { start: this.getEnd(node) - 1, end: this.getEnd(node) - 1 };
             }
           } else {
             throw new NotSupportedError(
@@ -73,7 +74,7 @@ class TypescriptAdapter implements Adapter<Node> {
         }
 
         if (childNode) {
-          return { start: childNode.getStart(), end: childNode.getEnd() };
+          return { start: this.getStart(childNode), end: this.getEnd(childNode) };
         }
       }
     }
@@ -88,16 +89,18 @@ class TypescriptAdapter implements Adapter<Node> {
   }
 
   getEnd(node: Node): number {
-    return node.getEnd();
+    // typescript getText() may contain trailing whitespaces and newlines.
+    const trailingLength = node.getText().length - node.getText().trimEnd().length;
+    return node.getEnd() - trailingLength;
   }
 
   getStartLoc(node: Node): { line: number, column: number } {
-    const { line, character } = node.getSourceFile().getLineAndCharacterOfPosition(node.getStart());
+    const { line, character } = node.getSourceFile().getLineAndCharacterOfPosition(this.getStart(node));
     return { line: line + 1, column: character + 1 };
   }
 
   getEndLoc(node: Node): { line: number, column: number } {
-    const { line, character } = node.getSourceFile().getLineAndCharacterOfPosition(node.getEnd());
+    const { line, character } = node.getSourceFile().getLineAndCharacterOfPosition(this.getEnd(node));
     return { line: line + 1, column: character + 1 };
   }
 
