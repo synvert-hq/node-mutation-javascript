@@ -1,4 +1,4 @@
-import type { Action, InsertOptions, ReplaceOptions, ReplaceWithOptions, ProcessResult } from "./types";
+import type { Action, InsertOptions, ReplaceOptions, ReplaceWithOptions, ProcessResult, TestResult } from "./types";
 import Adapter from "./adapter";
 import TypescriptAdapter from "./typescript-adapter";
 import { AppendAction, DeleteAction, InsertAction, PrependAction, RemoveAction, ReplaceWithAction, ReplaceAction } from "./action";
@@ -218,20 +218,12 @@ class NodeMutation<T> {
   }
 
   /**
-   * @typedef {Object} ProcessResult
-   * @property {number} conflict - if there's any action range conflicted
-   */
-
-  /**
-   * Read the source code from file path,
-   * rewrite the source code based on all actions,
-   * then write the new source code back to the file.
+   * Rewrite the source code based on all actions.
    *
    * If there's an action range conflict,
    * it will raise a ConflictActionError if strategy is set to THROW_ERROR,
-   * it will process all non conflicted actions and return `{ conflict: true }`
-   * if strategy is set to KEEP_RUNNING.
-   * @returns {ProcessResult} if actions are conflicted
+   * it will process all non conflicted actions and return `{ conflicted: true }`
+   * @returns {ProcessResult} if actions are conflicted and the new source.
    */
   process(): ProcessResult {
     if (this.actions.length == 0) {
@@ -254,9 +246,29 @@ class NodeMutation<T> {
     return {
       affected: true,
       conflicted: conflictActions.length !== 0,
-      actions: this.actions,
       newSource
     };
+  }
+
+  /**
+   * Return the actions.
+   *
+   * If there's an action range conflict,
+   * it will raise a ConflictActionError if strategy is set to THROW_ERROR,
+   * it will process all non conflicted actions and return `{ conflicted: true }`
+   * @returns {ProcessResult} if actions are conflicted and the actions
+   */
+  test(): TestResult {
+    if (this.actions.length == 0) {
+      return { affected: false, conflicted: false, actions: [] };
+    }
+    let conflictActions = [];
+    this.actions.sort(this.compareActions);
+    conflictActions = this.getConflictActions();
+    if (conflictActions.length > 0  && NodeMutation.strategy === STRATEGY.THROW_ERROR) {
+      throw new ConflictActionError();
+    }
+    return { affected: true, conflicted: conflictActions.length !== 0, actions: this.actions };
   }
 
   /**

@@ -30,6 +30,11 @@ export type ReplaceOptions = {
 export type ProcessResult = {
   affected: boolean,
   conflicted: boolean,
-  actions?: Action[],
   newSource?: string
+}
+
+export type TestResult = {
+  affected: boolean,
+  conflicted: boolean,
+  actions: Action[]
 }
