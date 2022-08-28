@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.2.0 (2022-08-28)
+
+* Add `NodeMutation#test` method
+
 ## 1.1.5 (2022-08-23)
 
 * Fix "typescript getText() may contain trailing whitespaces and newlines"
