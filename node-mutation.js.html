@@ -24,7 +24,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="ConflictActionError.html">ConflictActionError</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="NodeMutation.html">NodeMutation</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#.configure">configure</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#append">append</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#delete">delete</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#insert">insert</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#prepend">prepend</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#process">process</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#remove">remove</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#replace">replace</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#replaceWith">replaceWith</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="NotSupportedError.html">NotSupportedError</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getAdapter">getAdapter</a></span></li>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="ConflictActionError.html">ConflictActionError</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="NodeMutation.html">NodeMutation</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#.configure">configure</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#append">append</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#delete">delete</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#insert">insert</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#prepend">prepend</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#process">process</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#remove">remove</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#replace">replace</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#replaceWith">replaceWith</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#test">test</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="NotSupportedError.html">NotSupportedError</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getAdapter">getAdapter</a></span></li>
 </nav>
 
 <div id="main">
@@ -251,19 +251,12 @@ class NodeMutation {
         this.actions.push(new action_1.ReplaceWithAction(node, code, options).process());
     }
     /**
-     * @typedef {Object} ProcessResult
-     * @property {number} conflict - if there's any action range conflicted
-     */
-    /**
-     * Read the source code from file path,
-     * rewrite the source code based on all actions,
-     * then write the new source code back to the file.
+     * Rewrite the source code based on all actions.
      *
      * If there's an action range conflict,
      * it will raise a ConflictActionError if strategy is set to THROW_ERROR,
-     * it will process all non conflicted actions and return `{ conflict: true }`
-     * if strategy is set to KEEP_RUNNING.
-     * @returns {ProcessResult} if actions are conflicted
+     * it will process all non conflicted actions and return `{ conflicted: true }`
+     * @returns {ProcessResult} if actions are conflicted and the new source.
      */
     process() {
         if (this.actions.length == 0) {
@@ -285,9 +278,28 @@ class NodeMutation {
         return {
             affected: true,
             conflicted: conflictActions.length !== 0,
-            actions: this.actions,
             newSource
         };
+    }
+    /**
+     * Return the actions.
+     *
+     * If there's an action range conflict,
+     * it will raise a ConflictActionError if strategy is set to THROW_ERROR,
+     * it will process all non conflicted actions and return `{ conflicted: true }`
+     * @returns {ProcessResult} if actions are conflicted and the actions
+     */
+    test() {
+        if (this.actions.length == 0) {
+            return { affected: false, conflicted: false, actions: [] };
+        }
+        let conflictActions = [];
+        this.actions.sort(this.compareActions);
+        conflictActions = this.getConflictActions();
+        if (conflictActions.length > 0 &amp;&amp; NodeMutation.strategy === STRATEGY.THROW_ERROR) {
+            throw new error_1.ConflictActionError();
+        }
+        return { affected: true, conflicted: conflictActions.length !== 0, actions: this.actions };
     }
     /**
      * Action sort function.
@@ -346,7 +358,7 @@ exports.default = NodeMutation;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Tue Aug 23 2022 00:16:10 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Sun Aug 28 2022 15:24:26 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
