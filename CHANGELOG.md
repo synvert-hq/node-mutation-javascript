@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.2.1 (2022-08-29)
+
+* Export `TestResult`
+
 ## 1.2.0 (2022-08-28)
 
 * Add `NodeMutation#test` method
