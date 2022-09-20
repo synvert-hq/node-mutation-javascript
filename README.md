@@ -7,10 +7,12 @@ NodeMutation provides a set of APIs to rewrite node source code.
 
 ## Table of Contents
 
-- [Installation](#installation)
-- [Usage](#usage)
-- [Write Adapter](#write-adapter)
-- [Contributing Guide](#contributing-guide)
+- [NodeMutation](#nodemutation)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Write Adapter](#write-adapter)
+  - [Contributing Guide](#contributing-guide)
 
 ## Installation
 
@@ -53,6 +55,8 @@ mutation.remove(node: Node)
 mutation.replace(node: Node, selectors: string | string[], options: ReplaceOptions)
 // replace the ast node with new code
 mutation.replaceWith(node: Node, code: string, options: ReplaceWithOptions = { autoIndent: true })
+// no operation
+mutation.noop(node: Node)
 ```
 
 3. process actions and write the new source code to file:
