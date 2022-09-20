@@ -43,9 +43,9 @@ export abstract class BaseAction<T> {
 
   /**
    * The rewritten source code.
-   * @returns {string} rewritten code.
+   * @returns {string | undefined} rewritten code.
    */
-  abstract get newCode(): string;
+  abstract get newCode(): string | undefined;
 
   /**
    * The rewritten source code.

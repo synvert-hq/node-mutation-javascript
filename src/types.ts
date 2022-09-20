@@ -9,7 +9,7 @@ export type NodeArrayExt = NodeExt[] & {
 export type Action = {
   start: number,
   end: number,
-  newCode: string
+  newCode?: string
 };
 
 export type POSITION = "beginning" | "end";

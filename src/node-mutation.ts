@@ -1,7 +1,7 @@
 import type { Action, InsertOptions, ReplaceOptions, ReplaceWithOptions, ProcessResult, TestResult } from "./types";
 import Adapter from "./adapter";
 import TypescriptAdapter from "./typescript-adapter";
-import { AppendAction, DeleteAction, InsertAction, PrependAction, RemoveAction, ReplaceWithAction, ReplaceAction } from "./action";
+import { AppendAction, DeleteAction, InsertAction, NoopAction, PrependAction, RemoveAction, ReplaceWithAction, ReplaceAction } from "./action";
 import { ConflictActionError } from "./error";
 
 export enum STRATEGY {
@@ -124,6 +124,14 @@ class NodeMutation<T> {
    */
   insert(node: T, code: string, options: InsertOptions) {
     this.actions.push(new InsertAction<T>(node, code, options).process());
+  }
+
+  /**
+   * No operation.
+   * @param node {T} - ast node
+   */
+  noop(node: T) {
+    this.actions.push(new NoopAction<T>(node).process());
   }
 
   /**
