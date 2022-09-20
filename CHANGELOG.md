@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.3.0 (2022-09-20)
+
+* Add `NoopAction`
+
 ## 1.2.1 (2022-08-29)
 
 * Export `TestResult`
