@@ -2,7 +2,7 @@ import { BaseAction } from "../action";
 import { getAdapter } from "../helpers";
 
 /**
- * NoopAction to do nothing.
+ * NoopAction to do no operation.
  * @extends BaseAction
  */
 export class NoopAction<T> extends BaseAction<T> {

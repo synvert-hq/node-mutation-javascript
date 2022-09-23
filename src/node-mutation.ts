@@ -245,10 +245,12 @@ class NodeMutation<T> {
     }
     let newSource = this.source;
     this.actions.reverse().forEach((action) => {
-      newSource =
-        newSource.slice(0, action.start) +
-        action.newCode +
-        newSource.slice(action.end);
+      if (action.newCode) {
+        newSource =
+          newSource.slice(0, action.start) +
+          action.newCode +
+          newSource.slice(action.end);
+      }
     });
 
     return {
