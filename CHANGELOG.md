@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.3.1 (2022-09-24)
+
+* Update source only if `newCode` is not `undefined`
+
 ## 1.3.0 (2022-09-20)
 
 * Add `NoopAction`
