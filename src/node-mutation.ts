@@ -245,7 +245,7 @@ class NodeMutation<T> {
     }
     let newSource = this.source;
     this.actions.reverse().forEach((action) => {
-      if (action.newCode) {
+      if (typeof action.newCode !== "undefined") {
         newSource =
           newSource.slice(0, action.start) +
           action.newCode +
