@@ -10,7 +10,7 @@ class TypescriptAdapter implements Adapter<Node> {
   }
 
   rewrittenSource(node: Node, code: string): string {
-    return code.replace(/{{([a-zA-z0-9\.\(\)\ ,\-]+?)}}/gm, (string, match, _offset) => {
+    return code.replace(/{{(.+?)}}/gm, (string, match, _offset) => {
       if (!match) return null;
 
       const obj = this.actualValue(node, match.split("."));
