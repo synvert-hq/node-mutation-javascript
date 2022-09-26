@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.3.2 (2022-09-26)
+
+* Typescript adapter `actualValue` support function call
+
 ## 1.3.1 (2022-09-24)
 
 * Update source only if `newCode` is not `undefined`
