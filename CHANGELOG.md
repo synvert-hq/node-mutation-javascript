@@ -1,5 +1,10 @@
 # NodeMutation
 
+## 1.3.3 (2022-09-27)
+
+* Fix regexp to match evaluated value
+* Process if `newCode` is empty string
+
 ## 1.3.2 (2022-09-26)
 
 * Typescript adapter `actualValue` support function call
