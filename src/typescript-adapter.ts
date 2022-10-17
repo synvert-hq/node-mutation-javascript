@@ -96,12 +96,12 @@ class TypescriptAdapter implements Adapter<Node> {
 
   getStartLoc(node: Node): { line: number, column: number } {
     const { line, character } = node.getSourceFile().getLineAndCharacterOfPosition(this.getStart(node));
-    return { line: line + 1, column: character + 1 };
+    return { line: line + 1, column: character };
   }
 
   getEndLoc(node: Node): { line: number, column: number } {
     const { line, character } = node.getSourceFile().getLineAndCharacterOfPosition(this.getEnd(node));
-    return { line: line + 1, column: character + 1 };
+    return { line: line + 1, column: character };
   }
 
   getIndent(node: Node): number {

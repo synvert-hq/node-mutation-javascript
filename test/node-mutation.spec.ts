@@ -42,7 +42,7 @@ describe("NodeMutation", () => {
     });
 
     it("get conflict with KEEP_RUNNING strategy", () => {
-      NodeMutation<Node>.configure({ strategy: STRATEGY.KEEP_RUNNING });
+      NodeMutation.configure({ strategy: STRATEGY.KEEP_RUNNING });
       const mutation = new NodeMutation<Node>(source);
       mutation.actions.push({
         start: "class ".length,
@@ -71,7 +71,7 @@ describe("NodeMutation", () => {
     });
 
     it("get conflict with THROW_ERROR strategy", () => {
-      NodeMutation<Node>.configure({ strategy: STRATEGY.THROW_ERROR });
+      NodeMutation.configure({ strategy: STRATEGY.THROW_ERROR });
       const mutation = new NodeMutation<Node>(source);
       mutation.actions.push({
         start: "class ".length,
@@ -127,7 +127,7 @@ describe("NodeMutation", () => {
     });
 
     it("get conflict with KEEP_RUNNING strategy", () => {
-      NodeMutation<Node>.configure({ strategy: STRATEGY.KEEP_RUNNING });
+      NodeMutation.configure({ strategy: STRATEGY.KEEP_RUNNING });
       const mutation = new NodeMutation<Node>(source);
       mutation.actions.push({
         start: "class ".length,
@@ -151,7 +151,7 @@ describe("NodeMutation", () => {
     });
 
     it("get conflict with THROW_ERROR strategy", () => {
-      NodeMutation<Node>.configure({ strategy: STRATEGY.THROW_ERROR });
+      NodeMutation.configure({ strategy: STRATEGY.THROW_ERROR });
       const mutation = new NodeMutation<Node>(source);
       mutation.actions.push({
         start: "class ".length,
