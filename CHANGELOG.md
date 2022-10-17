@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.3.4 (2022-10-17)
+
+* Location column starts with 0
+
 ## 1.3.3 (2022-09-27)
 
 * Fix regexp to match evaluated value
