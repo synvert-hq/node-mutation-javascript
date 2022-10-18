@@ -1,5 +1,5 @@
 import type { NodeExt, NodeArrayExt } from "./types";
-import { PropertyAccessExpression, Node, SyntaxKind } from "typescript";
+import { PropertyAccessExpression, Node, SyntaxKind, PropertyAssignment } from "typescript";
 import Adapter from "./adapter";
 import { NotSupportedError } from "./error";
 
@@ -35,7 +35,10 @@ class TypescriptAdapter implements Adapter<Node> {
 
   childNodeRange(node: Node, childName: string): { start: number, end: number } {
     if (["arguments", "parameters"].includes(childName)) {
-      return { start: this.getStart((node as any)[childName][0] as Node) - 1, end: this.getEnd((node as any)[childName][0] as Node) + 1 };
+      const elements = (node as any)[childName];
+      return { start: this.getStart(elements[0] as Node) - 1, end: this.getEnd(elements[elements.length - 1] as Node) + 1 };
+    } else if (node.kind === SyntaxKind.PropertyAssignment && childName === "semicolon") {
+      return { start: this.getEnd((node as PropertyAssignment).name), end: this.getEnd((node as PropertyAssignment).name) + 1 };
     } else if (node.kind === SyntaxKind.PropertyAccessExpression && childName === "dot") {
       return { start: this.getStart((node as PropertyAccessExpression).name) - 1, end: this.getStart((node as PropertyAccessExpression).name) };
     } else {

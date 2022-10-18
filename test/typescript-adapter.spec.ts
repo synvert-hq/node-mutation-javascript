@@ -36,4 +36,31 @@ describe("TypescriptAdapter", () => {
       expect(startLoc.column).toEqual(1);
     });
   });
+
+  describe("#childNodeRange", () => {
+    test("FunctionDeclaration parameters", () => {
+      const node = parseCode("function foobar(foo, bar) {}");
+      expect(adapter.childNodeRange(node, "parameters")).toEqual({ start: 15, end: 25 });
+    });
+
+    test("MethodDeclaration parameters", () => {
+      const node = parseCode("class Foobar { foobar(foo, bar) {} }");
+      expect(adapter.childNodeRange(node, "members.0.parameters")).toEqual({ start: 21, end: 31 });
+    });
+
+    test("CallExpression arguments", () => {
+      const node = parseCode("foobar(foo, bar)");
+      expect(adapter.childNodeRange(node, "expression.arguments")).toEqual({ start: 6, end: 16 });
+    });
+
+    test("PropertyAssignment semicolon", () => {
+      const node = parseCode("const obj = { foo: bar }");
+      expect(adapter.childNodeRange(node, "declarationList.declarations.0.initializer.properties.0.semicolon")).toEqual({ start: 17, end: 18 });
+    });
+
+    test("PropertyAccessExpression dot", () => {
+      const node = parseCode("foo.bar");
+      expect(adapter.childNodeRange(node, "expression.dot")).toEqual({ start: 3, end: 4 });
+    });
+  });
 });
