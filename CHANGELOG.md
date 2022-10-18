@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.3.5 (2022-10-18)
+
+* Support PropertyAssignment semicolon in TypescriptAdapter
+
 ## 1.3.4 (2022-10-17)
 
 * Location column starts with 0
