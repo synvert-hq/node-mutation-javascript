@@ -24,7 +24,7 @@ class TypescriptAdapter implements Adapter<Node> {
           return obj;
         }
       } else {
-        return string;
+        throw new NotSupportedError(`can not parse "${code}"`);
       }
     });
   }
@@ -66,9 +66,7 @@ class TypescriptAdapter implements Adapter<Node> {
               return { start: this.getEnd(node) - 1, end: this.getEnd(node) - 1 };
             }
           } else {
-            throw new NotSupportedError(
-              `childNodeRange is not handled for ${this.getSource(node)}, child name: ${childName}`
-            );
+            throw new NotSupportedError(`${childName} is not supported for ${this.getSource(node)}`);
           }
         }
 
@@ -82,9 +80,7 @@ class TypescriptAdapter implements Adapter<Node> {
       }
     }
 
-    throw new NotSupportedError(
-      `childNodeRange is not handled for ${this.getSource(node)}, child name: ${childName}`
-    );
+    throw new NotSupportedError(`${childName} is not supported for ${this.getSource(node)}`);
   }
 
   getStart(node: Node): number {

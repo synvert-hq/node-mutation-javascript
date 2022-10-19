@@ -1,13 +1,36 @@
+import { NotSupportedError } from "../src/error";
 import TypescriptAdapter from "../src/typescript-adapter";
 import { parseCode } from "./helper";
 
 describe("TypescriptAdapter", () => {
   const adapter = new TypescriptAdapter();
 
+  describe("rewrittenSource", () => {
+    it("rewrites with node known method", () => {
+      const code = "class Synvert {}";
+      const node = parseCode(code);
+      expect(adapter.rewrittenSource(node, "{{name}}")).toEqual("Synvert");
+    });
+
+    it("rewrites for arguments", () => {
+      const code = "foobar(foo, bar)";
+      const node = parseCode(code);
+      expect(adapter.rewrittenSource(node, "{{expression.arguments}}")).toEqual("foo, bar");
+    });
+
+    it("throws an error for unknown property", () => {
+      const code = "class Synvert {}";
+      const node = parseCode(code);
+      expect(() => {
+        adapter.rewrittenSource(node, "{{foobar}}");
+      }).toThrow(new NotSupportedError('can not parse "{{foobar}}"'));
+    });
+  });
+
   describe("getStart", () => {
     it("gets start count", () => {
       const node = parseCode("class Synvert {\n}");
-      expect(adapter.getStart(node)).toEqual(0)
+      expect(adapter.getStart(node)).toEqual(0);
     });
   });
 
@@ -61,6 +84,13 @@ describe("TypescriptAdapter", () => {
     test("PropertyAccessExpression dot", () => {
       const node = parseCode("foo.bar");
       expect(adapter.childNodeRange(node, "expression.dot")).toEqual({ start: 3, end: 4 });
+    });
+
+    test("CallExpression unknown", () => {
+      const node = parseCode("foobar(foo, bar)");
+      expect(() => {
+        adapter.childNodeRange(node, "expression.unknown");
+      }).toThrow(new NotSupportedError("unknown is not supported for foobar(foo, bar)"));
     });
   });
 });
