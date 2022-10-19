@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.3.6 (2022-10-119)
+
+* Better error message
+
 ## 1.3.5 (2022-10-18)
 
 * Support PropertyAssignment semicolon in TypescriptAdapter
