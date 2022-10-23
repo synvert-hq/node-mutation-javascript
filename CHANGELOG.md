@@ -1,6 +1,10 @@
 # NodeMutation
 
-## 1.3.6 (2022-10-119)
+## 1.3.7 (2022-10-24)
+
+* Better error message when node does not respond to a key
+
+## 1.3.6 (2022-10-19)
 
 * Better error message
 
