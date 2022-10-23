@@ -23,7 +23,7 @@ describe("TypescriptAdapter", () => {
       const node = parseCode(code);
       expect(() => {
         adapter.rewrittenSource(node, "{{foobar}}");
-      }).toThrow(new NotSupportedError('can not parse "{{foobar}}"'));
+      }).toThrow(new NotSupportedError("foobar is not supported for class Synvert {}"));
     });
   });
 

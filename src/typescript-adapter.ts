@@ -10,7 +10,7 @@ class TypescriptAdapter implements Adapter<Node> {
   }
 
   rewrittenSource(node: Node, code: string): string {
-    return code.replace(/{{(.+?)}}/gm, (string, match, _offset) => {
+    return code.replace(/{{(.+?)}}/gm, (_string, match, _offset) => {
       if (!match) return null;
 
       const obj = this.actualValue(node, match.split("."));
@@ -119,7 +119,7 @@ class TypescriptAdapter implements Adapter<Node> {
       } else if (key.includes("(") && key.includes(")")) {
         childNode = eval(`childNode.${key}`);
       } else {
-        childNode = null;
+        throw `${key} is not supported for ${this.getSource(childNode)}`;
       }
     });
     return childNode;
