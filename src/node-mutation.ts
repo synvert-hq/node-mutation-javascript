@@ -3,6 +3,7 @@ import Adapter from "./adapter";
 import TypescriptAdapter from "./typescript-adapter";
 import { AppendAction, DeleteAction, InsertAction, NoopAction, PrependAction, RemoveAction, ReplaceWithAction, ReplaceAction } from "./action";
 import { ConflictActionError } from "./error";
+import debug from "debug";
 
 export enum STRATEGY {
   KEEP_RUNNING = 1,
@@ -307,15 +308,24 @@ class NodeMutation<T> {
     if (i < 0) return [];
 
     let beginPos = this.actions[i].start;
+    let endPos = this.actions[i].end;
     while (j > -1) {
-      if (beginPos < this.actions[j].end) {
+      // if we have two insert actions at same position.
+      const samePosition = beginPos == this.actions[j].start && beginPos == endPos && this.actions[j].start == this.actions[j].end;
+      // if we have two actions with overlapped range.
+      const overlappedPosition = beginPos < this.actions[j].end;
+      if (samePosition || overlappedPosition) {
         conflictActions.push(this.actions.splice(j, 1)[0]);
       } else {
         i = j;
         beginPos = this.actions[i].start;
+        endPos = this.actions[i].end;
       }
       j--;
     }
+    conflictActions.forEach(conflictAction => {
+      debug("node-mutation")(`${conflictAction.constructor.name}[${conflictAction.start}-${conflictAction.end}]:${conflictAction.newCode}`);
+    });
     return conflictActions;
   }
 }
