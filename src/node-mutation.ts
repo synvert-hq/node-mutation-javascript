@@ -115,7 +115,6 @@ class NodeMutation<T> {
    * if we call
    * ```
    * mutation.insert(node, ".bar", { to: "expression.expression" })
-   * }
    * ```
    * the source code will be rewritten to
    * ```
