@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.4.0 (2022-10-25)
+
+* Add a new strategy ALLOW_INSERT_AT_SAME_POSITION
+
 ## 1.3.8 (2022-10-25)
 
 * Mark same position as conflict action
