@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.3.8 (2022-10-25)
+
+* Mark same position as conflict action
+
 ## 1.3.7 (2022-10-24)
 
 * Better error message when node does not respond to a key
