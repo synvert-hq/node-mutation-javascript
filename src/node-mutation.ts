@@ -5,7 +5,7 @@ import { AppendAction, DeleteAction, InsertAction, NoopAction, PrependAction, Re
 import { ConflictActionError } from "./error";
 import debug from "debug";
 
-export enum STRATEGY {
+export enum Strategy {
   KEEP_RUNNING = 0b1,
   THROW_ERROR = 0b10,
   ALLOW_INSERT_AT_SAME_POSITION = 0b100
@@ -13,7 +13,7 @@ export enum STRATEGY {
 
 class NodeMutation<T> {
   private static adapter?: Adapter<any>;
-  private static strategy?: STRATEGY = STRATEGY.THROW_ERROR;
+  private static strategy?: Strategy = Strategy.THROW_ERROR;
   public actions: Action[] = [];
 
   /**
@@ -21,9 +21,9 @@ class NodeMutation<T> {
    * @static
    * @param options {Object}
    * @param options.adapter {Adapter} - adapter, default is TypescriptAdapter
-   * @param options.strategy {STRATEGY} - strategy, default is STRATEGY.THROW_ERROR
+   * @param options.strategy {Strategy} - strategy, default is Strategy.THROW_ERROR
    */
-  static configure(options: { adapter?: Adapter<any>, strategy?: STRATEGY }) {
+  static configure(options: { adapter?: Adapter<any>, strategy?: Strategy }) {
     if (options.adapter) {
       this.adapter = options.adapter;
     }
@@ -241,7 +241,7 @@ class NodeMutation<T> {
     let conflictActions = [];
     this.actions.sort(this.compareActions);
     conflictActions = this.getConflictActions();
-    if (conflictActions.length > 0  && this.isStrategry(STRATEGY.THROW_ERROR)) {
+    if (conflictActions.length > 0  && this.isStrategry(Strategy.THROW_ERROR)) {
       throw new ConflictActionError();
     }
     let newSource = this.source;
@@ -276,7 +276,7 @@ class NodeMutation<T> {
     let conflictActions = [];
     this.actions.sort(this.compareActions);
     conflictActions = this.getConflictActions();
-    if (conflictActions.length > 0  && this.isStrategry(STRATEGY.THROW_ERROR)) {
+    if (conflictActions.length > 0  && this.isStrategry(Strategy.THROW_ERROR)) {
       throw new ConflictActionError();
     }
     return { affected: true, conflicted: conflictActions.length !== 0, actions: this.actions };
@@ -315,7 +315,7 @@ class NodeMutation<T> {
       const samePosition = beginPos == this.actions[j].start && beginPos == endPos && this.actions[j].start == this.actions[j].end;
       // if we have two actions with overlapped range.
       const overlappedPosition = beginPos < this.actions[j].end;
-      if ((!this.isStrategry(STRATEGY.ALLOW_INSERT_AT_SAME_POSITION) && samePosition) || overlappedPosition) {
+      if ((!this.isStrategry(Strategy.ALLOW_INSERT_AT_SAME_POSITION) && samePosition) || overlappedPosition) {
         conflictActions.push(this.actions.splice(j, 1)[0]);
       } else {
         i = j;
@@ -330,7 +330,7 @@ class NodeMutation<T> {
     return conflictActions;
   }
 
-  private isStrategry(strategy: STRATEGY): boolean {
+  private isStrategry(strategy: Strategy): boolean {
     return !!NodeMutation.strategy && (NodeMutation.strategy & strategy) === strategy;
   }
 }

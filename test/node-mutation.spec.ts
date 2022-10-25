@@ -1,5 +1,5 @@
 import dedent from "dedent";
-import NodeMutation, { STRATEGY } from "../src/node-mutation";
+import NodeMutation, { Strategy } from "../src/node-mutation";
 import { ConflictActionError } from "../src/error";
 
 describe("NodeMutation", () => {
@@ -42,7 +42,7 @@ describe("NodeMutation", () => {
     });
 
     it("gets conflict with KEEP_RUNNING strategy", () => {
-      NodeMutation.configure({ strategy: STRATEGY.KEEP_RUNNING });
+      NodeMutation.configure({ strategy: Strategy.KEEP_RUNNING });
       const mutation = new NodeMutation<Node>(source);
       mutation.actions.push({
         start: "class ".length,
@@ -71,7 +71,7 @@ describe("NodeMutation", () => {
     });
 
     it("gets conflict with THROW_ERROR strategy", () => {
-      NodeMutation.configure({ strategy: STRATEGY.THROW_ERROR });
+      NodeMutation.configure({ strategy: Strategy.THROW_ERROR });
       const mutation = new NodeMutation<Node>(source);
       mutation.actions.push({
         start: "class ".length,
@@ -94,7 +94,7 @@ describe("NodeMutation", () => {
     });
 
     it("gets conflict when insert at the same position", () => {
-      NodeMutation.configure({ strategy: STRATEGY.KEEP_RUNNING });
+      NodeMutation.configure({ strategy: Strategy.KEEP_RUNNING });
       const mutation = new NodeMutation<Node>(source);
       mutation.actions.push({
         start: "class Foobar".length,
@@ -118,7 +118,7 @@ describe("NodeMutation", () => {
     });
 
     it("gets no conflict with ALLOW_INSERT_AT_SAME_POSITION strategy", () => {
-      NodeMutation.configure({ strategy: STRATEGY.KEEP_RUNNING | STRATEGY.ALLOW_INSERT_AT_SAME_POSITION });
+      NodeMutation.configure({ strategy: Strategy.KEEP_RUNNING | Strategy.ALLOW_INSERT_AT_SAME_POSITION });
       const mutation = new NodeMutation<Node>(source);
       mutation.actions.push({
         start: "class Foobar".length,
@@ -175,7 +175,7 @@ describe("NodeMutation", () => {
     });
 
     it("get conflict with KEEP_RUNNING strategy", () => {
-      NodeMutation.configure({ strategy: STRATEGY.KEEP_RUNNING });
+      NodeMutation.configure({ strategy: Strategy.KEEP_RUNNING });
       const mutation = new NodeMutation<Node>(source);
       mutation.actions.push({
         start: "class ".length,
@@ -199,7 +199,7 @@ describe("NodeMutation", () => {
     });
 
     it("get conflict with THROW_ERROR strategy", () => {
-      NodeMutation.configure({ strategy: STRATEGY.THROW_ERROR });
+      NodeMutation.configure({ strategy: Strategy.THROW_ERROR });
       const mutation = new NodeMutation<Node>(source);
       mutation.actions.push({
         start: "class ".length,

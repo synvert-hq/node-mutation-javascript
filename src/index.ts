@@ -1,4 +1,4 @@
-import NodeMutation, { STRATEGY } from "./node-mutation";
+import NodeMutation, { Strategy } from "./node-mutation";
 import Adapter from "./adapter";
 import TypescriptAdapter from "./typescript-adapter";
 import { NotSupportedError, ConflictActionError } from "./error";
@@ -8,7 +8,7 @@ export default NodeMutation;
 export {
   Adapter,
   TypescriptAdapter,
-  STRATEGY,
+  Strategy,
   NotSupportedError,
   ConflictActionError,
   InsertOptions,
