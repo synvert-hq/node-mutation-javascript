@@ -1,5 +1,10 @@
 # NodeMutation
 
+## 1.4.1 (2022-10-25)
+
+* Rename `STRATEGY` to `Strategy`
+* Abstract `Strategy` to `src/strategy.ts`
+
 ## 1.4.0 (2022-10-25)
 
 * Add a new strategy ALLOW_INSERT_AT_SAME_POSITION
