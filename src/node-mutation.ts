@@ -1,15 +1,10 @@
 import type { Action, InsertOptions, ReplaceOptions, ReplaceWithOptions, ProcessResult, TestResult } from "./types";
 import Adapter from "./adapter";
 import TypescriptAdapter from "./typescript-adapter";
+import Strategy from "./strategy";
 import { AppendAction, DeleteAction, InsertAction, NoopAction, PrependAction, RemoveAction, ReplaceWithAction, ReplaceAction } from "./action";
 import { ConflictActionError } from "./error";
 import debug from "debug";
-
-export enum Strategy {
-  KEEP_RUNNING = 0b1,
-  THROW_ERROR = 0b10,
-  ALLOW_INSERT_AT_SAME_POSITION = 0b100
-}
 
 class NodeMutation<T> {
   private static adapter?: Adapter<any>;

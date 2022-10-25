@@ -1,5 +1,6 @@
 import dedent from "dedent";
-import NodeMutation, { Strategy } from "../src/node-mutation";
+import NodeMutation from "../src/node-mutation";
+import Strategy from "../src/strategy";
 import { ConflictActionError } from "../src/error";
 
 describe("NodeMutation", () => {
