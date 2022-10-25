@@ -6,8 +6,9 @@ import { ConflictActionError } from "./error";
 import debug from "debug";
 
 export enum STRATEGY {
-  KEEP_RUNNING = 1,
-  THROW_ERROR,
+  KEEP_RUNNING = 0b1,
+  THROW_ERROR = 0b10,
+  ALLOW_INSERT_AT_SAME_POSITION = 0b100
 }
 
 class NodeMutation<T> {
@@ -240,7 +241,7 @@ class NodeMutation<T> {
     let conflictActions = [];
     this.actions.sort(this.compareActions);
     conflictActions = this.getConflictActions();
-    if (conflictActions.length > 0  && NodeMutation.strategy === STRATEGY.THROW_ERROR) {
+    if (conflictActions.length > 0  && this.isStrategry(STRATEGY.THROW_ERROR)) {
       throw new ConflictActionError();
     }
     let newSource = this.source;
@@ -275,7 +276,7 @@ class NodeMutation<T> {
     let conflictActions = [];
     this.actions.sort(this.compareActions);
     conflictActions = this.getConflictActions();
-    if (conflictActions.length > 0  && NodeMutation.strategy === STRATEGY.THROW_ERROR) {
+    if (conflictActions.length > 0  && this.isStrategry(STRATEGY.THROW_ERROR)) {
       throw new ConflictActionError();
     }
     return { affected: true, conflicted: conflictActions.length !== 0, actions: this.actions };
@@ -314,7 +315,7 @@ class NodeMutation<T> {
       const samePosition = beginPos == this.actions[j].start && beginPos == endPos && this.actions[j].start == this.actions[j].end;
       // if we have two actions with overlapped range.
       const overlappedPosition = beginPos < this.actions[j].end;
-      if (samePosition || overlappedPosition) {
+      if ((!this.isStrategry(STRATEGY.ALLOW_INSERT_AT_SAME_POSITION) && samePosition) || overlappedPosition) {
         conflictActions.push(this.actions.splice(j, 1)[0]);
       } else {
         i = j;
@@ -327,6 +328,10 @@ class NodeMutation<T> {
       debug("node-mutation")(`${conflictAction.constructor.name}[${conflictAction.start}-${conflictAction.end}]:${conflictAction.newCode}`);
     });
     return conflictActions;
+  }
+
+  private isStrategry(strategy: STRATEGY): boolean {
+    return !!NodeMutation.strategy && (NodeMutation.strategy & strategy) === strategy;
   }
 }
 

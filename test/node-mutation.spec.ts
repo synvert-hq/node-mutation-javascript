@@ -41,7 +41,7 @@ describe("NodeMutation", () => {
       `)
     });
 
-    it("get conflict with KEEP_RUNNING strategy", () => {
+    it("gets conflict with KEEP_RUNNING strategy", () => {
       NodeMutation.configure({ strategy: STRATEGY.KEEP_RUNNING });
       const mutation = new NodeMutation<Node>(source);
       mutation.actions.push({
@@ -70,7 +70,7 @@ describe("NodeMutation", () => {
       `)
     });
 
-    it("get conflict with THROW_ERROR strategy", () => {
+    it("gets conflict with THROW_ERROR strategy", () => {
       NodeMutation.configure({ strategy: STRATEGY.THROW_ERROR });
       const mutation = new NodeMutation<Node>(source);
       mutation.actions.push({
@@ -91,6 +91,54 @@ describe("NodeMutation", () => {
       expect(() => {
         mutation.process();
       }).toThrowError(new ConflictActionError());
+    });
+
+    it("gets conflict when insert at the same position", () => {
+      NodeMutation.configure({ strategy: STRATEGY.KEEP_RUNNING });
+      const mutation = new NodeMutation<Node>(source);
+      mutation.actions.push({
+        start: "class Foobar".length,
+        end: "class FooBar".length,
+        newCode: " extends Base",
+      });
+      mutation.actions.push({
+        start: "class FooBar".length,
+        end: "class FooBar".length,
+        newCode: " extends Base",
+      });
+      const result = mutation.process();
+      expect(result.affected).toBeTruthy();
+      expect(result.conflicted).toBeTruthy();
+      expect(result.newSource).toEqual(dedent`
+        class FooBar extends Base {
+          foo() {}
+          bar() {}
+        }
+      `)
+    });
+
+    it("gets no conflict with ALLOW_INSERT_AT_SAME_POSITION strategy", () => {
+      NodeMutation.configure({ strategy: STRATEGY.KEEP_RUNNING | STRATEGY.ALLOW_INSERT_AT_SAME_POSITION });
+      const mutation = new NodeMutation<Node>(source);
+      mutation.actions.push({
+        start: "class Foobar".length,
+        end: "class FooBar".length,
+        newCode: " extends Base",
+      });
+      mutation.actions.push({
+        start: "class FooBar".length,
+        end: "class FooBar".length,
+        newCode: " extends Base",
+      });
+      const result = mutation.process();
+      expect(result.affected).toBeTruthy();
+      expect(result.conflicted).toBeFalsy();
+      expect(result.newSource).toEqual(dedent`
+        class FooBar extends Base extends Base {
+          foo() {}
+          bar() {}
+        }
+      `)
     });
   });
 
