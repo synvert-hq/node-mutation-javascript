@@ -50,7 +50,7 @@ export class ReplaceWithAction<T> extends BaseAction<T> {
           if (index === 0 || line === "") {
             newCode.push(line);
           } else {
-            newCode.push(" ".repeat(getAdapter<T>().getIndent(this.node)) + line);
+            newCode.push(" ".repeat(getAdapter<T>().getStartLoc(this.node).column) + line);
           }
         });
       return newCode.join("\n");

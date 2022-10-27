@@ -70,13 +70,6 @@ interface Adapter<T> {
    * @returns {Location} end location
    */
   getEndLoc(node: T): { line: number, column: number };
-
-  /**
-   * Get indent of ast node
-   * @param node {T} ast node
-   * @returns {Number} indent
-   */
-  getIndent(node: T): number;
 }
 
 export default Adapter;

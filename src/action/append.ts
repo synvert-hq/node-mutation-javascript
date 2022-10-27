@@ -11,7 +11,7 @@ export class AppendAction<T> extends BaseAction<T> {
    * @protected
    */
   calculatePositions() {
-    this.start = getAdapter<T>().getEnd(this.node) - getAdapter<T>().getIndent(this.node) - "}".length;
+    this.start = getAdapter<T>().getEnd(this.node) - getAdapter<T>().getStartLoc(this.node).column - "}".length;
     this.end = this.start;
   }
 
@@ -21,7 +21,7 @@ export class AppendAction<T> extends BaseAction<T> {
    */
   get newCode() {
     const source = this.rewrittenSource();
-    const indent = " ".repeat(getAdapter<T>().getIndent(this.node) + DEFAULT_INDENT);
+    const indent = " ".repeat(getAdapter<T>().getStartLoc(this.node).column + DEFAULT_INDENT);
     if (source.split("\n").length > 1) {
       return (
         source

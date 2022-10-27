@@ -21,7 +21,7 @@ export class PrependAction<T> extends BaseAction<T> {
    */
   get newCode(): string {
     const source = this.rewrittenSource();
-    const indent = " ".repeat(getAdapter<T>().getIndent(this.node) + DEFAULT_INDENT);
+    const indent = " ".repeat(getAdapter<T>().getStartLoc(this.node).column + DEFAULT_INDENT);
     if (source.split("\n").length > 1) {
       return (
         source
