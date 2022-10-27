@@ -1,9 +1,42 @@
+import dedent from "dedent";
 import { NotSupportedError } from "../src/error";
 import TypescriptAdapter from "../src/typescript-adapter";
 import { parseCode } from "./helper";
 
 describe("TypescriptAdapter", () => {
   const adapter = new TypescriptAdapter();
+
+  describe("getSource", () => {
+    it('gets one line code', () => {
+      const code = `const synvert = function() {}`;
+      const node = parseCode(code);
+      expect(adapter.getSource(node)).toEqual(code);
+    });
+
+    it('gets multiple lines code', () => {
+      const code = `
+        const synvert = function() {
+        }
+      `;
+      const node = (parseCode(code) as any)['declarationList']['declarations'][0]['initializer'];
+      expect(adapter.getSource(node)).toEqual(dedent`
+        function() {
+                }
+      `);
+    });
+
+    it('fixes multiple lines code', () => {
+      const code = `
+        const synvert = function() {
+        }
+      `;
+      const node = (parseCode(code) as any)['declarationList']['declarations'][0]['initializer'];
+      expect(adapter.getSource(node, { fixIndent: true })).toEqual(dedent`
+        function() {
+        }
+      `);
+    });
+  });
 
   describe("rewrittenSource", () => {
     it("rewrites with node known method", () => {

@@ -4,9 +4,24 @@ import Adapter from "./adapter";
 import { NotSupportedError } from "./error";
 
 class TypescriptAdapter implements Adapter<Node> {
-  getSource(node: Node): string {
-    // typescript getText() may contain trailing whitespaces and newlines.
-    return node.getText().trimEnd();
+  getSource(node: Node, options?: { fixIndent: boolean }): string {
+    if (options && options.fixIndent) {
+      const column = this.getStartLoc(node).column;
+      return node.getText().trimEnd()
+        .split("\n")
+        .map((line, index) => {
+          if (index === 0 || line === "") {
+            return line;
+          } else {
+            const index = line.search(/\S|$/);
+            return index < column ? line.slice(index) : line.slice(column);
+          }
+        })
+        .join("\n");
+    } else {
+      // typescript getText() may contain trailing whitespaces and newlines.
+      return node.getText().trimEnd();
+    }
   }
 
   rewrittenSource(node: Node, code: string): string {

@@ -4,7 +4,7 @@ interface Adapter<T> {
    * @param node {T} ast node
    * @returns {string} source code
    */
-  getSource(node: T): string;
+  getSource(node: T, options?: { fixIndent: boolean }): string;
 
   /**
    * Replace the child node selector with child node source code
