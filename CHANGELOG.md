@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.5.1 (2022-10-28)
+
+* Fix `getSource` indent
+
 ## 1.5.0 (2022-10-28)
 
 * Adapter `getSource` accepts a `fixIndent` option
