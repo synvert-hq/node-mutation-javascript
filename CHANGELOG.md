@@ -1,5 +1,10 @@
 # NodeMutation
 
+## 1.5.2 (2022-10-28)
+
+* Revert "use getStartLoc().column instead of getIndent()"
+* Use `Adapter#getIndent` for `getSource#indent`
+
 ## 1.5.1 (2022-10-28)
 
 * Fix `getSource` indent
