@@ -16,11 +16,13 @@ describe("TypescriptAdapter", () => {
     it('gets multiple lines code', () => {
       const code = `
         const synvert = function() {
+          console.log("synvert");
         }
       `;
       const node = (parseCode(code) as any)['declarationList']['declarations'][0]['initializer'];
       expect(adapter.getSource(node)).toEqual(dedent`
         function() {
+                  console.log("synvert");
                 }
       `);
     });
@@ -28,11 +30,13 @@ describe("TypescriptAdapter", () => {
     it('fixes multiple lines code', () => {
       const code = `
         const synvert = function() {
+          console.log("synvert");
         }
       `;
       const node = (parseCode(code) as any)['declarationList']['declarations'][0]['initializer'];
       expect(adapter.getSource(node, { fixIndent: true })).toEqual(dedent`
         function() {
+          console.log("synvert");
         }
       `);
     });

@@ -6,7 +6,7 @@ import { NotSupportedError } from "./error";
 class TypescriptAdapter implements Adapter<Node> {
   getSource(node: Node, options?: { fixIndent: boolean }): string {
     if (options && options.fixIndent) {
-      const column = this.getStartLoc(node).column;
+      const column = this.getEndLoc(node).column - 1;
       return node.getText().trimEnd()
         .split("\n")
         .map((line, index) => {
