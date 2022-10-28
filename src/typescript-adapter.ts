@@ -118,6 +118,10 @@ class TypescriptAdapter implements Adapter<Node> {
     return { line: line + 1, column: character };
   }
 
+  getIndent(node: Node): number {
+    return this.fileContent(node).split("\n")[this.getStartLoc(node).line - 1].search(/\S|$/);
+  }
+
   private actualValue(node: Node, multiKeys: string[]): any {
     let childNode: any = node;
     multiKeys.forEach((key) => {
