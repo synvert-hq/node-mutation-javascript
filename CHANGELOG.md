@@ -1,5 +1,10 @@
 # NodeMutation
 
+## 1.5.0 (2022-10-28)
+
+* Adapter `getSource` accepts a `fixIndent` option
+* Use `getStartLoc().column` instead of `getIndent()`
+
 ## 1.4.1 (2022-10-25)
 
 * Rename `STRATEGY` to `Strategy`
