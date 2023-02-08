@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.6.1 (2023-02-08)
+
+* Fix configure `tabWidth`
+
 ## 1.6.0 (2023-02-08)
 
 * Configure `tabWidth`
