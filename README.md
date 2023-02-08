@@ -11,7 +11,10 @@ NodeMutation provides a set of APIs to rewrite node source code.
   - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
   - [Usage](#usage)
-  - [Write Adapter](#write-adapter)
+  - [Configuration](#configuration)
+    - [adapter](#adapter)
+    - [strategy](#strategy)
+    - [tabWidth](#tabwidth)
   - [Contributing Guide](#contributing-guide)
 
 ## Installation
@@ -65,14 +68,34 @@ mutation.noop(node: Node)
 mutation.process()
 ```
 
-## Write Adapter
+## Configuration
+
+### adapter
 
 Different parsers, like typescript and espree, will generate different AST nodes, to make NodeMutation work for them all,
 we define an [Adapter](https://github.com/xinminlabs/node-mutation-javascript/blob/main/src/adapter.ts) interface,
 if you implement the Adapter interface, you can set it as NodeMutation's adapter.
 
 ```typescript
-NodeMutation.configure({ adapter: new EspreeAdapter() })
+NodeMutation.configure({ adapter: new EspreeAdapter() }); // default is TypescriptAdapter
+```
+
+### strategy
+
+It provides 3 strategies to handle conflicts when processing actions:
+
+1. `Strategy.KEEP_RUNNING`: keep running and ignore the conflict action.
+2. `Strategy.THROW_ERROR`: throw error when conflict action is found.
+3. `Strategy.ALLOW_INSERT_AT_SAME_POSITION`: allow insert action at the same position.
+
+```typescript
+NodeMutation.configure({ strategy: Strategy.KEEP_RUNNING | Strategy.ALLOW_INSERT_AT_SAME_POSITION }); // default is Strategy.THROW_ERROR
+```
+
+### tabWidth
+
+```typescript
+NodeMutation.configure({ tabWidth: 4 }); // default is 2
 ```
 
 ## Contributing Guide
