@@ -28,7 +28,7 @@ class NodeMutation<T> {
       this.strategy = options.strategy;
     }
     if (options.tabWidth) {
-      this.tabWidth = 2;
+      this.tabWidth = options.tabWidth;
     }
   }
 

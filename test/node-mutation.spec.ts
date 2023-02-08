@@ -4,6 +4,14 @@ import Strategy from "../src/strategy";
 import { ConflictActionError } from "../src/error";
 
 describe("NodeMutation", () => {
+  describe("configure", () => {
+    it("sets tabWidth", () => {
+      expect(NodeMutation.tabWidth).toEqual(2);
+      NodeMutation.configure({ tabWidth: 4 });
+      expect(NodeMutation.tabWidth).toEqual(4);
+    });
+  });
+
   describe("process", () => {
     const source = dedent`
       class FooBar {
