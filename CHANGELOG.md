@@ -1,5 +1,10 @@
 # NodeMutation
 
+## 1.6.0 (2023-02-08)
+
+* Configure `tabWidth`
+* Make use of `NodeMutation.tabWidth`
+
 ## 1.5.2 (2022-10-28)
 
 * Revert "use getStartLoc().column instead of getIndent()"
