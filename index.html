@@ -24,7 +24,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Configuration.html">Configuration</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="ConflictActionError.html">ConflictActionError</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="NodeMutation.html">NodeMutation</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#.configure">configure</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#append">append</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#delete">delete</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#insert">insert</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#noop">noop</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#prepend">prepend</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#process">process</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#remove">remove</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#replace">replace</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#replaceWith">replaceWith</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#test">test</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="NotSupportedError.html">NotSupportedError</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getAdapter">getAdapter</a></span></li>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="ConflictActionError.html">ConflictActionError</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="NodeMutation.html">NodeMutation</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#.configure">configure</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#append">append</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#delete">delete</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#insert">insert</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#noop">noop</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#prepend">prepend</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#process">process</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#remove">remove</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#replace">replace</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#replaceWith">replaceWith</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="NodeMutation.html#test">test</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="NotSupportedError.html">NotSupportedError</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#getAdapter">getAdapter</a></span></li>
 </nav>
 
 <div id="main">
@@ -59,7 +59,13 @@
 <li><a href="#table-of-contents">Table of Contents</a></li>
 <li><a href="#installation">Installation</a></li>
 <li><a href="#usage">Usage</a></li>
-<li><a href="#write-adapter">Write Adapter</a></li>
+<li><a href="#configuration">Configuration</a>
+<ul>
+<li><a href="#adapter">adapter</a></li>
+<li><a href="#strategy">strategy</a></li>
+<li><a href="#tabwidth">tabWidth</a></li>
+</ul>
+</li>
 <li><a href="#contributing-guide">Contributing Guide</a></li>
 </ul>
 </li>
@@ -104,11 +110,24 @@ mutation.noop(node: Node)
 </ol>
 <pre class="prettyprint source lang-typescript"><code>mutation.process()
 </code></pre>
-<h2>Write Adapter</h2>
+<h2>Configuration</h2>
+<h3>adapter</h3>
 <p>Different parsers, like typescript and espree, will generate different AST nodes, to make NodeMutation work for them all,
 we define an <a href="https://github.com/xinminlabs/node-mutation-javascript/blob/main/src/adapter.ts">Adapter</a> interface,
 if you implement the Adapter interface, you can set it as NodeMutation's adapter.</p>
-<pre class="prettyprint source lang-typescript"><code>NodeMutation.configure({ adapter: new EspreeAdapter() })
+<pre class="prettyprint source lang-typescript"><code>NodeMutation.configure({ adapter: new EspreeAdapter() }); // default is TypescriptAdapter
+</code></pre>
+<h3>strategy</h3>
+<p>It provides 3 strategies to handle conflicts when processing actions:</p>
+<ol>
+<li><code>Strategy.KEEP_RUNNING</code>: keep running and ignore the conflict action.</li>
+<li><code>Strategy.THROW_ERROR</code>: throw error when conflict action is found.</li>
+<li><code>Strategy.ALLOW_INSERT_AT_SAME_POSITION</code>: allow insert action at the same position.</li>
+</ol>
+<pre class="prettyprint source lang-typescript"><code>NodeMutation.configure({ strategy: Strategy.KEEP_RUNNING | Strategy.ALLOW_INSERT_AT_SAME_POSITION }); // default is Strategy.THROW_ERROR
+</code></pre>
+<h3>tabWidth</h3>
+<pre class="prettyprint source lang-typescript"><code>NodeMutation.configure({ tabWidth: 4 }); // default is 2
 </code></pre>
 <h2>Contributing Guide</h2>
 <ol>
@@ -140,7 +159,7 @@ if you implement the Adapter interface, you can set it as NodeMutation's adapter
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Wed Feb 08 2023 11:04:02 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Wed Feb 08 2023 11:29:01 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
