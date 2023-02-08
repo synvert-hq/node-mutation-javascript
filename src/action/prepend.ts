@@ -1,5 +1,6 @@
 import { BaseAction } from "../action";
-import { getAdapter, DEFAULT_INDENT } from "../helpers";
+import { getAdapter } from "../helpers";
+import NodeMutation from "../node-mutation";
 
 /**
  * PrependAction to prepend code to the top of node body.
@@ -21,7 +22,7 @@ export class PrependAction<T> extends BaseAction<T> {
    */
   get newCode(): string {
     const source = this.rewrittenSource();
-    const indent = " ".repeat(getAdapter<T>().getIndent(this.node) + DEFAULT_INDENT);
+    const indent = " ".repeat(getAdapter<T>().getIndent(this.node) + NodeMutation.tabWidth);
     if (source.split("\n").length > 1) {
       return (
         source
