@@ -13,7 +13,7 @@ export class ReplaceAction<T> extends BaseAction<T> {
    * Create a ReplaceAction
    * @param {T} node
    * @param {string|string[]} selectors - name of child nodes
-   * @param {Object} options - { with } new code to be replaced
+   * @param {ReplaceOptions} options
    */
   constructor(
     node: T,

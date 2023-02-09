@@ -14,7 +14,7 @@ export class InsertAction<T> extends BaseAction<T> {
    * Create an InsertAction
    * @param {T} node
    * @param {string} code - new code to be inserted
-   * @param {Object} options - position to insert code
+   * @param {InsertOptions} options
    */
   constructor(node: T, code: string, options: InsertOptions) {
     super(node, code);

@@ -12,8 +12,8 @@ export class ReplaceWithAction<T> extends BaseAction<T> {
   /**
    * Create a ReplaceWithAction
    * @param {T} node
-   * @param {string} code - new code to be replaced
-   * @param {Object} options - default is { autoIndent: true } if auto fix indent
+   * @param {string} code - new code to replace with
+   * @param {ReplaceWithOptions} options
    */
   constructor(
     node: T,

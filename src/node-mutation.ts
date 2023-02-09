@@ -95,12 +95,17 @@ class NodeMutation<T> {
   }
 
   /**
+   * Insert options
+   * @typedef {Object} InsertOptions
+   * @property {string} [at = "end"] - position to insert, "beginning" or "end"
+   * @property {string} [to] - selector to find the child ast node
+   */
+
+  /**
    * Insert code to the ast node.
    * @param node {T} - ast node
    * @param code {string} - new code to insert
-   * @param options {Object}
-   * @params options.at {string} - position to insert, "beginning" or "end", "end" is by default
-   * @params options.to {string} - selector to find the child ast node
+   * @param options {InsertOptions}
    * @example
    * source code of the ast node is
    * ```
@@ -181,11 +186,16 @@ class NodeMutation<T> {
   }
 
   /**
+   * Replace options
+   * @typedef {Object} ReplaceOptions
+   * @property {string} with - new code to replace with
+   */
+
+  /**
    * Replace child node of the ast node with new code
    * @param node {T} - current ast node
    * @param selectors {string|string[]} - selectors to find chid ast nodes
-   * @param options {Object}
-   * @params options.with {string} - new code to replace
+   * @param options {ReplaceOptions}
    * @example
    * source code of the ast node is
    * ```
@@ -205,9 +215,16 @@ class NodeMutation<T> {
   }
 
   /**
+   * ReplaceWith options
+   * @typedef {Object} ReplaceWithOptions
+   * @property {boolean} [autoIndent = true] - if true, auto indent the new code
+   */
+
+  /**
    * Replace the ast node with new code
    * @param node {T} - ast node
-   * @params code {string} - new code to replace
+   * @param code {string} - new code to replace
+   * @param options {ReplaceWithOptions}
    * @example
    * source code of the ast node is
    * ```
@@ -227,12 +244,20 @@ class NodeMutation<T> {
   }
 
   /**
+   * Process Result
+   * @typedef {Object} ProcessResult
+   * @property {boolean} affected - if the source code is affected
+   * @property {boolean} conflicted - if the actions are conflicted
+   * @property {string} [newSource] - the new generated source code
+   */
+
+  /**
    * Rewrite the source code based on all actions.
    *
    * If there's an action range conflict,
    * it will raise a ConflictActionError if strategy is set to THROW_ERROR,
    * it will process all non conflicted actions and return `{ conflicted: true }`
-   * @returns {ProcessResult} if actions are conflicted and the new source.
+   * @returns {ProcessResult}
    */
   process(): ProcessResult {
     if (this.actions.length == 0) {
@@ -262,12 +287,28 @@ class NodeMutation<T> {
   }
 
   /**
+   * Action
+   * @typedef {Object} Action
+   * @property {number} start - start position of the action
+   * @property {number} end - end position of the action
+   * @property {string} [newCode] - the new generated source code
+   */
+
+  /**
+   * Test Result
+   * @typedef {Object} TestResult
+   * @property {boolean} affected - if the source code is affected
+   * @property {boolean} conflicted - if the actions are conflicted
+   * @property {Action[]} actions - actions to be processed
+   */
+
+  /**
    * Return the actions.
    *
    * If there's an action range conflict,
    * it will raise a ConflictActionError if strategy is set to THROW_ERROR,
    * it will process all non conflicted actions and return `{ conflicted: true }`
-   * @returns {ProcessResult} if actions are conflicted and the actions
+   * @returns {TestResult} if actions are conflicted and the actions
    */
   test(): TestResult {
     if (this.actions.length == 0) {
