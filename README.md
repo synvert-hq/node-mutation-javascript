@@ -57,7 +57,7 @@ mutation.remove(node: Node)
 // replace child node of the ast node with new code
 mutation.replace(node: Node, selectors: string | string[], options: ReplaceOptions)
 // replace the ast node with new code
-mutation.replaceWith(node: Node, code: string, options: ReplaceWithOptions = { autoIndent: true })
+mutation.replaceWith(node: Node, code: string)
 // no operation
 mutation.noop(node: Node)
 ```

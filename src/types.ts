@@ -19,10 +19,6 @@ export type InsertOptions = {
   to?: string
 }
 
-export type ReplaceWithOptions = {
-  autoIndent: boolean
-}
-
 export type ReplaceOptions = {
   with: string
 }

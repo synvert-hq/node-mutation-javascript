@@ -1,4 +1,4 @@
-import type { Action, InsertOptions, ReplaceOptions, ReplaceWithOptions, ProcessResult, TestResult } from "./types";
+import type { Action, InsertOptions, ReplaceOptions, ProcessResult, TestResult } from "./types";
 import Adapter from "./adapter";
 import TypescriptAdapter from "./typescript-adapter";
 import Strategy from "./strategy";
@@ -215,16 +215,9 @@ class NodeMutation<T> {
   }
 
   /**
-   * ReplaceWith options
-   * @typedef {Object} ReplaceWithOptions
-   * @property {boolean} [autoIndent = true] - if true, auto indent the new code
-   */
-
-  /**
    * Replace the ast node with new code
    * @param node {T} - ast node
    * @param code {string} - new code to replace
-   * @param options {ReplaceWithOptions}
    * @example
    * source code of the ast node is
    * ```
@@ -239,8 +232,8 @@ class NodeMutation<T> {
    * Boolean(foobar)
    * ```
    */
-  replaceWith(node: T, code: string, options: ReplaceWithOptions = { autoIndent: true }) {
-    this.actions.push(new ReplaceWithAction<T>(node, code, options).process());
+  replaceWith(node: T, code: string) {
+    this.actions.push(new ReplaceWithAction<T>(node, code).process());
   }
 
   /**

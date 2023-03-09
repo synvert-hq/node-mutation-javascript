@@ -3,7 +3,7 @@ import Adapter from "./adapter";
 import Strategy from "./strategy";
 import TypescriptAdapter from "./typescript-adapter";
 import { NotSupportedError, ConflictActionError } from "./error";
-import { InsertOptions, ReplaceWithOptions, ReplaceOptions, ProcessResult, TestResult } from "./types";
+import { InsertOptions, ReplaceOptions, ProcessResult, TestResult } from "./types";
 
 export default NodeMutation;
 export {
@@ -13,7 +13,6 @@ export {
   NotSupportedError,
   ConflictActionError,
   InsertOptions,
-  ReplaceWithOptions,
   ReplaceOptions,
   ProcessResult,
   TestResult
