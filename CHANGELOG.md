@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.6.2 (2023-03-09)
+
+* Remove `replaceWith` `autoIndent` option
+
 ## 1.6.1 (2023-02-08)
 
 * Fix configure `tabWidth`
