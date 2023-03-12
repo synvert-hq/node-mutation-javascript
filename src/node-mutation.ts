@@ -128,7 +128,7 @@ class NodeMutation<T> {
    * this.foo.bar
    * ```
    */
-  insert(node: T, code: string, options: InsertOptions) {
+  insert(node: T, code: string, options: InsertOptions = { at: "end" }) {
     this.actions.push(new InsertAction<T>(node, code, options).process());
   }
 
