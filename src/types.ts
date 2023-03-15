@@ -1,9 +1,16 @@
-import { Node } from "typescript";
+import { Node as TypescriptNode } from "typescript";
+import { Node as EspreeNode } from "acorn";
 
-export type NodeExt = Node & { [index: string]: NodeExt | NodeExt[] };
+export type TypescriptNodeExt = TypescriptNode & { [index: string]: TypescriptNodeExt | TypescriptNodeExt[] };
 
-export type NodeArrayExt = NodeExt[] & {
-  [index: string]: NodeExt | (() => NodeExt);
+export type TypescriptNodeArrayExt = TypescriptNodeExt[] & {
+  [index: string]: TypescriptNodeExt | (() => TypescriptNodeExt);
+};
+
+export type EspreeNodeExt = EspreeNode & { [index: string]: EspreeNodeExt | EspreeNodeArrayExt };
+
+export type EspreeNodeArrayExt = EspreeNodeExt[] & {
+  [index: string]: EspreeNodeExt | (() => { start: number; end: number });
 };
 
 export type Action = {
