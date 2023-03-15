@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.6.3 (2023-03-15)
+
+* Add default option to `insert` api
+
 ## 1.6.2 (2023-03-09)
 
 * Remove `replaceWith` `autoIndent` option
