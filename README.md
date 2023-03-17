@@ -76,6 +76,11 @@ Different parsers, like typescript and espree, will generate different AST nodes
 we define an [Adapter](https://github.com/xinminlabs/node-mutation-javascript/blob/main/src/adapter.ts) interface,
 if you implement the Adapter interface, you can set it as NodeMutation's adapter.
 
+It provides 2 adapters:
+
+1. `TypescriptAdapter`
+2. `EspreeAdapter`
+
 ```typescript
 NodeMutation.configure({ adapter: new EspreeAdapter() }); // default is TypescriptAdapter
 ```
