@@ -1,7 +1,7 @@
-import type { TypescriptNodeExt as NodeExt, TypescriptNodeArrayExt as NodeArrayExt } from "./types";
+import type { TypescriptNodeExt as NodeExt, TypescriptNodeArrayExt as NodeArrayExt } from "../types";
 import { PropertyAccessExpression, Node, SyntaxKind, PropertyAssignment } from "typescript";
-import Adapter from "./adapter";
-import { NotSupportedError } from "./error";
+import Adapter from "../adapter";
+import { NotSupportedError } from "../error";
 
 class TypescriptAdapter implements Adapter<Node> {
   getSource(node: Node, options?: { fixIndent: boolean }): string {

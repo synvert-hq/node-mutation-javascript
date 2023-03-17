@@ -1,6 +1,6 @@
 import type { Action, InsertOptions, ReplaceOptions, ProcessResult, TestResult } from "./types";
 import Adapter from "./adapter";
-import TypescriptAdapter from "./typescript-adapter";
+import TypescriptAdapter from "./adapter/typescript";
 import Strategy from "./strategy";
 import { AppendAction, DeleteAction, InsertAction, NoopAction, PrependAction, RemoveAction, ReplaceWithAction, ReplaceAction } from "./action";
 import { ConflictActionError } from "./error";

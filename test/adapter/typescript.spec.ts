@@ -1,21 +1,15 @@
 import dedent from "dedent";
-import { NotSupportedError } from "../src/error";
-import EspreeAdapter from "../src/espree-adapter";
-import { parseCodeByEspree } from "./helper";
-import mock from "mock-fs";
+import { NotSupportedError } from "../../src/error";
+import TypescriptAdapter from "../../src/adapter/typescript";
+import { parseCode } from "../helper";
 
-describe("EspreeAdapter", () => {
-  const adapter = new EspreeAdapter();
-
-  afterEach(() => {
-    mock.restore();
-  });
+describe("TypescriptAdapter", () => {
+  const adapter = new TypescriptAdapter();
 
   describe("getSource", () => {
     it('gets one line code', () => {
       const code = `const synvert = function() {}`;
-      mock({ "code.js": code });
-      const node = parseCodeByEspree(code);
+      const node = parseCode(code);
       expect(adapter.getSource(node)).toEqual(code);
     });
 
@@ -25,8 +19,7 @@ describe("EspreeAdapter", () => {
           console.log("synvert");
         }
       `;
-      mock({ "code.js": code });
-      const node = (parseCodeByEspree(code) as any)['declarations'][0]['init'];
+      const node = (parseCode(code) as any)['declarationList']['declarations'][0]['initializer'];
       expect(adapter.getSource(node)).toEqual(dedent`
         function() {
                   console.log("synvert");
@@ -40,8 +33,7 @@ describe("EspreeAdapter", () => {
           console.log("synvert");
         }
       `;
-      mock({ "code.js": code });
-      const node = (parseCodeByEspree(code) as any)['declarations'][0]['init'];
+      const node = (parseCode(code) as any)['declarationList']['declarations'][0]['initializer'];
       expect(adapter.getSource(node, { fixIndent: true })).toEqual(dedent`
         function() {
           console.log("synvert");
@@ -53,22 +45,19 @@ describe("EspreeAdapter", () => {
   describe("rewrittenSource", () => {
     it("rewrites with node known method", () => {
       const code = "class Synvert {}";
-      mock({ "code.js": code });
-      const node = parseCodeByEspree(code);
-      expect(adapter.rewrittenSource(node, "{{id}}")).toEqual("Synvert");
+      const node = parseCode(code);
+      expect(adapter.rewrittenSource(node, "{{name}}")).toEqual("Synvert");
     });
 
     it("rewrites for arguments", () => {
       const code = "foobar(foo, bar)";
-      mock({ "code.js": code });
-      const node = parseCodeByEspree(code);
+      const node = parseCode(code);
       expect(adapter.rewrittenSource(node, "{{expression.arguments}}")).toEqual("foo, bar");
     });
 
     it("throws an error for unknown property", () => {
       const code = "class Synvert {}";
-      mock({ "code.js": code });
-      const node = parseCodeByEspree(code);
+      const node = parseCode(code);
       expect(() => {
         adapter.rewrittenSource(node, "{{foobar}}");
       }).toThrow(new NotSupportedError("foobar is not supported for class Synvert {}"));
@@ -77,9 +66,7 @@ describe("EspreeAdapter", () => {
 
   describe("getStart", () => {
     it("gets start count", () => {
-      const code = "class Synvert {\n}";
-      mock({ "code.js": code });
-      const node = parseCodeByEspree(code);
+      const node = parseCode("class Synvert {\n}");
       expect(adapter.getStart(node)).toEqual(0);
     });
   });
@@ -87,17 +74,14 @@ describe("EspreeAdapter", () => {
   describe("getEnd", () => {
     it("gets end count", () => {
       const code = "class Synvert {\n}";
-      mock({ "code.js": code });
-      const node = parseCodeByEspree(code);
+      const node = parseCode(code);
       expect(adapter.getEnd(node)).toEqual(code.length);
     });
   });
 
   describe("getStartLoc", () => {
     test("gets start location", () => {
-      const code = "class Synvert {\n}";
-      mock({ "code.js": code });
-      const node = parseCodeByEspree(code);
+      const node = parseCode("class Synvert {\n}");
       const startLoc = adapter.getStartLoc(node);
       expect(startLoc.line).toEqual(1);
       expect(startLoc.column).toEqual(0);
@@ -106,9 +90,7 @@ describe("EspreeAdapter", () => {
 
   describe("getEndLoc", () => {
     test("gets end location", () => {
-      const code = "class Synvert {\n}";
-      mock({ "code.js": code });
-      const node = parseCodeByEspree(code);
+      const node = parseCode("class Synvert {\n}");
       const startLoc = adapter.getEndLoc(node);
       expect(startLoc.line).toEqual(2);
       expect(startLoc.column).toEqual(1);
@@ -116,45 +98,33 @@ describe("EspreeAdapter", () => {
   });
 
   describe("#childNodeRange", () => {
-    test("FunctionDeclaration params", () => {
-      const code = "function foobar(foo, bar) {}";
-      mock({ "code.js": code });
-      const node = parseCodeByEspree(code);
-      expect(adapter.childNodeRange(node, "params")).toEqual({ start: 15, end: 25 });
+    test("FunctionDeclaration parameters", () => {
+      const node = parseCode("function foobar(foo, bar) {}");
+      expect(adapter.childNodeRange(node, "parameters")).toEqual({ start: 15, end: 25 });
     });
 
     test("MethodDeclaration parameters", () => {
-      const code = "class Foobar { foobar(foo, bar) {} }";
-      mock({ "code.js": code });
-      const node = parseCodeByEspree(code);
-      expect(adapter.childNodeRange(node, "body.body.0.value.params")).toEqual({ start: 21, end: 31 });
+      const node = parseCode("class Foobar { foobar(foo, bar) {} }");
+      expect(adapter.childNodeRange(node, "members.0.parameters")).toEqual({ start: 21, end: 31 });
     });
 
     test("CallExpression arguments", () => {
-      const code = "foobar(foo, bar)";
-      mock({ "code.js": code });
-      const node = parseCodeByEspree(code);
+      const node = parseCode("foobar(foo, bar)");
       expect(adapter.childNodeRange(node, "expression.arguments")).toEqual({ start: 6, end: 16 });
     });
 
     test("PropertyAssignment semicolon", () => {
-      const code = "const obj = { foo: bar }";
-      mock({ "code.js": code });
-      const node = parseCodeByEspree(code);
-      expect(adapter.childNodeRange(node, "declarations.0.init.properties.0.semicolon")).toEqual({ start: 17, end: 18 });
+      const node = parseCode("const obj = { foo: bar }");
+      expect(adapter.childNodeRange(node, "declarationList.declarations.0.initializer.properties.0.semicolon")).toEqual({ start: 17, end: 18 });
     });
 
     test("PropertyAccessExpression dot", () => {
-      const code = "foo.bar";
-      mock({ "code.js": code });
-      const node = parseCodeByEspree(code);
+      const node = parseCode("foo.bar");
       expect(adapter.childNodeRange(node, "expression.dot")).toEqual({ start: 3, end: 4 });
     });
 
     test("CallExpression unknown", () => {
-      const code = "foobar(foo, bar)";
-      mock({ "code.js": code });
-      const node = parseCodeByEspree(code);
+      const node = parseCode("foobar(foo, bar)");
       expect(() => {
         adapter.childNodeRange(node, "expression.unknown");
       }).toThrow(new NotSupportedError("unknown is not supported for foobar(foo, bar)"));

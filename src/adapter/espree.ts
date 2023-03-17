@@ -1,7 +1,7 @@
-import type { EspreeNodeArrayExt as NodeArrayExt, EspreeNodeExt as NodeExt } from "./types";
+import type { EspreeNodeArrayExt as NodeArrayExt, EspreeNodeExt as NodeExt } from "../types";
 import fs from "fs";
-import Adapter from "./adapter";
-import { NotSupportedError } from "./error";
+import Adapter from "../adapter";
+import { NotSupportedError } from "../error";
 
 /**
  * Implement node-query-typescript adapter
