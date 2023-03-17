@@ -1,4 +1,4 @@
-import type { EspreeNodeArrayExt as NodeArrayExt, EspreeNodeExt as NodeExt } from "../types";
+import type { EspreeNodeArrayExt as NodeArrayExt, EspreeNodeExt as NodeExt } from "../types/adapter";
 import fs from "fs";
 import Adapter from "../adapter";
 import { NotSupportedError } from "../error";

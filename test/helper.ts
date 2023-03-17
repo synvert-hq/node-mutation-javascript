@@ -1,4 +1,4 @@
-import { EspreeNodeExt } from "../src/types";
+import type { EspreeNodeExt } from "../src/types/adapter";
 import ts from "typescript";
 import * as espree from "@xinminlabs/espree";
 

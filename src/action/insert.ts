@@ -1,4 +1,4 @@
-import type { POSITION, InsertOptions } from "../types";
+import type { POSITION, InsertOptions } from "../types/action";
 import { BaseAction } from "../action";
 import { getAdapter } from "../helpers";
 

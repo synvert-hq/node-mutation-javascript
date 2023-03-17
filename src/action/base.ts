@@ -1,4 +1,4 @@
-import type { Action } from "../types";
+import type { Action } from "../types/action";
 import { getAdapter } from "../helpers";
 import debug from "debug";
 

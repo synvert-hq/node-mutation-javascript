@@ -1,4 +1,5 @@
-import type { Action, InsertOptions, ReplaceOptions, ProcessResult, TestResult } from "./types";
+import type { Action, InsertOptions, ReplaceOptions } from "./types/action";
+import type { ProcessResult, TestResult } from "./types/node-mutation";
 import Adapter from "./adapter";
 import TypescriptAdapter from "./adapter/typescript";
 import Strategy from "./strategy";

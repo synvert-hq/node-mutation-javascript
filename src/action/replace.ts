@@ -1,4 +1,4 @@
-import type { ReplaceOptions } from "../types";
+import type { ReplaceOptions } from "../types/action";
 import { BaseAction } from "../action";
 import { getAdapter } from "../helpers";
 

@@ -4,7 +4,8 @@ import Strategy from "./strategy";
 import TypescriptAdapter from "./adapter/typescript";
 import EspreeAdapter from "./adapter/espree";
 import { NotSupportedError, ConflictActionError } from "./error";
-import { InsertOptions, ReplaceOptions, ProcessResult, TestResult } from "./types";
+import type { InsertOptions, ReplaceOptions } from "./types/action";
+import type { ProcessResult, TestResult } from "./types/node-mutation";
 
 export default NodeMutation;
 export {
