@@ -1,5 +1,15 @@
 # NodeMutation
 
+## 1.8.0 (2023-04-19)
+
+* Add `type` to `Action`
+* Abstract to `types` folder
+* Abstract to `adapter` folder
+
+## 1.7.0 (2023-03-17)
+
+* Add `espree` adapter
+
 ## 1.6.3 (2023-03-15)
 
 * Add default option to `insert` api
