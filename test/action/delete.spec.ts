@@ -13,6 +13,7 @@ describe("DeleteAction", () => {
       "expression.arguments",
     ]);
     expect(action.process()).toEqual({
+      type: "delete",
       start: "this.foo".length,
       end: "this.foo.bind(this)".length,
       newCode: "",

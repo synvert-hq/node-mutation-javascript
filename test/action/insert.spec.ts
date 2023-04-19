@@ -11,7 +11,7 @@ describe("InsertAction", () => {
       const action = new InsertAction<Node>(node, "::", {
         at: "beginning",
       });
-      expect(action.process()).toEqual({ start: 0, end: 0, newCode: "::" });
+      expect(action.process()).toEqual({ type: "insert", start: 0, end: 0, newCode: "::" });
     });
   });
 
@@ -20,7 +20,7 @@ describe("InsertAction", () => {
       const action = new InsertAction<Node>(node, ".bar", {
         to: "expression.expression"
       });
-      expect(action.process()).toEqual({ start: "this".length, end: "this".length, newCode: ".bar" });
+      expect(action.process()).toEqual({ type: "insert", start: "this".length, end: "this".length, newCode: ".bar" });
     });
   });
 });

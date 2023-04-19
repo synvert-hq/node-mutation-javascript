@@ -11,6 +11,7 @@ describe("ReplaceWithAction", () => {
       "Boolean({{expression.operand.operand}})"
     );
     expect(action.process()).toEqual({
+      type: "replace",
       start: 0,
       end: "!!foobar".length,
       newCode: "Boolean(foobar)",
@@ -24,6 +25,7 @@ describe("ReplaceWithAction", () => {
       "{{typeArguments}}[]"
     );
     expect(action.process()).toEqual({
+      type: "replace",
       start: "const x: ".length,
       end: "const x: Array<string>".length,
       newCode: "string[]",
@@ -46,6 +48,7 @@ describe("ReplaceWithAction", () => {
       `
     );
     expect(action.process()).toEqual({
+      type: "replace",
       start: 0,
       end: source.length,
       newCode: dedent`
@@ -61,6 +64,7 @@ describe("ReplaceWithAction", () => {
     const node = parseCode(source);
     const action = new ReplaceWithAction<Node>(node, "{{expression.expression.expression.text.slice(2, -1)}}");
     expect(action.process()).toEqual({
+      type: "replace",
       start: 0,
       end: source.length,
       newCode: 'bar'

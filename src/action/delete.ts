@@ -16,6 +16,7 @@ export class DeleteAction<T> extends BaseAction<T> {
   constructor(node: T, selectors: string | string[]) {
     super(node, "");
     this.selectors = Array.isArray(selectors) ? selectors : Array(selectors);
+    this.type = "delete";
   }
 
   /**

@@ -6,6 +6,7 @@ import debug from "debug";
  * Action does some real actions, e.g. insert / replace / delete code.
  */
 export abstract class BaseAction<T> {
+  protected type: string;
   protected start: number;
   protected end: number;
 
@@ -17,6 +18,7 @@ export abstract class BaseAction<T> {
   constructor(protected node: T, protected code: string) {
     this.start = -1;
     this.end = -1;
+    this.type = "";
   }
 
   /**
@@ -35,6 +37,7 @@ export abstract class BaseAction<T> {
 
     debug("node-mutation")(`${this.constructor.name}[${this.start}-${this.end}]:${this.newCode}`);
     return {
+      type: this.type,
       start: this.start,
       end: this.end,
       newCode: this.newCode,

@@ -12,6 +12,7 @@ export class RemoveAction<T> extends BaseAction<T> {
    */
   constructor(node: T) {
     super(node, "");
+    this.type = "delete";
   }
 
   /**

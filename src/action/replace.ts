@@ -22,6 +22,7 @@ export class ReplaceAction<T> extends BaseAction<T> {
   ) {
     super(node, options.with);
     this.selectors = Array.isArray(selectors) ? selectors : Array(selectors);
+    this.type = "replace";
   }
 
   /**

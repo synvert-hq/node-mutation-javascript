@@ -1,4 +1,5 @@
 export type Action = {
+  type: string,
   start: number,
   end: number,
   newCode?: string

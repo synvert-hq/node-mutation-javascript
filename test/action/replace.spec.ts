@@ -8,6 +8,7 @@ describe("ReplaceAction", () => {
   it("gets range and rewritten code", () => {
     const action = new ReplaceAction<Node>(node, "name", { with: "Synvert" });
     expect(action.process()).toEqual({
+      type: "replace",
       start: "class ".length,
       end: "class FooBar".length,
       newCode: "Synvert",

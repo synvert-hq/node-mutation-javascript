@@ -7,6 +7,16 @@ import { getAdapter } from "../helpers";
  */
 export class ReplaceWithAction<T> extends BaseAction<T> {
   /**
+   * Create an ReplaceAction
+   * @param {T} node
+   * @param {string} code
+   */
+  constructor(node: T, code: string) {
+    super(node, code);
+    this.type = "replace";
+  }
+
+  /**
    * Calculate the begin and end positions.
    * @protected
    */

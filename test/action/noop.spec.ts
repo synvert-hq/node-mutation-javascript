@@ -7,6 +7,7 @@ describe("NoopAction", () => {
     const node = parseCode("!!foobar");
     const action = new NoopAction<Node>(node);
     expect(action.process()).toEqual({
+      type: "",
       start: 0,
       end: "!!foobar".length,
       newCode: undefined,

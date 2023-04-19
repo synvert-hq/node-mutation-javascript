@@ -8,6 +8,16 @@ import NodeMutation from "../node-mutation";
  */
 export class AppendAction<T> extends BaseAction<T> {
   /**
+   * Create an AppendAction
+   * @param {T} node
+   * @param {string} code
+   */
+  constructor(node: T, code: string) {
+    super(node, code);
+    this.type = "insert";
+  }
+
+  /**
    * Calculate the begin and end positions.
    * @protected
    */

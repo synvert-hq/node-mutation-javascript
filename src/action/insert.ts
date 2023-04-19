@@ -20,6 +20,7 @@ export class InsertAction<T> extends BaseAction<T> {
     super(node, code);
     this.at = options.at;
     this.selector = options.to;
+    this.type = "insert";
   }
 
   /**

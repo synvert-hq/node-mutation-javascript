@@ -10,6 +10,7 @@ describe("PrependAction", () => {
     it("gets range and rewritten code", () => {
       const action = new PrependAction<Node>(node, "foobar() {}");
       expect(action.process()).toEqual({
+        type: "insert",
         start: "class Foobar {\n".length,
         end: "class Foobar {\n".length,
         newCode: `  foobar() {}\n`,
@@ -21,6 +22,7 @@ describe("PrependAction", () => {
     it("gets range and rewritten code", () => {
       const action = new PrependAction<Node>(node, "foo() {}\nbar() {}");
       expect(action.process()).toEqual({
+        type: "insert",
         start: "class Foobar {\n".length,
         end: "class Foobar {\n".length,
         newCode: `  foo() {}\n  bar() {}\n`,
