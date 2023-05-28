@@ -80,6 +80,7 @@ It provides 2 adapters:
 
 1. `TypescriptAdapter`
 2. `EspreeAdapter`
+3. `GonzalesPeAdapter`
 
 ```typescript
 NodeMutation.configure({ adapter: new EspreeAdapter() }); // default is TypescriptAdapter
