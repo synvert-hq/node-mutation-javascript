@@ -1,4 +1,4 @@
-import type { EspreeNodeArrayExt as NodeArrayExt, EspreeNodeExt as NodeExt } from "../types/adapter";
+import { Node } from "acorn";
 import fs from "fs";
 import Adapter from "../adapter";
 import { NotSupportedError } from "../error";
@@ -7,9 +7,9 @@ import { NotSupportedError } from "../error";
  * Implement node-query-typescript adapter
  * @see https://github.com/xinminlabs/node-query-typescript/blob/main/src/adapter.ts
  */
-class EspreeAdapter implements Adapter<NodeExt> {
+class EspreeAdapter implements Adapter<Node> {
   // get node source
-  getSource(node: NodeExt, options?: { fixIndent: boolean }): string {
+  getSource(node: Node, options?: { fixIndent: boolean }): string {
     const source = this.fileContent(node).slice(node.start, node.end);
     if (options && options.fixIndent) {
       const column = this.getIndent(node);
@@ -37,7 +37,7 @@ class EspreeAdapter implements Adapter<NodeExt> {
    * @param {string} code - expression code
    * @returns {string} rewritten code.
    */
-  rewrittenSource(node: NodeExt, code: string): string {
+  rewrittenSource(node: Node, code: string): string {
     return code.replace(/{{([a-zA-z0-9\.]+?)}}/gm, (string, match, _offset) => {
       if (!match) return null;
 
@@ -45,8 +45,8 @@ class EspreeAdapter implements Adapter<NodeExt> {
       if (obj) {
         if (Array.isArray(obj)) {
           return this.fileContent(node).slice(
-            (obj[0] as NodeExt).start,
-            (obj[obj.length - 1] as NodeExt).end
+            (obj[0] as Node).start,
+            (obj[obj.length - 1] as Node).end
           );
         }
         if (obj.hasOwnProperty("type")) {
@@ -64,7 +64,7 @@ class EspreeAdapter implements Adapter<NodeExt> {
    * Get the source code of current file.
    * @returns {string} source code of current file.
    */
-  fileContent(node: NodeExt): string {
+  fileContent(node: Node): string {
     return fs.readFileSync(node.loc!.source!, "utf-8");
   }
 
@@ -75,26 +75,26 @@ class EspreeAdapter implements Adapter<NodeExt> {
    * @throws {NotSupportedError} if we can't get the range.
    */
   childNodeRange(
-    node: NodeExt,
+    node: Node,
     childName: string
   ): { start: number; end: number } {
     if (node.type === "MethodDefinition" && childName === "async") {
-      return { start: node.start, end: (node.key as NodeExt).start };
+      return { start: node.start, end: ((node as any).key as Node).start };
     } else if (node.type === "MemberExpression" && childName === "dot") {
       return {
-        start: (node.property as NodeExt).start - 1,
-        end: (node.property as NodeExt).start,
+        start: ((node as any).property as Node).start - 1,
+        end: ((node as any).property as Node).start,
       };
     } else if (
       ["MemberExpression", "CallExpression"].includes(node.type) &&
       childName === "arguments"
     ) {
-      if (node.arguments && node.arguments.length > 0) {
+      if ((node as any).arguments && (node as any).arguments.length > 0) {
         return {
-          start: (node.arguments as NodeArrayExt)[0].start - 1,
+          start: ((node as any).arguments as NodeArrayExt)[0].start - 1,
           end:
-            (node.arguments as NodeArrayExt)[
-              (node.arguments as NodeArrayExt).length - 1
+            ((node as any).arguments as NodeArrayExt)[
+              ((node as any).arguments as NodeArrayExt).length - 1
             ].end + 1,
         };
       } else {
@@ -103,12 +103,12 @@ class EspreeAdapter implements Adapter<NodeExt> {
     } else if (node.type === "ClassDeclaration" && childName === "class") {
       return { start: node.start, end: node.start + 5 };
     } else if (["FunctionDeclaration", "FunctionExpression"].includes(node.type) && childName === "params") {
-      if (node.params && node.params.length > 0) {
+      if ((node as any).params && (node as any).params.length > 0) {
         return {
-          start: (node.params as NodeArrayExt)[0].start - 1,
+          start: ((node as any).params as Node[])[0].start - 1,
           end:
-            (node.params as NodeArrayExt)[
-              (node.params as NodeArrayExt).length - 1
+            ((node as any).params as Node[])[
+              ((node as any).params as Node[]).length - 1
             ].end + 1,
         };
       } else {
@@ -124,13 +124,13 @@ class EspreeAdapter implements Adapter<NodeExt> {
       };
     } else if (node.type === "Property" && childName === "semicolon") {
       return {
-        start: (node.key as NodeExt).end,
-        end: (node.key as NodeExt).end + 1,
+        start: ((node as any).key as Node).end,
+        end: ((node as any).key as Node).end + 1,
       };
     } else {
       const [directChildName, ...nestedChildName] = childName.split(".");
-      if (node[directChildName]) {
-        const childNode: NodeExt | NodeArrayExt = node[directChildName];
+      if ((node as any)[directChildName]) {
+        const childNode: Node | Node[] = (node as any)[directChildName];
 
         if (Array.isArray(childNode)) {
           const [childDirectChildName, ...childNestedChildName] =
@@ -138,14 +138,14 @@ class EspreeAdapter implements Adapter<NodeExt> {
 
           if (childNestedChildName.length > 0) {
             return this.childNodeRange(
-              childNode[childDirectChildName] as NodeExt,
+              (childNode as any)[childDirectChildName] as Node,
               childNestedChildName.join(".")
             );
           }
 
-          if (typeof childNode[childDirectChildName] === "function") {
+          if (typeof (childNode as any)[childDirectChildName] === "function") {
             const childChildNode = (
-              childNode[childDirectChildName] as () => {
+              (childNode as any)[childDirectChildName] as () => {
                 start: number;
                 end: number;
               }
@@ -154,7 +154,7 @@ class EspreeAdapter implements Adapter<NodeExt> {
           } else if (!Number.isNaN(childDirectChildName)) {
             const childChildNode = childNode.at(
               Number.parseInt(childDirectChildName)
-            ) as NodeExt;
+            ) as Node;
             if (childChildNode) {
               return { start: childChildNode.start, end: childChildNode.end };
             } else {
@@ -179,31 +179,31 @@ class EspreeAdapter implements Adapter<NodeExt> {
     throw new NotSupportedError(`${childName} is not supported for ${this.getSource(node)}`);
   }
 
-  getStart(node: NodeExt): number {
+  getStart(node: Node): number {
     return node.start;
   }
 
-  getEnd(node: NodeExt): number {
+  getEnd(node: Node): number {
     return node.end;
   }
 
-  getStartLoc(node: NodeExt): { line: number; column: number } {
+  getStartLoc(node: Node): { line: number; column: number } {
     const { line, column } = node.loc!.start;
     return { line, column };
   }
 
-  getEndLoc(node: NodeExt): { line: number; column: number } {
+  getEndLoc(node: Node): { line: number; column: number } {
     const { line, column } = node.loc!.end;
     return { line, column };
   }
 
-  getIndent(node: NodeExt): number {
+  getIndent(node: Node): number {
     return this.fileContent(node)
       .split("\n")
       [this.getStartLoc(node).line - 1].search(/\S|$/);
   }
 
-  private actualValue(node: NodeExt, multiKeys: string[]): any {
+  private actualValue(node: Node, multiKeys: string[]): any {
     let childNode: any = node;
     multiKeys.forEach((key) => {
       if (!childNode) return;
