@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.9.0 (2023-05-28)
+
+  * Add `GonzalesPeAdapter`
+
 ## 1.8.0 (2023-04-19)
 
 * Add `type` to `Action`
