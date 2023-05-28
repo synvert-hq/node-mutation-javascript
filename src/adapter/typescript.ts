@@ -1,4 +1,3 @@
-import type { TypescriptNodeExt as NodeExt, TypescriptNodeArrayExt as NodeArrayExt } from "../types/adapter";
 import { PropertyAccessExpression, Node, SyntaxKind, PropertyAssignment } from "typescript";
 import Adapter from "../adapter";
 import { NotSupportedError } from "../error";
@@ -59,22 +58,22 @@ class TypescriptAdapter implements Adapter<Node> {
     } else {
       const [directChildName, ...nestedChildName] = childName.split(".");
       if ((node as any)[directChildName]) {
-        const childNode: NodeExt | NodeArrayExt = (node as any)[directChildName];
+        const childNode: Node | Node[] = (node as any)[directChildName];
 
         if (Array.isArray(childNode)) {
           const [childDirectChildName, ...childNestedChildName] = nestedChildName;
 
           if (childNestedChildName.length > 0) {
-            return this.childNodeRange(childNode[childDirectChildName] as NodeExt, childNestedChildName.join("."));
+            return this.childNodeRange((childNode as any)[childDirectChildName] as Node, childNestedChildName.join("."));
           }
 
-          if (typeof childNode[childDirectChildName] === "function") {
-            const childChildNode = (childNode[childDirectChildName] as () => NodeExt)();
+          if (typeof (childNode as any)[childDirectChildName] === "function") {
+            const childChildNode = ((childNode as any)[childDirectChildName] as () => Node)();
             return { start: this.getStart(childChildNode), end: this.getEnd(childChildNode) };
           } else if (!Number.isNaN(childDirectChildName)) {
             const childChildNode = childNode.at(
               Number.parseInt(childDirectChildName)
-            ) as NodeExt;
+            ) as Node;
             if (childChildNode) {
               return { start: this.getStart(childChildNode), end: this.getEnd(childChildNode) };
             } else {
