@@ -1,4 +1,4 @@
-import type { Action, InsertOptions, ReplaceOptions } from "./types/action";
+import type { Action, InsertOptions, ReplaceOptions, DeleteOptions } from "./types/action";
 import type { ProcessResult, TestResult } from "./types/node-mutation";
 import Adapter from "./adapter";
 import TypescriptAdapter from "./adapter/typescript";
@@ -77,6 +77,7 @@ class NodeMutation<T> {
    * Delete source code of the child ast node
    * @param node {T} - current ast node
    * @param selectors {string|string[]} - selectors to find chid ast nodes
+   * @param options {DeleteOptions}
    * @example
    * source code of the ast node is
    * ```
@@ -91,8 +92,8 @@ class NodeMutation<T> {
    * this.foo
    * ```
    */
-  delete(node: T, selectors: string | string[]) {
-    this.actions.push(new DeleteAction<T>(node, selectors).process());
+  delete(node: T, selectors: string | string[], options: DeleteOptions = {}) {
+    this.actions.push(new DeleteAction<T>(node, selectors, options).process());
   }
 
   /**

@@ -15,3 +15,7 @@ export type InsertOptions = {
 export type ReplaceOptions = {
   with: string
 }
+
+export type DeleteOptions = {
+  wholeLine?: boolean
+}

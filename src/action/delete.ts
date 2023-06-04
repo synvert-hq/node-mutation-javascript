@@ -1,5 +1,6 @@
 import { BaseAction } from "../action";
 import { getAdapter } from "../helpers";
+import { DeleteOptions } from "../types/action";
 
 /**
  * DeleteAction to delete child node.
@@ -7,16 +8,18 @@ import { getAdapter } from "../helpers";
  */
 export class DeleteAction<T> extends BaseAction<T> {
   private selectors: string[];
+  private wholeLine?: boolean;
 
   /**
    * Create a DeleteAction
    * @param {T} node
    * @param {string|string[]} selectors - name of child nodes
    */
-  constructor(node: T, selectors: string | string[]) {
+  constructor(node: T, selectors: string | string[], options: DeleteOptions) {
     super(node, "");
     this.selectors = Array.isArray(selectors) ? selectors : Array(selectors);
     this.type = "delete";
+    this.wholeLine = options.wholeLine;
   }
 
   /**
@@ -38,6 +41,10 @@ export class DeleteAction<T> extends BaseAction<T> {
     this.removeBraces();
     this.removeComma();
     this.removeSpace();
+    if (this.wholeLine) {
+      this.removeNewLine();
+      this.squeezeLines();
+    }
   }
 
   /**
@@ -45,6 +52,31 @@ export class DeleteAction<T> extends BaseAction<T> {
    */
   get newCode(): string {
     return "";
+  }
+
+  /**
+   * Remove the whole line.
+   * @private
+   */
+  private removeNewLine(): void {
+    const lines = this.source().split("\n");
+    const beginLine = this.beginLine();
+    const endLine = this.endLiine();
+    this.start =
+      lines.slice(0, beginLine - 1).join("\n").length +
+      (beginLine === 1 ? 0 : "\n".length);
+    this.end = lines.slice(0, endLine).join("\n").length;
+    if (lines.length > endLine) {
+      this.end = this.end + "\n".length;
+    }
+  }
+
+  private beginLine(): number {
+    return getAdapter<T>().fileContent(this.node).slice(0, this.start).split("\n").length;
+  }
+
+  private endLiine(): number {
+    return getAdapter<T>().fileContent(this.node).slice(0, this.end).split("\n").length;
   }
 }
 

@@ -5,7 +5,7 @@ import TypescriptAdapter from "./adapter/typescript";
 import GonzalesPeAdapter from "./adapter/gonzales-pe";
 import EspreeAdapter from "./adapter/espree";
 import { NotSupportedError, ConflictActionError } from "./error";
-import type { InsertOptions, ReplaceOptions } from "./types/action";
+import type { InsertOptions, ReplaceOptions, DeleteOptions } from "./types/action";
 import type { ProcessResult, TestResult } from "./types/node-mutation";
 
 export default NodeMutation;
@@ -19,6 +19,7 @@ export {
   ConflictActionError,
   InsertOptions,
   ReplaceOptions,
+  DeleteOptions,
   ProcessResult,
   TestResult
 };
