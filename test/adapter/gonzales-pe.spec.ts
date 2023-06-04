@@ -71,7 +71,7 @@ describe("GonzalesPeAdapter", () => {
       const node = parseCodeByGonzalesPe(code, 'code.scss');
       expect(adapter.getStart(node)).toEqual(0);
       const childNode = (node as any)['content'][0]['content'][2]['content'][1];
-      expect(adapter.getStart(childNode)).toEqual(7);
+      expect(adapter.getStart(childNode)).toEqual(8);
     });
   });
 
@@ -120,14 +120,14 @@ describe("GonzalesPeAdapter", () => {
       `;
       mock({ "code.scss": code });
       const node = parseCodeByGonzalesPe(code, 'code.scss');
-      expect(adapter.getEndLoc(node)).toEqual({ line: 5, column: 0 });
+      expect(adapter.getEndLoc(node)).toEqual({ line: 5, column: 1 });
       const childNode = (node as any)['content'][0]['content'][2]['content'][1];
-      expect(adapter.getEndLoc(childNode)).toEqual({ line: 4, column: 2 });
+      expect(adapter.getEndLoc(childNode)).toEqual({ line: 4, column: 3 });
     });
   });
 
   describe("#childNodeRange", () => {
-    test("FunctionDeclaration params", () => {
+    test("gets range", () => {
       const code = dedent`
         nav {
           a {
@@ -138,7 +138,7 @@ describe("GonzalesPeAdapter", () => {
       mock({ "code.scss": code });
       const node = parseCodeByGonzalesPe(code, 'code.scss');
       expect(adapter.childNodeRange(node, 'content')).toEqual({ start: 0, end: code.length });
-      expect(adapter.childNodeRange(node, 'content.0.content.2.content.1')).toEqual({ start: 7, end: code.length - 2 });
+      expect(adapter.childNodeRange(node, 'content.0.content.2.content.1')).toEqual({ start: 8, end: code.length - 2 });
     });
   });
 });

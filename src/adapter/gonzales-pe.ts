@@ -115,9 +115,9 @@ class GonzalesPeAdapter implements Adapter<Node> {
 
   getEnd(node: Node): number {
     if (node.end.line === 1) {
-      return node.end.column;
+      return node.end.column - 1;
     }
-    return this.lineCharsCount(this.fileContent(node), node.end.line - 1) + 1 + node.end.column;
+    return this.lineCharsCount(this.fileContent(node), node.end.line - 1) + node.end.column;
   }
 
   getStartLoc(node: Node): { line: number; column: number } {
@@ -125,7 +125,7 @@ class GonzalesPeAdapter implements Adapter<Node> {
   }
 
   getEndLoc(node: Node): { line: number; column: number } {
-    return { line: node.end.line, column: node.end.column - 1 };
+    return { line: node.end.line, column: node.end.column };
   }
 
   getIndent(node: Node): number {
@@ -153,7 +153,7 @@ class GonzalesPeAdapter implements Adapter<Node> {
   // @param lines {Number} lines of code.
   // @return {Number} char count of lines of code.
   private lineCharsCount(code: string, lines: number): number {
-    return code.split("\n").slice(0, lines).join("\n").length;
+    return code.split("\n").slice(0, lines).join("\n").length + 1;
   }
 }
 
