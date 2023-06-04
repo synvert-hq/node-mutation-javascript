@@ -21,16 +21,7 @@ export class RemoveAction<T> extends BaseAction<T> {
    */
   calculatePositions(): void {
     if (this.takeWholeLine()) {
-      const lines = this.source().split("\n");
-      const beginLine = getAdapter<T>().getStartLoc(this.node).line;
-      const endLine = getAdapter<T>().getEndLoc(this.node).line;
-      this.start =
-        lines.slice(0, beginLine - 1).join("\n").length +
-        (beginLine === 1 ? 0 : "\n".length);
-      this.end = lines.slice(0, endLine).join("\n").length;
-      if (lines.length > endLine) {
-        this.end = this.end + "\n".length;
-      }
+      this.removeNewLine();
       this.squeezeLines();
     } else {
       this.start = getAdapter<T>().getStart(this.node);
@@ -50,14 +41,33 @@ export class RemoveAction<T> extends BaseAction<T> {
   }
 
   /**
+   * Remove the whole line.
+   * @private
+   */
+  private removeNewLine(): void {
+    const lines = this.source().split("\n");
+    const beginLine = getAdapter<T>().getStartLoc(this.node).line;
+    const endLine = getAdapter<T>().getEndLoc(this.node).line;
+    this.start =
+      lines.slice(0, beginLine - 1).join("\n").length +
+      (beginLine === 1 ? 0 : "\n".length);
+    this.end = lines.slice(0, endLine).join("\n").length;
+    if (lines.length > endLine) {
+      this.end = this.end + "\n".length;
+    }
+  }
+
+  /**
    * Check if the source code of this node takes the whole line.
    * @private
    * @returns {boolean}
    */
   private takeWholeLine(): boolean {
+    const beginLine = getAdapter<T>().getStartLoc(this.node).line;
+    const endLine = getAdapter<T>().getEndLoc(this.node).line;
     const sourceFromFile = this.source()
       .split("\n")
-      .slice(getAdapter<T>().getStartLoc(this.node).line - 1, getAdapter<T>().getEndLoc(this.node).line)
+      .slice(beginLine - 1, endLine)
       .join("\n")
       .trim();
     const source = getAdapter<T>().getSource(this.node);

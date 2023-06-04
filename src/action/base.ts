@@ -143,10 +143,10 @@ export abstract class BaseAction<T> {
    */
   protected removeSpace(): void {
     // this happens when removing a property in jsx element.
-    const source = this.source();
-    const beforeCharIsSpace = source[this.start - 1] === " ";
-    const afterCharIsGreatThan = source[this.end] == ">";
-    if (beforeCharIsSpace && afterCharIsGreatThan) {
+    if (this.prevTokenIs(" ") && this.nextTokenIs(">")) {
+      this.start = this.start - 1;
+    }
+    if (this.prevTokenIs(" ") && this.nextTokenIs("\n")) {
       this.start = this.start - 1;
     }
   }
