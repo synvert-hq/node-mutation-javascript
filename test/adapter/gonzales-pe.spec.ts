@@ -140,5 +140,27 @@ describe("GonzalesPeAdapter", () => {
       expect(adapter.childNodeRange(node, 'content')).toEqual({ start: 0, end: code.length });
       expect(adapter.childNodeRange(node, 'content.0.content.2.content.1')).toEqual({ start: 8, end: code.length - 2 });
     });
+
+    test("block leftCurlyBracket", () => {
+      const code = dedent`
+        a {
+          color: red;
+        }
+      `;
+      mock({ "code.scss": code });
+      const node = parseCodeByGonzalesPe(code, 'code.scss');
+      expect(adapter.childNodeRange(node, 'content.0.content.2.leftCurlyBracket')).toEqual({ start: 2, end: 3 });
+    });
+
+    test("block rightCurlyBracket", () => {
+      const code = dedent`
+        a {
+          color: red;
+        }
+      `;
+      mock({ "code.scss": code });
+      const node = parseCodeByGonzalesPe(code, 'code.scss');
+      expect(adapter.childNodeRange(node, 'content.0.content.2.rightCurlyBracket')).toEqual({ start: code.length - 1, end: code.length });
+    });
   });
 });

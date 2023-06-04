@@ -65,6 +65,13 @@ class GonzalesPeAdapter implements Adapter<Node> {
     node: Node,
     childName: string
   ): { start: number; end: number } {
+    if (node.type === "block" && childName === "leftCurlyBracket") {
+      return { start: this.getStart(node), end: this.getStart(node) + 1 };
+    }
+    if (node.type === "block" && childName === "rightCurlyBracket") {
+      return { start: this.getEnd(node) - 1, end: this.getEnd(node) };
+    }
+
     const [directChildName, ...nestedChildName] = childName.split(".");
     if ((node as any)[directChildName]) {
       const childNode: Node | Node[] = (node as any)[directChildName];
