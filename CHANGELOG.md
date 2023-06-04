@@ -1,8 +1,15 @@
 # NodeMutation
 
+## 1.10.0 (2023-06-04)
+
+* Export `GonzalesPeAdapter`
+* Fix `start` / `end` locations in `GonzalesPeAdapter`
+* Add `wholeLine` options in `delete` option
+* Support `leftCurlyBracket` and `rightCurlyBracket` for `block` node in `childNodeRange`
+
 ## 1.9.0 (2023-05-28)
 
-  * Add `GonzalesPeAdapter`
+* Add `GonzalesPeAdapter`
 
 ## 1.8.0 (2023-04-19)
 
