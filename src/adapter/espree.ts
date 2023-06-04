@@ -91,10 +91,10 @@ class EspreeAdapter implements Adapter<Node> {
     ) {
       if ((node as any).arguments && (node as any).arguments.length > 0) {
         return {
-          start: ((node as any).arguments as NodeArrayExt)[0].start - 1,
+          start: ((node as any).arguments as Node[])[0].start - 1,
           end:
-            ((node as any).arguments as NodeArrayExt)[
-              ((node as any).arguments as NodeArrayExt).length - 1
+            ((node as any).arguments as Node[])[
+              ((node as any).arguments as Node[]).length - 1
             ].end + 1,
         };
       } else {
