@@ -1,5 +1,10 @@
 # NodeMutation
 
+## 1.10.1 (2023-06-05)
+
+* Fix gonzales-pe `end` position
+* Shortcut to find gonzales child node
+
 ## 1.10.0 (2023-06-04)
 
 * Export `GonzalesPeAdapter`
