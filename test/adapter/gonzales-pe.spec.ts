@@ -1,5 +1,4 @@
 import dedent from "dedent";
-import { NotSupportedError } from "../../src/error";
 import GonzalesPeAdapter from "../../src/adapter/gonzales-pe";
 import { parseCodeByGonzalesPe, indent } from "../helper";
 import mock from "mock-fs";
@@ -40,7 +39,7 @@ describe("GonzalesPeAdapter", () => {
 
   describe("rewrittenSource", () => {
     it("rewrites with sub selector", () => {
-      const code = `
+      const code = dedent`
         nav {
           a {
             color: red;
@@ -54,7 +53,7 @@ describe("GonzalesPeAdapter", () => {
           color: red;
         }
       `
-      expect(adapter.rewrittenSource(node, "{{content.1.content.2.content.1}}")).toEqual(indent(expectedCode, 10));
+      expect(adapter.rewrittenSource(node, "{{ruleset.block.ruleset}}")).toEqual(indent(expectedCode, 2));
     });
   });
 
@@ -138,7 +137,7 @@ describe("GonzalesPeAdapter", () => {
       mock({ "code.scss": code });
       const node = parseCodeByGonzalesPe(code, 'code.scss');
       expect(adapter.childNodeRange(node, 'content')).toEqual({ start: 0, end: code.length });
-      expect(adapter.childNodeRange(node, 'content.0.content.2.content.1')).toEqual({ start: 8, end: code.length - 2 });
+      expect(adapter.childNodeRange(node, 'ruleset.block.ruleset')).toEqual({ start: 8, end: code.length - 2 });
     });
 
     test("block leftCurlyBracket", () => {
@@ -149,7 +148,7 @@ describe("GonzalesPeAdapter", () => {
       `;
       mock({ "code.scss": code });
       const node = parseCodeByGonzalesPe(code, 'code.scss');
-      expect(adapter.childNodeRange(node, 'content.0.content.2.leftCurlyBracket')).toEqual({ start: 2, end: 3 });
+      expect(adapter.childNodeRange(node, 'ruleset.block.leftCurlyBracket')).toEqual({ start: 2, end: 3 });
     });
 
     test("block rightCurlyBracket", () => {
@@ -160,7 +159,7 @@ describe("GonzalesPeAdapter", () => {
       `;
       mock({ "code.scss": code });
       const node = parseCodeByGonzalesPe(code, 'code.scss');
-      expect(adapter.childNodeRange(node, 'content.0.content.2.rightCurlyBracket')).toEqual({ start: code.length - 1, end: code.length });
+      expect(adapter.childNodeRange(node, 'ruleset.block.rightCurlyBracket')).toEqual({ start: code.length - 1, end: code.length });
     });
   });
 });

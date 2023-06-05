@@ -149,7 +149,11 @@ class GonzalesPeAdapter implements Adapter<Node> {
       } else if (typeof childNode[key] === "function") {
         childNode = childNode[key].call(childNode);
       } else {
-        throw `${key} is not supported for ${this.getSource(childNode)}`;
+        if (Array.isArray(childNode.content) && childNode.content.find((item: Node) => item.type === key)) {
+          childNode = childNode.content.find((item: Node) => item.type === key);
+        } else {
+          throw `${key} is not supported for ${this.getSource(childNode)}`;
+        }
       }
     });
     return childNode;
