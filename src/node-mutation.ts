@@ -330,6 +330,10 @@ class NodeMutation<T> {
     if (actionA.start < actionB.start) return -1;
     if (actionA.end > actionB.end) return 1;
     if (actionA.end < actionB.end) return -1;
+    if (actionA.conflictPosition && actionB.conflictPosition) {
+      if (actionA.conflictPosition > actionB.conflictPosition) return 1;
+      if (actionA.conflictPosition < actionB.conflictPosition) return -1;
+    }
     return 0;
   }
 

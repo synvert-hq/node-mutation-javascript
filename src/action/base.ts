@@ -9,6 +9,7 @@ export abstract class BaseAction<T> {
   protected type: string;
   protected start: number;
   protected end: number;
+  protected conflictPosition?: number;
 
   /**
    * Create an Action.
@@ -36,12 +37,16 @@ export abstract class BaseAction<T> {
     this.calculatePositions();
 
     debug("node-mutation")(`${this.constructor.name}[${this.start}-${this.end}]:${this.newCode}`);
-    return {
+    const result: Action = {
       type: this.type,
       start: this.start,
       end: this.end,
       newCode: this.newCode,
     };
+    if (this.conflictPosition) {
+      result.conflictPosition = this.conflictPosition;
+    }
+    return result;
   }
 
   /**

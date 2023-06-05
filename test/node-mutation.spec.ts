@@ -117,19 +117,47 @@ describe("NodeMutation", () => {
         type: "insert",
         start: "class Foobar".length,
         end: "class FooBar".length,
-        newCode: " extends Base",
+        newCode: " extends Foo",
       });
       mutation.actions.push({
         type: "insert",
         start: "class FooBar".length,
         end: "class FooBar".length,
-        newCode: " extends Base",
+        newCode: " extends Bar",
       });
       const result = mutation.process();
       expect(result.affected).toBeTruthy();
       expect(result.conflicted).toBeFalsy();
       expect(result.newSource).toEqual(dedent`
-        class FooBar extends Base extends Base {
+        class FooBar extends Foo extends Bar {
+          foo() {}
+          bar() {}
+        }
+      `)
+    });
+
+    it("gets no conflict with insert at the same position", () => {
+      NodeMutation.configure({ strategy: Strategy.KEEP_RUNNING });
+      const mutation = new NodeMutation<Node>(source);
+      mutation.actions.push({
+        type: "insert",
+        start: "class Foobar".length,
+        end: "class FooBar".length,
+        newCode: " extends Foo",
+        conflictPosition: 2,
+      });
+      mutation.actions.push({
+        type: "insert",
+        start: "class FooBar".length,
+        end: "class FooBar".length,
+        newCode: " extends Bar",
+        conflictPosition: 1,
+      });
+      const result = mutation.process();
+      expect(result.affected).toBeTruthy();
+      expect(result.conflicted).toBeFalsy();
+      expect(result.newSource).toEqual(dedent`
+        class FooBar extends Bar extends Foo {
           foo() {}
           bar() {}
         }

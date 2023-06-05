@@ -2,14 +2,16 @@ export type Action = {
   type: string,
   start: number,
   end: number,
-  newCode?: string
+  newCode?: string,
+  conflictPosition?: number, // insert position when insert at the same position
 };
 
 export type POSITION = "beginning" | "end";
 
 export type InsertOptions = {
   at?: POSITION,
-  to?: string
+  to?: string,
+  conflictPosition?: number, // insert position when insert at the same position
 }
 
 export type ReplaceOptions = {

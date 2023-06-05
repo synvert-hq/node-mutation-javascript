@@ -21,6 +21,9 @@ export class InsertAction<T> extends BaseAction<T> {
     this.at = options.at;
     this.selector = options.to;
     this.type = "insert";
+    if (options.conflictPosition) {
+      this.conflictPosition = options.conflictPosition;
+    }
   }
 
   /**
