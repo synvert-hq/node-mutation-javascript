@@ -347,11 +347,7 @@ class NodeMutation<T> {
     let beginPos = this.actions[i].start;
     let endPos = this.actions[i].end;
     while (j > -1) {
-      // if we have two insert actions at same position.
-      const samePosition = beginPos == this.actions[j].start && beginPos == endPos && this.actions[j].start == this.actions[j].end;
-      // if we have two actions with overlapped range.
-      const overlappedPosition = beginPos < this.actions[j].end;
-      if ((!this.isStrategry(Strategy.ALLOW_INSERT_AT_SAME_POSITION) && samePosition) || overlappedPosition) {
+      if (beginPos < this.actions[j].end) {
         conflictActions.push(this.actions.splice(j, 1)[0]);
       } else {
         i = j;

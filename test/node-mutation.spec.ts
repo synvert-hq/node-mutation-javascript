@@ -110,34 +110,8 @@ describe("NodeMutation", () => {
       }).toThrowError(new ConflictActionError());
     });
 
-    it("gets conflict when insert at the same position", () => {
+    it("gets no conflict with insert at the same position", () => {
       NodeMutation.configure({ strategy: Strategy.KEEP_RUNNING });
-      const mutation = new NodeMutation<Node>(source);
-      mutation.actions.push({
-        type: "insert",
-        start: "class Foobar".length,
-        end: "class FooBar".length,
-        newCode: " extends Base",
-      });
-      mutation.actions.push({
-        type: "insert",
-        start: "class FooBar".length,
-        end: "class FooBar".length,
-        newCode: " extends Base",
-      });
-      const result = mutation.process();
-      expect(result.affected).toBeTruthy();
-      expect(result.conflicted).toBeTruthy();
-      expect(result.newSource).toEqual(dedent`
-        class FooBar extends Base {
-          foo() {}
-          bar() {}
-        }
-      `)
-    });
-
-    it("gets no conflict with ALLOW_INSERT_AT_SAME_POSITION strategy", () => {
-      NodeMutation.configure({ strategy: Strategy.KEEP_RUNNING | Strategy.ALLOW_INSERT_AT_SAME_POSITION });
       const mutation = new NodeMutation<Node>(source);
       mutation.actions.push({
         type: "insert",
