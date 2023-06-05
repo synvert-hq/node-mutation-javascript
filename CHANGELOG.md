@@ -1,5 +1,10 @@
 # NodeMutation
 
+## 1.11.0 (2023-06-05)
+
+* Remove `ALLOW_INSERT_AT_SAME_POSITION` strategy
+* Add `conflictPosition` when insert at the same position
+
 ## 1.10.2 (2023-06-05)
 
 * Shortcut to find gonzales child node
