@@ -122,7 +122,7 @@ class GonzalesPeAdapter implements Adapter<Node> {
 
   getEnd(node: Node): number {
     if (node.end.line === 1) {
-      return node.end.column - 1;
+      return node.end.column;
     }
     return this.lineCharsCount(this.fileContent(node), node.end.line - 1) + node.end.column;
   }
