@@ -73,9 +73,8 @@ class GonzalesPeAdapter implements Adapter<Node> {
     }
 
     const [directChildName, ...nestedChildName] = childName.split(".");
-    if ((node as any)[directChildName]) {
-      const childNode: Node | Node[] = (node as any)[directChildName];
-
+    const childNode = this.getChildNode(node, directChildName);
+    if (childNode) {
       if (Array.isArray(childNode)) {
         const [childDirectChildName, ...childNestedChildName] =
           nestedChildName;
@@ -144,19 +143,22 @@ class GonzalesPeAdapter implements Adapter<Node> {
     multiKeys.forEach((key) => {
       if (!childNode) return;
 
-      if (childNode.hasOwnProperty(key)) {
-        childNode = childNode[key];
-      } else if (typeof childNode[key] === "function") {
-        childNode = childNode[key].call(childNode);
+      if (this.getChildNode(childNode, key)) {
+        childNode = this.getChildNode(childNode, key);
       } else {
-        if (Array.isArray(childNode.content) && childNode.content.find((item: Node) => item.type === key)) {
-          childNode = childNode.content.find((item: Node) => item.type === key);
-        } else {
-          throw `${key} is not supported for ${this.getSource(childNode)}`;
-        }
+        throw `${key} is not supported for ${this.getSource(childNode)}`;
       }
     });
     return childNode;
+  }
+
+  private getChildNode(node: Node, key: string): any {
+    if (node.hasOwnProperty(key)) {
+      return (node as any)[key];
+    }
+    if (Array.isArray(node.content) && node.content.find((childNode: Node) => childNode.type === key)) {
+      return node.content.find((childNode: Node) => childNode.type === key);
+    }
   }
 
   // Get the char count of lines of code.
