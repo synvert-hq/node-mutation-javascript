@@ -73,7 +73,7 @@ class GonzalesPeAdapter implements Adapter<Node> {
     }
 
     const [directChildName, ...nestedChildName] = childName.split(".");
-    const childNode = this.getChildNode(node, directChildName);
+    const childNode = (node as any)[directChildName];
     if (childNode) {
       if (Array.isArray(childNode)) {
         const [childDirectChildName, ...childNestedChildName] =
@@ -143,22 +143,13 @@ class GonzalesPeAdapter implements Adapter<Node> {
     multiKeys.forEach((key) => {
       if (!childNode) return;
 
-      if (this.getChildNode(childNode, key)) {
-        childNode = this.getChildNode(childNode, key);
+      if ((childNode as any)[key]) {
+        childNode = (childNode as any)[key];
       } else {
         throw `${key} is not supported for ${this.getSource(childNode)}`;
       }
     });
     return childNode;
-  }
-
-  private getChildNode(node: Node, key: string): any {
-    if (node.hasOwnProperty(key)) {
-      return (node as any)[key];
-    }
-    if (Array.isArray(node.content) && node.content.find((childNode: Node) => childNode.type === key)) {
-      return node.content.find((childNode: Node) => childNode.type === key);
-    }
   }
 
   // Get the char count of lines of code.
