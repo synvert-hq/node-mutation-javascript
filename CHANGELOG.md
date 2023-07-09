@@ -1,5 +1,10 @@
 # NodeMutation
 
+## 1.12.0 (2023-07-09)
+
+* Update `@xinminlabs/gonzales-pe` to 1.1.0
+* Remove `getChildNode` function from `GonzalesPeAdapter`
+
 ## 1.11.0 (2023-06-05)
 
 * Remove `ALLOW_INSERT_AT_SAME_POSITION` strategy
