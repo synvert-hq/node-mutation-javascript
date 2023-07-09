@@ -33,7 +33,7 @@
     "@types/jest": "^28.1.1",
     "@types/mock-fs": "^4.13.1",
     "@xinminlabs/espree": "^9.5.2",
-    "@xinminlabs/gonzales-pe": "^1.0.0",
+    "@xinminlabs/gonzales-pe": "^1.1.0",
     "acorn": "^8.8.2",
     "dedent": "^0.7.0",
     "jest": "^28.1.1",
