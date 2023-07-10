@@ -11,6 +11,7 @@ NodeMutation provides a set of APIs to rewrite node source code.
   - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
   - [Usage](#usage)
+  - [Evaluated Value](#evaluated-value)
   - [Configuration](#configuration)
     - [adapter](#adapter)
     - [strategy](#strategy)
@@ -68,6 +69,19 @@ mutation.noop(node: Node)
 mutation.process()
 ```
 
+## Evaluated Value
+
+NodeMutation supports to evaluate the value of the node, and use the evaluated value to rewrite the source code.
+
+```ruby
+source = 'class Synvert {}'
+node = espree.parse(source)
+mutation.replace node, '{{id}}', with: 'Foobar'
+source # class Foobar {}
+```
+
+See more in [TypescriptAdapter](https://xinminlabs.github.io/node-mutation-javascript/TypescriptAdapter.html), [SyntaxTreeAdapter](https://xinminlabs.github.io/node-mutation-javascript/EspreeAdapter.html), and [GonzalesPeAdapter](https://xinminlabs.github.io/node-mutation-javascript/GonzalesPeAdapter.html)
+
 ## Configuration
 
 ### adapter
@@ -76,7 +90,7 @@ Different parsers, like typescript and espree, will generate different AST nodes
 we define an [Adapter](https://github.com/xinminlabs/node-mutation-javascript/blob/main/src/adapter.ts) interface,
 if you implement the Adapter interface, you can set it as NodeMutation's adapter.
 
-It provides 2 adapters:
+It provides 3 adapters:
 
 1. `TypescriptAdapter`
 2. `EspreeAdapter`
@@ -88,7 +102,7 @@ NodeMutation.configure({ adapter: new EspreeAdapter() }); // default is Typescri
 
 ### strategy
 
-It provides 3 strategies to handle conflicts when processing actions:
+It provides 2 strategies to handle conflicts when processing actions:
 
 1. `Strategy.KEEP_RUNNING`: keep running and ignore the conflict action.
 2. `Strategy.THROW_ERROR`: throw error when conflict action is found.
