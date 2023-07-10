@@ -65,6 +65,13 @@ describe("EspreeAdapter", () => {
       expect(adapter.rewrittenSource(node, "{{expression.arguments}}")).toEqual("foo, bar");
     });
 
+    it("rewrites for arguments.0", () => {
+      const code = "foobar(foo, bar)";
+      mock({ "code.js": code });
+      const node = parseCodeByEspree(code);
+      expect(adapter.rewrittenSource(node, "{{expression.arguments.0}}")).toEqual("foo");
+    });
+
     it("throws an error for unknown property", () => {
       const code = "class Synvert {}";
       mock({ "code.js": code });

@@ -30,12 +30,21 @@ class EspreeAdapter implements Adapter<Node> {
   }
 
   /**
-   * Get rewritten source code.
+   * Get the new source code after evaluating the node.
+   * @param {Node} node - The node to evaluate.
+   * @param {string} code - The code to evaluate.
+   * @returns {string} The new source code.
    * @example
-   * // foo.slice(1, 2)
-   * node.rewrittenSource("{{expression.callee.object}}.slice({{expression.arguments}})") #=>
-   * @param {string} code - expression code
-   * @returns {string} rewritten code.
+   * node = espree.parse("foo.substring(1, 2)")
+   * rewrittenSource(node, "{{expression.property}})") // substring
+   *
+   * // node array
+   * node = espree.parse("foo.substring(1, 2)")
+   * rewrittenSource(node, "{{expression.callee.object}}.slice({{expression.arguments}})") // foo.slice(1, 2)
+   *
+   * // index for node array
+   * node = espree.parse("foo.substring(1, 2)")
+   * rewrittenSource(node, "{{expression.arguments.1}}") // 2
    */
   rewrittenSource(node: Node, code: string): string {
     return code.replace(/{{([a-zA-z0-9\.]+?)}}/gm, (string, match, _offset) => {
@@ -70,9 +79,37 @@ class EspreeAdapter implements Adapter<Node> {
 
   /**
    * Get the source range of child node.
-   * @param {string} childName - name of child node.
-   * @returns {Object} child node range, e.g. { start: 0, end: 10 }
+   * @param {Node} node - The node.
+   * @param {string} childName - The name to find child node.
+   * @returns {Object} The range of the child node, e.g. { start: 0, end: 10 }
    * @throws {NotSupportedError} if we can't get the range.
+   * @example
+   * node = espree.parse("function foobar(foo, bar) {}")
+   * childNodeRange(node, "id") // { start: "function ".length, end: "function foobar".length }
+   *
+   * // node array
+   * node = espree.parse("function foobar(foo, bar) {}")
+   * childNodeRange(node, "params") // { start: "function foobar".length, end: "function foobar(foo, bar)".length }
+   *
+   * // index for node array
+   * node = espree.parse("function foobar(foo, bar) {}")
+   * childNodeRange(node, "params.1") // { start: "function foobar(foo, ".length, end: "function foobar(foo, bar".length }
+   *
+   * // async for MethodDefinition node
+   * node = espree.parse("async foobar() {}")
+   * childNodeRange(node, "async") // { start: 0, end: "async".length }
+   *
+   * // dot for MemberExpression node
+   * node = espree.parse("foo.bar")
+   * childNodeRange(node, "dot") // { start: "foo".length, end: "foo.".length }
+   *
+   * // class for ClassDeclaration node
+   * node = espree.parse("class FooBar {}")
+   * childNodeRange(node, "class") // { start: 0, end: "class".length }
+   *
+   * // semicolon for Property node
+   * node = espree.parse("{ foo: bar }");
+   * childNodeRange(node, "semicolon") // { start: "{ foo", end: "{ foo:".length }
    */
   childNodeRange(
     node: Node,

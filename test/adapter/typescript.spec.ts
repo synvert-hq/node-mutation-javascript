@@ -55,6 +55,12 @@ describe("TypescriptAdapter", () => {
       expect(adapter.rewrittenSource(node, "{{expression.arguments}}")).toEqual("foo, bar");
     });
 
+    it("rewrites for arguments.1", () => {
+      const code = "foobar(foo, bar)";
+      const node = parseCode(code);
+      expect(adapter.rewrittenSource(node, "{{expression.arguments.1}}")).toEqual("bar");
+    });
+
     it("throws an error for unknown property", () => {
       const code = "class Synvert {}";
       const node = parseCode(code);

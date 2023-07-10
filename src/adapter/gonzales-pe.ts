@@ -17,12 +17,13 @@ class GonzalesPeAdapter implements Adapter<Node> {
   }
 
   /**
-   * Get rewritten source code.
+   * Get the new source code after evaluating the node.
+   * @param {Node} node - The node to evaluate.
+   * @param {string} code - The code to evaluate.
+   * @returns {string} The new source code.
    * @example
-   * // foo.slice(1, 2)
-   * node.rewrittenSource("{{expression.callee.object}}.slice({{expression.arguments}})") #=>
-   * @param {string} code - expression code
-   * @returns {string} rewritten code.
+   * node = gonzales.parse("a { color: red; }", { syntax: "css" })
+   * rewrittenSource(node, "{{block.declaration.value}})") // red
    */
   rewrittenSource(node: Node, code: string): string {
     return code.replace(/{{([a-zA-z0-9\.]+?)}}/gm, (string, match, _offset) => {
@@ -57,9 +58,13 @@ class GonzalesPeAdapter implements Adapter<Node> {
 
   /**
    * Get the source range of child node.
-   * @param {string} childName - name of child node.
-   * @returns {Object} child node range, e.g. { start: 0, end: 10 }
+   * @param {Node} node - The node.
+   * @param {string} childName - The name to find child node.
+   * @returns {Object} The range of the child node, e.g. { start: 0, end: 10 }
    * @throws {NotSupportedError} if we can't get the range.
+   * @example
+   * node = gonzales.parse("a { color: red }")
+   * childNodeRange(node, "{{block.declaration.value}}") // { start: "a { color:  ".length, end: "a { color: red".length }
    */
   childNodeRange(
     node: Node,

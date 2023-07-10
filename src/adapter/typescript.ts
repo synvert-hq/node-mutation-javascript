@@ -23,6 +23,23 @@ class TypescriptAdapter implements Adapter<Node> {
     }
   }
 
+  /**
+   * Get the new source code after evaluating the node.
+   * @param {Node} node - The node to evaluate.
+   * @param {string} code - The code to evaluate.
+   * @returns {string} The new source code.
+   * @example
+   * node = ts.createSourceFile("code.ts", "foo.substring(1, 2)")
+   * rewrittenSource(node, "{{expression.name}}") // substring
+   *
+   * // node array
+   * node = ts.createSourceFile("code.ts", "foo.substring(1, 2)")
+   * rewrittenSource(node, "{{expression.expression}}.slice({{expression.arguments}})") // foo.slice(1, 2)
+   *
+   * // index for node array
+   * node = espree.parse("foo.substring(1, 2)")
+   * rewrittenSource(node, "{{expression.arguments.1}}") // 2
+   */
   rewrittenSource(node: Node, code: string): string {
     return code.replace(/{{(.+?)}}/gm, (_string, match, _offset) => {
       if (!match) return null;
@@ -47,6 +64,32 @@ class TypescriptAdapter implements Adapter<Node> {
     return node.getSourceFile().getFullText();
   }
 
+  /**
+   * Get the source range of child node.
+   * @param {Node} node - The node.
+   * @param {string} childName - The name to find child node.
+   * @returns {Object} The range of the child node, e.g. { start: 0, end: 10 }
+   * @throws {NotSupportedError} if we can't get the range.
+   * @example
+   * node = ts.createSourceFile("code.ts", "function foobar(foo, bar) {}")
+   * childNodeRange(node, "name") // { start: "function ".length, end: "function foobar".length }
+   *
+   * // node array
+   * node = ts.createSourceFile("code.ts", "function foobar(foo, bar) {}")
+   * childNodeRange(node, "parameters") // { start: "function foobar".length, end: "function foobar(foo, bar)".length }
+   *
+   * // index for node array
+   * node = ts.createSourceFile("code.ts", "function foobar(foo, bar) {}")
+   * childNodeRange(node, "parameters.1") // { start: "function foobar(foo, ".length, end: "function foobar(foo, bar".length }
+   *
+   * // semicolon for PropertyAssignment node
+   * node = ts.createSourceFile("code.ts", "{ foo: bar }");
+   * childNodeRange(node, "semicolon") // { start: "{ foo", end: "{ foo:".length }
+   *
+   * // dot for PropertyAccessExpression node
+   * node = ts.createSourceFile("code.ts", "foo.bar")
+   * childNodeRange(node, "dot") // { start: "foo".length, end: "foo.".length }
+   */
   childNodeRange(node: Node, childName: string): { start: number, end: number } {
     if (["arguments", "parameters"].includes(childName)) {
       const elements = (node as any)[childName];
