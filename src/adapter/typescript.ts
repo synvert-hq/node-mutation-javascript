@@ -130,8 +130,6 @@ class TypescriptAdapter implements Adapter<Node> {
         childNode = childNode[key];
       } else if (typeof childNode[key] === "function") {
         childNode = childNode[key].call(childNode);
-      } else if (key.includes("(") && key.includes(")")) {
-        childNode = eval(`childNode.${key}`);
       } else {
         throw `${key} is not supported for ${this.getSource(childNode)}`;
       }

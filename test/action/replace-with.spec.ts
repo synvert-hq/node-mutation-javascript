@@ -58,16 +58,4 @@ describe("ReplaceWithAction", () => {
       `,
     });
   });
-
-  it("gets range and rewritten code with function call", () => {
-    const source = `/^bar/.test(baz)`;
-    const node = parseCode(source);
-    const action = new ReplaceWithAction<Node>(node, "{{expression.expression.expression.text.slice(2, -1)}}");
-    expect(action.process()).toEqual({
-      type: "replace",
-      start: 0,
-      end: source.length,
-      newCode: 'bar'
-    })
-  });
 });
