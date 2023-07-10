@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>PrependAction - Documentation</title>
+    <title>TypescriptAdapter - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">PrependAction</h1>
+    <h1 class="page-title">TypescriptAdapter</h1>
     
 
     
@@ -42,10 +42,10 @@
 <header>
     
         <h2>
-        PrependAction
+        TypescriptAdapter
         </h2>
         
-            <div class="class-description">PrependAction to prepend code to the top of node body.</div>
+            <div class="class-description">Typescript Adapter</div>
         
     
 </header>
@@ -60,14 +60,122 @@
     <h2>Constructor</h2>
     
 
-    <h4 class="name" id="PrependAction"><span class="type-signature"></span>new PrependAction<span class="signature">(node, code)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="TypescriptAdapter"><span class="type-signature"></span>new TypescriptAdapter<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="adapter_typescript.js.html">adapter/typescript.js</a>, <a href="adapter_typescript.js.html#line9">line 9</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+    
+    </div>
+
+    
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li>Adapter</li>
+    </ul>
+
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+<div class="section-method">
+
+    
+
+    <h4 class="name" id="childNodeRange"><span class="type-signature"></span>childNodeRange<span class="signature">(node, childName)</span><span class="type-signature"> &rarr; {Object}</span></h4>
 
     
 
 
 
 <div class="description">
-    Create an AppendAction
+    Get the source range of child node.
 </div>
 
 
@@ -103,7 +211,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="action_prepend.js.html">action/prepend.js</a>, <a href="action_prepend.js.html#line14">line 14</a>
+        <a href="adapter_typescript.js.html">adapter/typescript.js</a>, <a href="adapter_typescript.js.html#line98">line 98</a>
     </li></ul></dd>
     
 
@@ -153,7 +261,7 @@
             <td class="type">
             
                 
-<span class="param-type"><code>T</code></span>
+<span class="param-type"><code>Node</code></span>
 
 
             
@@ -164,7 +272,249 @@
             
 
             <td class="description last">
+                The node.
                 
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>childName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>string</code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                The name to find child node.
+                
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="section-throws">
+<h5>Throws:</h5>
+
+        
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        if we can't get the range.
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type"><code><a href="NotSupportedError.html">NotSupportedError</a></code></span>
+
+
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
+
+    
+</div>
+
+
+
+<div class="section-returns">
+<h5>Returns:</h5>
+
+        
+
+<dl class="param-type">
+    <dt>
+        Type:
+    </dt>
+    <dd>
+        
+<span class="param-type"><code>Object</code></span>
+
+
+    </dd>
+</dl>
+
+
+<div class="param-desc">
+    The range of the child node, e.g. { start: 0, end: 10 }
+</div>
+
+    
+</div>
+
+
+
+<div class="section-examples">
+<h5>Example</h5>
+
+    <pre class="prettyprint"><code>node = ts.createSourceFile("code.ts", "function foobar(foo, bar) {}")
+childNodeRange(node, "name") // { start: "function ".length, end: "function foobar".length }
+
+// node array
+node = ts.createSourceFile("code.ts", "function foobar(foo, bar) {}")
+childNodeRange(node, "parameters") // { start: "function foobar".length, end: "function foobar(foo, bar)".length }
+
+// index for node array
+node = ts.createSourceFile("code.ts", "function foobar(foo, bar) {}")
+childNodeRange(node, "parameters.1") // { start: "function foobar(foo, ".length, end: "function foobar(foo, bar".length }
+
+// semicolon for PropertyAssignment node
+node = ts.createSourceFile("code.ts", "{ foo: bar }");
+childNodeRange(node, "semicolon") // { start: "{ foo", end: "{ foo:".length }
+
+// dot for PropertyAccessExpression node
+node = ts.createSourceFile("code.ts", "foo.bar")
+childNodeRange(node, "dot") // { start: "foo".length, end: "foo.".length }</code></pre>
+
+</div>
+
+</div>
+        
+            
+<div class="section-method">
+
+    
+
+    <h4 class="name" id="rewrittenSource"><span class="type-signature"></span>rewrittenSource<span class="signature">(node, code)</span><span class="type-signature"> &rarr; {string}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Get the new source code after evaluating the node.
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="adapter_typescript.js.html">adapter/typescript.js</a>, <a href="adapter_typescript.js.html#line48">line 48</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>node</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>Node</code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                The node to evaluate.
                 
             </td>
         </tr>
@@ -190,7 +540,7 @@
             
 
             <td class="description last">
-                
+                The code to evaluate.
                 
             </td>
         </tr>
@@ -198,656 +548,6 @@
     
     </tbody>
 </table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-    
-    </div>
-
-    
-        <h3 class="subsection-title">Extends</h3>
-
-        
-
-
-    <ul>
-        <li><a href="BaseAction.html">BaseAction</a></li>
-    </ul>
-
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-        <h3 class="subsection-title">Members</h3>
-
-        
-            
-<div class="section-members">
-<h4 class="name" id="newCode"><span class="type-signature"></span>newCode<span class="type-signature"></span></h4>
-
-
-
-
-<div class="description">
-    The rewritten source code.
-</div>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="action_prepend.js.html">action/prepend.js</a>, <a href="action_prepend.js.html#line36">line 36</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-</div>
-
-        
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
-            
-<div class="section-method">
-
-    
-
-    <h4 class="name" id="calculatePositions"><span class="type-signature">(protected) </span>calculatePositions<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Calculate the begin and end positions.
-</div>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="action_prepend.js.html">action/prepend.js</a>, <a href="action_prepend.js.html#line28">line 28</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-        
-            
-<div class="section-method">
-
-    
-
-    <h4 class="name" id="process"><span class="type-signature"></span>process<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="global.html#Action">Action</a>}</span></h4>
-
-    
-
-
-
-<div class="description">
-    Calculate begin and end positions, and return an action.
-</div>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-overrides">Overrides:</dt>
-    <dd class="tag-overrides"><ul class="dummy"><li>
-        <a href="BaseAction.html#process">BaseAction#process</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="action_base.js.html">action/base.js</a>, <a href="action_base.js.html#line29">line 29</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="section-returns">
-<h5>Returns:</h5>
-
-        
-
-<dl class="param-type">
-    <dt>
-        Type:
-    </dt>
-    <dd>
-        
-<span class="param-type"><code><a href="global.html#Action">Action</a></code></span>
-
-
-    </dd>
-</dl>
-
-
-<div class="param-desc">
-    action
-</div>
-
-    
-</div>
-
-
-
-</div>
-        
-            
-<div class="section-method">
-
-    
-
-    <h4 class="name" id="removeBraces"><span class="type-signature">(protected) </span>removeBraces<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Remove unused braces.
-e.g. `foobar({ foo: bar })`, if we remove `foo: bar`, braces should also be removed.
-</div>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-overrides">Overrides:</dt>
-    <dd class="tag-overrides"><ul class="dummy"><li>
-        <a href="BaseAction.html#removeBraces">BaseAction#removeBraces</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="action_base.js.html">action/base.js</a>, <a href="action_base.js.html#line90">line 90</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-        
-            
-<div class="section-method">
-
-    
-
-    <h4 class="name" id="removeComma"><span class="type-signature">(protected) </span>removeComma<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Rmove unused comma.
-e.g. `foobar(foo, bar)`, if we remove `foo`, the comma should also be removed,
-the code should be changed to `foobar(bar)`.
-</div>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-overrides">Overrides:</dt>
-    <dd class="tag-overrides"><ul class="dummy"><li>
-        <a href="BaseAction.html#removeComma">BaseAction#removeComma</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="action_base.js.html">action/base.js</a>, <a href="action_base.js.html#line114">line 114</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-        
-            
-<div class="section-method">
-
-    
-
-    <h4 class="name" id="removeSpace"><span class="type-signature">(protected) </span>removeSpace<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Remove unused space.
-e.g. `<div foo='bar'>foobar</div>`, if we remove `foo='bar`, the space should also be removed,
-the code shoulde be changed to `<div>foobar</div>`.
-</div>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-overrides">Overrides:</dt>
-    <dd class="tag-overrides"><ul class="dummy"><li>
-        <a href="BaseAction.html#removeSpace">BaseAction#removeSpace</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="action_base.js.html">action/base.js</a>, <a href="action_base.js.html#line134">line 134</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-        
-            
-<div class="section-method">
-
-    
-
-    <h4 class="name" id="rewrittenSource"><span class="type-signature">(protected) </span>rewrittenSource<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
-
-    
-
-
-
-<div class="description">
-    The rewritten source code.
-</div>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-overrides">Overrides:</dt>
-    <dd class="tag-overrides"><ul class="dummy"><li>
-        <a href="BaseAction.html#rewrittenSource">BaseAction#rewrittenSource</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="action_base.js.html">action/base.js</a>, <a href="action_base.js.html#line48">line 48</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
 
 
 
@@ -881,7 +581,7 @@ the code shoulde be changed to `<div>foobar</div>`.
 
 
 <div class="param-desc">
-    rewritten source code.
+    The new source code.
 </div>
 
     
@@ -889,282 +589,21 @@ the code shoulde be changed to `<div>foobar</div>`.
 
 
 
-</div>
-        
-            
-<div class="section-method">
+<div class="section-examples">
+<h5>Example</h5>
 
-    
+    <pre class="prettyprint"><code>node = ts.createSourceFile("code.ts", "foo.substring(1, 2)")
+rewrittenSource(node, "{{expression.name}}") // substring
 
-    <h4 class="name" id="source"><span class="type-signature">(protected) </span>source<span class="signature">()</span><span class="type-signature"></span></h4>
+// node array
+node = ts.createSourceFile("code.ts", "foo.substring(1, 2)")
+rewrittenSource(node, "{{expression.expression}}.slice({{expression.arguments}})") // foo.slice(1, 2)
 
-    
-
-
-
-<div class="description">
-    Get the source code of this node.
-</div>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-overrides">Overrides:</dt>
-    <dd class="tag-overrides"><ul class="dummy"><li>
-        <a href="BaseAction.html#source">BaseAction#source</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="action_base.js.html">action/base.js</a>, <a href="action_base.js.html#line56">line 56</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="section-returns">
-<h5>Returns:</h5>
-
-        
-
-
-<div class="param-desc">
-    source code of this node.
-</div>
-
-    
-</div>
-
-
+// index for node array
+node = espree.parse("foo.substring(1, 2)")
+rewrittenSource(node, "{{expression.arguments.1}}") // 2</code></pre>
 
 </div>
-        
-            
-<div class="section-method">
-
-    
-
-    <h4 class="name" id="squeezeLines"><span class="type-signature">(protected) </span>squeezeLines<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Squeeze empty lines from source code.
-</div>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-overrides">Overrides:</dt>
-    <dd class="tag-overrides"><ul class="dummy"><li>
-        <a href="BaseAction.html#squeezeLines">BaseAction#squeezeLines</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="action_base.js.html">action/base.js</a>, <a href="action_base.js.html#line75">line 75</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-        
-            
-<div class="section-method">
-
-    
-
-    <h4 class="name" id="squeezeSpaces"><span class="type-signature">(protected) </span>squeezeSpaces<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-<div class="description">
-    Squeeze spaces from source code.
-</div>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-overrides">Overrides:</dt>
-    <dd class="tag-overrides"><ul class="dummy"><li>
-        <a href="BaseAction.html#squeezeSpaces">BaseAction#squeezeSpaces</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="action_base.js.html">action/base.js</a>, <a href="action_base.js.html#line63">line 63</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 </div>
         
