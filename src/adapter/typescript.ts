@@ -2,6 +2,10 @@ import { PropertyAccessExpression, Node, SyntaxKind, PropertyAssignment } from "
 import Adapter from "../adapter";
 import { NotSupportedError } from "../error";
 
+/**
+ * Typescript Adapter
+ * @extends Adapter
+ */
 class TypescriptAdapter implements Adapter<Node> {
   getSource(node: Node, options?: { fixIndent: boolean }): string {
     if (options && options.fixIndent) {

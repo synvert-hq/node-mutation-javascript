@@ -6,8 +6,8 @@ import Adapter from "../adapter";
 import { NotSupportedError } from "../error";
 
 /**
- * Implement node-query-typescript adapter
- * @see https://github.com/xinminlabs/node-query-typescript/blob/main/src/adapter.ts
+ * GonzalesPe Adapter
+ * @extends Adapter
  */
 class GonzalesPeAdapter implements Adapter<Node> {
   // get node source
