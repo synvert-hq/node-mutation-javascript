@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>error.js - Documentation</title>
+    <title>action/replace-with.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">error.js</h1>
+    <h1 class="page-title">action/replace-with.js</h1>
     
 
     
@@ -41,28 +41,40 @@
         <article>
             <pre class="prettyprint source linenums"><code>"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConflictActionError = exports.NotSupportedError = void 0;
+exports.ReplaceWithAction = void 0;
+const action_1 = require("../action");
+const helpers_1 = require("../helpers");
 /**
- * NotSupportedError is thrown when calling a not supported method on AST node.
- * @extends Error
+ * ReplaceWithAction to replace code.
+ * @extends BaseAction
  */
-class NotSupportedError extends Error {
-    constructor(message) {
-        super(message);
-        this.name = "NotSupportedError";
+class ReplaceWithAction extends action_1.BaseAction {
+    /**
+     * Create an ReplaceAction
+     * @param {T} node
+     * @param {string} code
+     */
+    constructor(node, code) {
+        super(node, code);
+        this.type = "replace";
+    }
+    /**
+     * Calculate the begin and end positions.
+     * @protected
+     */
+    calculatePositions() {
+        this.start = (0, helpers_1.getAdapter)().getStart(this.node);
+        this.end = (0, helpers_1.getAdapter)().getEnd(this.node);
+    }
+    /**
+     * The rewritten source code.
+     * @returns {string} rewritten code.
+     */
+    get newCode() {
+        return this.rewrittenSource();
     }
 }
-exports.NotSupportedError = NotSupportedError;
-/**
- * ConflictActionError is thrown when there is a conflict among actions.
- */
-class ConflictActionError extends Error {
-    constructor() {
-        super("mutation actions are conflicted");
-        this.name = "ConflictActionError";
-    }
-}
-exports.ConflictActionError = ConflictActionError;
+exports.ReplaceWithAction = ReplaceWithAction;
 </code></pre>
         </article>
     </section>

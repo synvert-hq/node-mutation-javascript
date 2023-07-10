@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>error.js - Documentation</title>
+    <title>action/delete.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">error.js</h1>
+    <h1 class="page-title">action/delete.js</h1>
     
 
     
@@ -41,28 +41,72 @@
         <article>
             <pre class="prettyprint source linenums"><code>"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConflictActionError = exports.NotSupportedError = void 0;
+exports.DeleteAction = void 0;
+const action_1 = require("../action");
+const helpers_1 = require("../helpers");
 /**
- * NotSupportedError is thrown when calling a not supported method on AST node.
- * @extends Error
+ * DeleteAction to delete child node.
+ * @extends BaseAction
  */
-class NotSupportedError extends Error {
-    constructor(message) {
-        super(message);
-        this.name = "NotSupportedError";
+class DeleteAction extends action_1.BaseAction {
+    /**
+     * Create a DeleteAction
+     * @param {T} node
+     * @param {string|string[]} selectors - name of child nodes
+     */
+    constructor(node, selectors, options) {
+        super(node, "");
+        this.selectors = Array.isArray(selectors) ? selectors : Array(selectors);
+        this.type = "delete";
+        this.wholeLine = options.wholeLine;
+    }
+    /**
+     * Calculate the begin and end positions.
+     * @protected
+     */
+    calculatePositions() {
+        this.start = Math.min(...this.selectors.map((selector) => (0, helpers_1.getAdapter)().childNodeRange(this.node, selector).start));
+        this.end = Math.max(...this.selectors.map((selector) => (0, helpers_1.getAdapter)().childNodeRange(this.node, selector).end));
+        this.squeezeSpaces();
+        this.removeBraces();
+        this.removeComma();
+        this.removeSpace();
+        if (this.wholeLine) {
+            this.removeNewLine();
+            this.squeezeLines();
+        }
+    }
+    /**
+     * The rewritten code, always empty string.
+     */
+    get newCode() {
+        return "";
+    }
+    /**
+     * Remove the whole line.
+     * @private
+     */
+    removeNewLine() {
+        const lines = this.source().split("\n");
+        const beginLine = this.beginLine();
+        const endLine = this.endLiine();
+        this.start =
+            lines.slice(0, beginLine - 1).join("\n").length +
+                (beginLine === 1 ? 0 : "\n".length);
+        this.end = lines.slice(0, endLine).join("\n").length;
+        if (lines.length > endLine) {
+            this.end = this.end + "\n".length;
+        }
+    }
+    beginLine() {
+        return (0, helpers_1.getAdapter)().fileContent(this.node).slice(0, this.start).split("\n").length;
+    }
+    endLiine() {
+        return (0, helpers_1.getAdapter)().fileContent(this.node).slice(0, this.end).split("\n").length;
     }
 }
-exports.NotSupportedError = NotSupportedError;
-/**
- * ConflictActionError is thrown when there is a conflict among actions.
- */
-class ConflictActionError extends Error {
-    constructor() {
-        super("mutation actions are conflicted");
-        this.name = "ConflictActionError";
-    }
-}
-exports.ConflictActionError = ConflictActionError;
+exports.DeleteAction = DeleteAction;
+exports.default = DeleteAction;
 </code></pre>
         </article>
     </section>

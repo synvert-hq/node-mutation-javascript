@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>error.js - Documentation</title>
+    <title>adapter/gonzales-pe.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">error.js</h1>
+    <h1 class="page-title">adapter/gonzales-pe.js</h1>
     
 
     
@@ -40,29 +40,150 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>"use strict";
+var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
+    return (mod &amp;&amp; mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConflictActionError = exports.NotSupportedError = void 0;
+const fs_1 = __importDefault(require("fs"));
+const error_1 = require("../error");
 /**
- * NotSupportedError is thrown when calling a not supported method on AST node.
- * @extends Error
+ * Implement node-query-typescript adapter
+ * @see https://github.com/xinminlabs/node-query-typescript/blob/main/src/adapter.ts
  */
-class NotSupportedError extends Error {
-    constructor(message) {
-        super(message);
-        this.name = "NotSupportedError";
+class GonzalesPeAdapter {
+    // get node source
+    getSource(node, options) {
+        const column = this.getIndent(node);
+        return " ".repeat(column) + node.toString();
+    }
+    /**
+     * Get the new source code after evaluating the node.
+     * @param {Node} node - The node to evaluate.
+     * @param {string} code - The code to evaluate.
+     * @returns {string} The new source code.
+     * @example
+     * node = gonzales.parse("a { color: red; }", { syntax: "css" })
+     * rewrittenSource(node, "{{block.declaration.value}})") // red
+     */
+    rewrittenSource(node, code) {
+        return code.replace(/{{([a-zA-z0-9\.]+?)}}/gm, (string, match, _offset) => {
+            if (!match)
+                return null;
+            const obj = this.actualValue(node, match.split("."));
+            if (obj) {
+                if (Array.isArray(obj)) {
+                    return this.fileContent(node).slice(this.getStart(node), this.getEnd(node));
+                }
+                if (obj.hasOwnProperty("type")) {
+                    return this.getSource(obj);
+                }
+                else {
+                    return obj;
+                }
+            }
+            else {
+                throw new error_1.NotSupportedError(`can not parse "${code}"`);
+            }
+        });
+    }
+    /**
+     * Get the source code of current file.
+     * @returns {string} source code of current file.
+     */
+    fileContent(node) {
+        return fs_1.default.readFileSync(node.sourceFile, "utf-8");
+    }
+    /**
+     * Get the source range of child node.
+     * @param {Node} node - The node.
+     * @param {string} childName - The name to find child node.
+     * @returns {Object} The range of the child node, e.g. { start: 0, end: 10 }
+     * @throws {NotSupportedError} if we can't get the range.
+     * @example
+     * node = gonzales.parse("a { color: red }")
+     * childNodeRange(node, "{{block.declaration.value}}") // { start: "a { color:  ".length, end: "a { color: red".length }
+     */
+    childNodeRange(node, childName) {
+        if (node.type === "block" &amp;&amp; childName === "leftCurlyBracket") {
+            return { start: this.getStart(node), end: this.getStart(node) + 1 };
+        }
+        if (node.type === "block" &amp;&amp; childName === "rightCurlyBracket") {
+            return { start: this.getEnd(node) - 1, end: this.getEnd(node) };
+        }
+        const [directChildName, ...nestedChildName] = childName.split(".");
+        const childNode = node[directChildName];
+        if (childNode) {
+            if (Array.isArray(childNode)) {
+                const [childDirectChildName, ...childNestedChildName] = nestedChildName;
+                if (childNestedChildName.length > 0) {
+                    return this.childNodeRange(childNode[childDirectChildName], childNestedChildName.join("."));
+                }
+                if (!Number.isNaN(childDirectChildName)) {
+                    const childChildNode = childNode.at(Number.parseInt(childDirectChildName));
+                    if (childChildNode) {
+                        return { start: this.getStart(childChildNode), end: this.getEnd(childChildNode) };
+                    }
+                    else {
+                        return { start: this.getEnd(node) - 1, end: this.getEnd(node) - 1 };
+                    }
+                }
+                else {
+                    throw new error_1.NotSupportedError(`${childName} is not supported for ${this.getSource(node)}`);
+                }
+            }
+            if (nestedChildName.length > 0) {
+                return this.childNodeRange(childNode, nestedChildName.join("."));
+            }
+            if (childNode) {
+                return { start: this.getStart(childNode), end: this.getEnd(childNode) };
+            }
+        }
+        throw new error_1.NotSupportedError(`${childName} is not supported for ${this.getSource(node)}`);
+    }
+    getStart(node) {
+        if (node.start.line === 1) {
+            return node.start.column - 1;
+        }
+        return this.lineCharsCount(this.fileContent(node), node.start.line - 1) + node.start.column - 1;
+    }
+    getEnd(node) {
+        if (node.end.line === 1) {
+            return node.end.column;
+        }
+        return this.lineCharsCount(this.fileContent(node), node.end.line - 1) + node.end.column;
+    }
+    getStartLoc(node) {
+        return { line: node.start.line, column: node.start.column - 1 };
+    }
+    getEndLoc(node) {
+        return { line: node.end.line, column: node.end.column };
+    }
+    getIndent(node) {
+        return node.start.column - 1;
+    }
+    actualValue(node, multiKeys) {
+        let childNode = node;
+        multiKeys.forEach((key) => {
+            if (!childNode)
+                return;
+            if (childNode[key]) {
+                childNode = childNode[key];
+            }
+            else {
+                throw `${key} is not supported for ${this.getSource(childNode)}`;
+            }
+        });
+        return childNode;
+    }
+    // Get the char count of lines of code.
+    // @param code {String} source code.
+    // @param lines {Number} lines of code.
+    // @return {Number} char count of lines of code.
+    lineCharsCount(code, lines) {
+        return code.split("\n").slice(0, lines).join("\n").length + 1;
     }
 }
-exports.NotSupportedError = NotSupportedError;
-/**
- * ConflictActionError is thrown when there is a conflict among actions.
- */
-class ConflictActionError extends Error {
-    constructor() {
-        super("mutation actions are conflicted");
-        this.name = "ConflictActionError";
-    }
-}
-exports.ConflictActionError = ConflictActionError;
+exports.default = GonzalesPeAdapter;
 </code></pre>
         </article>
     </section>

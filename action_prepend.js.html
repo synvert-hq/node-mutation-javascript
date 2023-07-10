@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>error.js - Documentation</title>
+    <title>action/prepend.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">error.js</h1>
+    <h1 class="page-title">action/prepend.js</h1>
     
 
     
@@ -40,29 +40,55 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>"use strict";
+var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
+    return (mod &amp;&amp; mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConflictActionError = exports.NotSupportedError = void 0;
+exports.PrependAction = void 0;
+const action_1 = require("../action");
+const helpers_1 = require("../helpers");
+const node_mutation_1 = __importDefault(require("../node-mutation"));
 /**
- * NotSupportedError is thrown when calling a not supported method on AST node.
- * @extends Error
+ * PrependAction to prepend code to the top of node body.
+ * @extends BaseAction
  */
-class NotSupportedError extends Error {
-    constructor(message) {
-        super(message);
-        this.name = "NotSupportedError";
+class PrependAction extends action_1.BaseAction {
+    /**
+     * Create an AppendAction
+     * @param {T} node
+     * @param {string} code
+     */
+    constructor(node, code) {
+        super(node, code);
+        this.type = "insert";
+    }
+    /**
+     * Calculate the begin and end positions.
+     * @protected
+     */
+    calculatePositions() {
+        this.start = (0, helpers_1.getAdapter)().getStart(this.node) + (0, helpers_1.getAdapter)().getSource(this.node).indexOf("{") + "{\n".length;
+        this.end = this.start;
+    }
+    /**
+     * The rewritten source code.
+     * @returns {string} rewritten code.
+     */
+    get newCode() {
+        const source = this.rewrittenSource();
+        const indent = " ".repeat((0, helpers_1.getAdapter)().getIndent(this.node) + node_mutation_1.default.tabWidth);
+        if (source.split("\n").length > 1) {
+            return (source
+                .split("\n")
+                .map((line) => indent + line)
+                .join("\n") + "\n");
+        }
+        else {
+            return indent + source + "\n";
+        }
     }
 }
-exports.NotSupportedError = NotSupportedError;
-/**
- * ConflictActionError is thrown when there is a conflict among actions.
- */
-class ConflictActionError extends Error {
-    constructor() {
-        super("mutation actions are conflicted");
-        this.name = "ConflictActionError";
-    }
-}
-exports.ConflictActionError = ConflictActionError;
+exports.PrependAction = PrependAction;
 </code></pre>
         </article>
     </section>

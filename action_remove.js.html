@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>error.js - Documentation</title>
+    <title>action/remove.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">error.js</h1>
+    <h1 class="page-title">action/remove.js</h1>
     
 
     
@@ -41,28 +41,82 @@
         <article>
             <pre class="prettyprint source linenums"><code>"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConflictActionError = exports.NotSupportedError = void 0;
+exports.RemoveAction = void 0;
+const action_1 = require("../action");
+const helpers_1 = require("../helpers");
 /**
- * NotSupportedError is thrown when calling a not supported method on AST node.
- * @extends Error
+ * RemoveAction to remove current node.
+ * @extends BaseAction
  */
-class NotSupportedError extends Error {
-    constructor(message) {
-        super(message);
-        this.name = "NotSupportedError";
+class RemoveAction extends action_1.BaseAction {
+    /**
+     * Create a RemoveAction
+     * @param {T} node
+     */
+    constructor(node) {
+        super(node, "");
+        this.type = "delete";
+    }
+    /**
+     * Calculate the begin and end positions.
+     * @protected
+     */
+    calculatePositions() {
+        if (this.takeWholeLine()) {
+            this.removeNewLine();
+            this.squeezeLines();
+        }
+        else {
+            this.start = (0, helpers_1.getAdapter)().getStart(this.node);
+            this.end = (0, helpers_1.getAdapter)().getEnd(this.node);
+            this.squeezeSpaces();
+            this.removeBraces();
+            this.removeComma();
+            this.removeSpace();
+        }
+    }
+    /**
+     * The rewritten code, always empty string.
+     */
+    get newCode() {
+        return "";
+    }
+    /**
+     * Remove the whole line.
+     * @private
+     */
+    removeNewLine() {
+        const lines = this.source().split("\n");
+        const beginLine = (0, helpers_1.getAdapter)().getStartLoc(this.node).line;
+        const endLine = (0, helpers_1.getAdapter)().getEndLoc(this.node).line;
+        this.start =
+            lines.slice(0, beginLine - 1).join("\n").length +
+                (beginLine === 1 ? 0 : "\n".length);
+        this.end = lines.slice(0, endLine).join("\n").length;
+        if (lines.length > endLine) {
+            this.end = this.end + "\n".length;
+        }
+    }
+    /**
+     * Check if the source code of this node takes the whole line.
+     * @private
+     * @returns {boolean}
+     */
+    takeWholeLine() {
+        const beginLine = (0, helpers_1.getAdapter)().getStartLoc(this.node).line;
+        const endLine = (0, helpers_1.getAdapter)().getEndLoc(this.node).line;
+        const sourceFromFile = this.source()
+            .split("\n")
+            .slice(beginLine - 1, endLine)
+            .join("\n")
+            .trim();
+        const source = (0, helpers_1.getAdapter)().getSource(this.node);
+        return (source === sourceFromFile ||
+            source + ";" === sourceFromFile ||
+            source + "," === sourceFromFile);
     }
 }
-exports.NotSupportedError = NotSupportedError;
-/**
- * ConflictActionError is thrown when there is a conflict among actions.
- */
-class ConflictActionError extends Error {
-    constructor() {
-        super("mutation actions are conflicted");
-        this.name = "ConflictActionError";
-    }
-}
-exports.ConflictActionError = ConflictActionError;
+exports.RemoveAction = RemoveAction;
 </code></pre>
         </article>
     </section>

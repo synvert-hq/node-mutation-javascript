@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>error.js - Documentation</title>
+    <title>adapter/typescript.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">error.js</h1>
+    <h1 class="page-title">adapter/typescript.js</h1>
     
 
     
@@ -41,28 +41,183 @@
         <article>
             <pre class="prettyprint source linenums"><code>"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConflictActionError = exports.NotSupportedError = void 0;
-/**
- * NotSupportedError is thrown when calling a not supported method on AST node.
- * @extends Error
- */
-class NotSupportedError extends Error {
-    constructor(message) {
-        super(message);
-        this.name = "NotSupportedError";
+const typescript_1 = require("typescript");
+const error_1 = require("../error");
+class TypescriptAdapter {
+    getSource(node, options) {
+        if (options &amp;&amp; options.fixIndent) {
+            const column = this.getIndent(node);
+            return node.getText().trimEnd()
+                .split("\n")
+                .map((line, index) => {
+                if (index === 0 || line === "") {
+                    return line;
+                }
+                else {
+                    const index = line.search(/\S|$/);
+                    return index &lt; column ? line.slice(index) : line.slice(column);
+                }
+            })
+                .join("\n");
+        }
+        else {
+            // typescript getText() may contain trailing whitespaces and newlines.
+            return node.getText().trimEnd();
+        }
     }
-}
-exports.NotSupportedError = NotSupportedError;
-/**
- * ConflictActionError is thrown when there is a conflict among actions.
- */
-class ConflictActionError extends Error {
-    constructor() {
-        super("mutation actions are conflicted");
-        this.name = "ConflictActionError";
+    /**
+     * Get the new source code after evaluating the node.
+     * @param {Node} node - The node to evaluate.
+     * @param {string} code - The code to evaluate.
+     * @returns {string} The new source code.
+     * @example
+     * node = ts.createSourceFile("code.ts", "foo.substring(1, 2)")
+     * rewrittenSource(node, "{{expression.name}}") // substring
+     *
+     * // node array
+     * node = ts.createSourceFile("code.ts", "foo.substring(1, 2)")
+     * rewrittenSource(node, "{{expression.expression}}.slice({{expression.arguments}})") // foo.slice(1, 2)
+     *
+     * // index for node array
+     * node = espree.parse("foo.substring(1, 2)")
+     * rewrittenSource(node, "{{expression.arguments.1}}") // 2
+     */
+    rewrittenSource(node, code) {
+        return code.replace(/{{(.+?)}}/gm, (_string, match, _offset) => {
+            if (!match)
+                return null;
+            const obj = this.actualValue(node, match.split("."));
+            if (obj) {
+                if (Array.isArray(obj)) {
+                    return this.fileContent(node).slice(this.getStart(obj[0]), this.getEnd(obj[obj.length - 1]));
+                }
+                if (obj.hasOwnProperty("kind")) {
+                    return this.getSource(obj);
+                }
+                else {
+                    return obj;
+                }
+            }
+            else {
+                throw new error_1.NotSupportedError(`can not parse "${code}"`);
+            }
+        });
     }
+    fileContent(node) {
+        return node.getSourceFile().getFullText();
+    }
+    /**
+     * Get the source range of child node.
+     * @param {Node} node - The node.
+     * @param {string} childName - The name to find child node.
+     * @returns {Object} The range of the child node, e.g. { start: 0, end: 10 }
+     * @throws {NotSupportedError} if we can't get the range.
+     * @example
+     * node = ts.createSourceFile("code.ts", "function foobar(foo, bar) {}")
+     * childNodeRange(node, "name") // { start: "function ".length, end: "function foobar".length }
+     *
+     * // node array
+     * node = ts.createSourceFile("code.ts", "function foobar(foo, bar) {}")
+     * childNodeRange(node, "parameters") // { start: "function foobar".length, end: "function foobar(foo, bar)".length }
+     *
+     * // index for node array
+     * node = ts.createSourceFile("code.ts", "function foobar(foo, bar) {}")
+     * childNodeRange(node, "parameters.1") // { start: "function foobar(foo, ".length, end: "function foobar(foo, bar".length }
+     *
+     * // semicolon for PropertyAssignment node
+     * node = ts.createSourceFile("code.ts", "{ foo: bar }");
+     * childNodeRange(node, "semicolon") // { start: "{ foo", end: "{ foo:".length }
+     *
+     * // dot for PropertyAccessExpression node
+     * node = ts.createSourceFile("code.ts", "foo.bar")
+     * childNodeRange(node, "dot") // { start: "foo".length, end: "foo.".length }
+     */
+    childNodeRange(node, childName) {
+        if (["arguments", "parameters"].includes(childName)) {
+            const elements = node[childName];
+            return { start: this.getStart(elements[0]) - 1, end: this.getEnd(elements[elements.length - 1]) + 1 };
+        }
+        else if (node.kind === typescript_1.SyntaxKind.PropertyAssignment &amp;&amp; childName === "semicolon") {
+            return { start: this.getEnd(node.name), end: this.getEnd(node.name) + 1 };
+        }
+        else if (node.kind === typescript_1.SyntaxKind.PropertyAccessExpression &amp;&amp; childName === "dot") {
+            return { start: this.getStart(node.name) - 1, end: this.getStart(node.name) };
+        }
+        else {
+            const [directChildName, ...nestedChildName] = childName.split(".");
+            if (node[directChildName]) {
+                const childNode = node[directChildName];
+                if (Array.isArray(childNode)) {
+                    const [childDirectChildName, ...childNestedChildName] = nestedChildName;
+                    if (childNestedChildName.length > 0) {
+                        return this.childNodeRange(childNode[childDirectChildName], childNestedChildName.join("."));
+                    }
+                    if (typeof childNode[childDirectChildName] === "function") {
+                        const childChildNode = childNode[childDirectChildName]();
+                        return { start: this.getStart(childChildNode), end: this.getEnd(childChildNode) };
+                    }
+                    else if (!Number.isNaN(childDirectChildName)) {
+                        const childChildNode = childNode.at(Number.parseInt(childDirectChildName));
+                        if (childChildNode) {
+                            return { start: this.getStart(childChildNode), end: this.getEnd(childChildNode) };
+                        }
+                        else {
+                            return { start: this.getEnd(node) - 1, end: this.getEnd(node) - 1 };
+                        }
+                    }
+                    else {
+                        throw new error_1.NotSupportedError(`${childName} is not supported for ${this.getSource(node)}`);
+                    }
+                }
+                if (nestedChildName.length > 0) {
+                    return this.childNodeRange(childNode, nestedChildName.join("."));
+                }
+                if (childNode) {
+                    return { start: this.getStart(childNode), end: this.getEnd(childNode) };
+                }
+            }
+        }
+        throw new error_1.NotSupportedError(`${childName} is not supported for ${this.getSource(node)}`);
+    }
+    getStart(node) {
+        return node.getStart();
+    }
+    getEnd(node) {
+        // typescript getText() may contain trailing whitespaces and newlines.
+        const trailingLength = node.getText().length - node.getText().trimEnd().length;
+        return node.getEnd() - trailingLength;
+    }
+    getStartLoc(node) {
+        const { line, character } = node.getSourceFile().getLineAndCharacterOfPosition(this.getStart(node));
+        return { line: line + 1, column: character };
+    }
+    getEndLoc(node) {
+        const { line, character } = node.getSourceFile().getLineAndCharacterOfPosition(this.getEnd(node));
+        return { line: line + 1, column: character };
+    }
+    getIndent(node) {
+        return this.fileContent(node).split("\n")[this.getStartLoc(node).line - 1].search(/\S|$/);
+    }
+    actualValue(node, multiKeys) {
+        let childNode = node;
+        multiKeys.forEach((key) => {
+            if (!childNode)
+                return;
+            if (childNode.hasOwnProperty(key)) {
+                childNode = childNode[key];
+            }
+            else if (typeof childNode[key] === "function") {
+                childNode = childNode[key].call(childNode);
+            }
+            else {
+                throw `${key} is not supported for ${this.getSource(childNode)}`;
+            }
+        });
+        return childNode;
+    }
+    ;
 }
-exports.ConflictActionError = ConflictActionError;
+exports.default = TypescriptAdapter;
 </code></pre>
         </article>
     </section>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>error.js - Documentation</title>
+    <title>action/base.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">error.js</h1>
+    <h1 class="page-title">action/base.js</h1>
     
 
     
@@ -40,29 +40,178 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>"use strict";
+var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
+    return (mod &amp;&amp; mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConflictActionError = exports.NotSupportedError = void 0;
+exports.BaseAction = void 0;
+const helpers_1 = require("../helpers");
+const debug_1 = __importDefault(require("debug"));
 /**
- * NotSupportedError is thrown when calling a not supported method on AST node.
- * @extends Error
+ * Action does some real actions, e.g. insert / replace / delete code.
  */
-class NotSupportedError extends Error {
-    constructor(message) {
-        super(message);
-        this.name = "NotSupportedError";
+class BaseAction {
+    /**
+     * Create an Action.
+     * @param {T} node
+     * @param {string} code - new code to insert, replace or delete
+     */
+    constructor(node, code) {
+        this.node = node;
+        this.code = code;
+        this.start = -1;
+        this.end = -1;
+        this.type = "";
+    }
+    /**
+     * Calculate begin and end positions, and return an action.
+     * @returns {Action} action
+     */
+    process() {
+        this.calculatePositions();
+        (0, debug_1.default)("node-mutation")(`${this.constructor.name}[${this.start}-${this.end}]:${this.newCode}`);
+        const result = {
+            type: this.type,
+            start: this.start,
+            end: this.end,
+            newCode: this.newCode,
+        };
+        if (this.conflictPosition) {
+            result.conflictPosition = this.conflictPosition;
+        }
+        return result;
+    }
+    /**
+     * The rewritten source code.
+     * @protected
+     * @returns {string} rewritten source code.
+     */
+    rewrittenSource() {
+        return (0, helpers_1.getAdapter)().rewrittenSource(this.node, this.code);
+    }
+    /**
+     * Get the source code of this node.
+     * @protected
+     * @returns source code of this node.
+     */
+    source() {
+        return (0, helpers_1.getAdapter)().fileContent(this.node);
+    }
+    /**
+     * Squeeze spaces from source code.
+     * @protected
+     */
+    squeezeSpaces() {
+        const source = this.source();
+        const beforeCharIsSpace = source[this.start - 1] === " ";
+        const afterCharIsSpace = source[this.end] == " ";
+        if (beforeCharIsSpace &amp;&amp; afterCharIsSpace) {
+            this.start = this.start - 1;
+        }
+    }
+    /**
+     * Squeeze empty lines from source code.
+     * @protected
+     */
+    squeezeLines() {
+        const lines = this.source().split("\n");
+        const beginLine = (0, helpers_1.getAdapter)().getStartLoc(this.node).line;
+        const endLine = (0, helpers_1.getAdapter)().getEndLoc(this.node).line;
+        const beforeLineIsBlank = endLine === 1 || lines[beginLine - 2] === "";
+        const afterLineIsBlank = lines[endLine] === "";
+        if (lines.length > 1 &amp;&amp; beforeLineIsBlank &amp;&amp; afterLineIsBlank) {
+            this.end = this.end + "\n".length;
+        }
+    }
+    /**
+     * Remove unused braces.
+     * e.g. `foobar({ foo: bar })`, if we remove `foo: bar`, braces should also be removed.
+     * @protected
+     */
+    removeBraces() {
+        if (this.prevTokenIs("{") &amp;&amp; this.nextTokenIs("}")) {
+            this.start = this.start - 1;
+            this.end = this.end + 1;
+        }
+        else if (this.prevTokenIs("{ ") &amp;&amp; this.nextTokenIs(" }")) {
+            this.start = this.start - 2;
+            this.end = this.end + 2;
+        }
+        else if (this.prevTokenIs("{") &amp;&amp; this.nextTokenIs(" }")) {
+            this.start = this.start - 1;
+            this.end = this.end + 2;
+        }
+        else if (this.prevTokenIs("{ ") &amp;&amp; this.nextTokenIs("}")) {
+            this.start = this.start - 2;
+            this.end = this.end + 1;
+        }
+    }
+    /**
+     * Rmove unused comma.
+     * e.g. `foobar(foo, bar)`, if we remove `foo`, the comma should also be removed,
+     * the code should be changed to `foobar(bar)`.
+     * @protected
+     */
+    removeComma() {
+        if (this.prevTokenIs(",")) {
+            this.start = this.start - 1;
+        }
+        else if (this.prevTokenIs(", ")) {
+            this.start = this.start - 2;
+        }
+        else if (this.nextTokenIs(", ") &amp;&amp; !this.startWith(":")) {
+            this.end = this.end + 2;
+        }
+        else if (this.nextTokenIs(",") &amp;&amp; !this.startWith(":")) {
+            this.end = this.end + 1;
+        }
+    }
+    /**
+     * Remove unused space.
+     * e.g. `&lt;div foo='bar'>foobar&lt;/div>`, if we remove `foo='bar`, the space should also be removed,
+     * the code shoulde be changed to `&lt;div>foobar&lt;/div>`.
+     * @protected
+     */
+    removeSpace() {
+        // this happens when removing a property in jsx element.
+        if (this.prevTokenIs(" ") &amp;&amp; this.nextTokenIs(">")) {
+            this.start = this.start - 1;
+        }
+        if (this.prevTokenIs(" ") &amp;&amp; this.nextTokenIs("\n")) {
+            this.start = this.start - 1;
+        }
+    }
+    /**
+     * Check if next token is substr.
+     * @private
+     * @param {string} substr
+     * @returns {boolean} true if next token is equal to substr
+     */
+    nextTokenIs(substr) {
+        return (this.source().slice(this.end, this.end + substr.length) === substr);
+    }
+    /**
+     * Check if previous token is substr.
+     * @private
+     * @param {string} substr
+     * @returns {boolean} true if previous token is equal to substr
+     */
+    prevTokenIs(substr) {
+        return (this.source().slice(this.start - substr.length, this.start) ===
+            substr);
+    }
+    /**
+     * Check if the node source starts with semicolon.
+     * @private
+     * @param {string} substr
+     * @returns {boolean} true if the node source starts with semicolon
+     */
+    startWith(substr) {
+        return (this.source().slice(this.start, this.start + substr.length) ===
+            substr);
     }
 }
-exports.NotSupportedError = NotSupportedError;
-/**
- * ConflictActionError is thrown when there is a conflict among actions.
- */
-class ConflictActionError extends Error {
-    constructor() {
-        super("mutation actions are conflicted");
-        this.name = "ConflictActionError";
-    }
-}
-exports.ConflictActionError = ConflictActionError;
+exports.BaseAction = BaseAction;
 </code></pre>
         </article>
     </section>
