@@ -4,6 +4,7 @@ export type Action = {
   end: number,
   newCode?: string,
   conflictPosition?: number, // insert position when insert at the same position
+  actions?: Action[],
 };
 
 export type POSITION = "beginning" | "end";

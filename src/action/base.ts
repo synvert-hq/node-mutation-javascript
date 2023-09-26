@@ -10,6 +10,7 @@ export abstract class BaseAction<T> {
   protected start: number;
   protected end: number;
   protected conflictPosition?: number;
+  protected actions?: Action[];
 
   /**
    * Create an Action.
@@ -42,6 +43,7 @@ export abstract class BaseAction<T> {
       start: this.start,
       end: this.end,
       newCode: this.newCode,
+      actions: this.actions,
     };
     if (this.conflictPosition) {
       result.conflictPosition = this.conflictPosition;

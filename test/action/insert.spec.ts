@@ -4,7 +4,6 @@ import { parseCode } from "../helper";
 
 describe("InsertAction", () => {
   const node = parseCode("this.foo");
-  let action: InsertAction<Node>;
 
   describe("at beginning", () => {
     it("get range and rewritten code", () => {
