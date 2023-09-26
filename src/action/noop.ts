@@ -19,8 +19,8 @@ export class NoopAction<T> extends BaseAction<T> {
    * @protected
    */
   calculatePositions(): void {
-    this.start = getAdapter<T>().getStart(this.node);
-    this.end = getAdapter<T>().getEnd(this.node);
+    this.start = getAdapter<T>().getStart(this.node!);
+    this.end = getAdapter<T>().getEnd(this.node!);
   }
 
   get newCode() {

@@ -32,12 +32,12 @@ export class ReplaceAction<T> extends BaseAction<T> {
   calculatePositions(): void {
     this.start = Math.min(
       ...this.selectors.map(
-        (selector) => getAdapter<T>().childNodeRange(this.node, selector).start
+        (selector) => getAdapter<T>().childNodeRange(this.node!, selector).start
       )
     );
     this.end = Math.max(
       ...this.selectors.map(
-        (selector) => getAdapter<T>().childNodeRange(this.node, selector).end
+        (selector) => getAdapter<T>().childNodeRange(this.node!, selector).end
       )
     );
   }

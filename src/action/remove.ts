@@ -24,8 +24,8 @@ export class RemoveAction<T> extends BaseAction<T> {
       this.removeNewLine();
       this.squeezeLines();
     } else {
-      this.start = getAdapter<T>().getStart(this.node);
-      this.end = getAdapter<T>().getEnd(this.node);
+      this.start = getAdapter<T>().getStart(this.node!);
+      this.end = getAdapter<T>().getEnd(this.node!);
       this.squeezeSpaces();
       this.removeBraces();
       this.removeComma();
@@ -46,8 +46,8 @@ export class RemoveAction<T> extends BaseAction<T> {
    */
   private removeNewLine(): void {
     const lines = this.source().split("\n");
-    const beginLine = getAdapter<T>().getStartLoc(this.node).line;
-    const endLine = getAdapter<T>().getEndLoc(this.node).line;
+    const beginLine = getAdapter<T>().getStartLoc(this.node!).line;
+    const endLine = getAdapter<T>().getEndLoc(this.node!).line;
     this.start =
       lines.slice(0, beginLine - 1).join("\n").length +
       (beginLine === 1 ? 0 : "\n".length);
@@ -63,14 +63,14 @@ export class RemoveAction<T> extends BaseAction<T> {
    * @returns {boolean}
    */
   private takeWholeLine(): boolean {
-    const beginLine = getAdapter<T>().getStartLoc(this.node).line;
-    const endLine = getAdapter<T>().getEndLoc(this.node).line;
+    const beginLine = getAdapter<T>().getStartLoc(this.node!).line;
+    const endLine = getAdapter<T>().getEndLoc(this.node!).line;
     const sourceFromFile = this.source()
       .split("\n")
       .slice(beginLine - 1, endLine)
       .join("\n")
       .trim();
-    const source = getAdapter<T>().getSource(this.node);
+    const source = getAdapter<T>().getSource(this.node!);
     return (
       source === sourceFromFile ||
       source + ";" === sourceFromFile ||

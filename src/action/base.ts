@@ -16,7 +16,7 @@ export abstract class BaseAction<T> {
    * @param {T} node
    * @param {string} code - new code to insert, replace or delete
    */
-  constructor(protected node: T, protected code: string) {
+  constructor(protected node: T | undefined, protected code: string) {
     this.start = -1;
     this.end = -1;
     this.type = "";
@@ -61,7 +61,7 @@ export abstract class BaseAction<T> {
    * @returns {string} rewritten source code.
    */
   protected rewrittenSource(): string {
-    return getAdapter<T>().rewrittenSource(this.node, this.code);
+    return getAdapter<T>().rewrittenSource(this.node!, this.code);
   }
 
   /**
@@ -70,7 +70,7 @@ export abstract class BaseAction<T> {
    * @returns source code of this node.
    */
   protected source(): string {
-    return getAdapter<T>().fileContent(this.node);
+    return getAdapter<T>().fileContent(this.node!);
   }
 
   /**
@@ -92,8 +92,8 @@ export abstract class BaseAction<T> {
    */
   protected squeezeLines(): void {
     const lines = this.source().split("\n");
-    const beginLine = getAdapter<T>().getStartLoc(this.node).line;
-    const endLine = getAdapter<T>().getEndLoc(this.node).line;
+    const beginLine = getAdapter<T>().getStartLoc(this.node!).line;
+    const endLine = getAdapter<T>().getEndLoc(this.node!).line;
     const beforeLineIsBlank = endLine === 1 || lines[beginLine - 2] === "";
     const afterLineIsBlank = lines[endLine] === "";
     if (lines.length > 1 && beforeLineIsBlank && afterLineIsBlank) {

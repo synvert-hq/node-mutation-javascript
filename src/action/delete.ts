@@ -29,12 +29,12 @@ export class DeleteAction<T> extends BaseAction<T> {
   calculatePositions(): void {
     this.start = Math.min(
       ...this.selectors.map(
-        (selector) => getAdapter<T>().childNodeRange(this.node, selector).start
+        (selector) => getAdapter<T>().childNodeRange(this.node!, selector).start
       )
     );
     this.end = Math.max(
       ...this.selectors.map(
-        (selector) => getAdapter<T>().childNodeRange(this.node, selector).end
+        (selector) => getAdapter<T>().childNodeRange(this.node!, selector).end
       )
     );
     this.squeezeSpaces();
@@ -72,11 +72,11 @@ export class DeleteAction<T> extends BaseAction<T> {
   }
 
   private beginLine(): number {
-    return getAdapter<T>().fileContent(this.node).slice(0, this.start).split("\n").length;
+    return getAdapter<T>().fileContent(this.node!).slice(0, this.start).split("\n").length;
   }
 
   private endLiine(): number {
-    return getAdapter<T>().fileContent(this.node).slice(0, this.end).split("\n").length;
+    return getAdapter<T>().fileContent(this.node!).slice(0, this.end).split("\n").length;
   }
 }
 

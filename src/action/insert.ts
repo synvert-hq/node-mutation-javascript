@@ -32,8 +32,8 @@ export class InsertAction<T> extends BaseAction<T> {
    */
   calculatePositions(): void {
     const range = this.selector
-      ? getAdapter<T>().childNodeRange(this.node, this.selector)
-      : { start: getAdapter<T>().getStart(this.node), end: getAdapter<T>().getEnd(this.node) };
+      ? getAdapter<T>().childNodeRange(this.node!, this.selector)
+      : { start: getAdapter<T>().getStart(this.node!), end: getAdapter<T>().getEnd(this.node!) };
     this.start = this.at === "beginning" ? range.start : range.end;
     this.end = this.start;
   }

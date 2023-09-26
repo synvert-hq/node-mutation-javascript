@@ -22,7 +22,7 @@ export class PrependAction<T> extends BaseAction<T> {
    * @protected
    */
   calculatePositions(): void {
-    this.start = getAdapter<T>().getStart(this.node) + getAdapter<T>().getSource(this.node).indexOf("{") + "{\n".length;
+    this.start = getAdapter<T>().getStart(this.node!) + getAdapter<T>().getSource(this.node!).indexOf("{") + "{\n".length;
     this.end = this.start;
   }
 
@@ -32,7 +32,7 @@ export class PrependAction<T> extends BaseAction<T> {
    */
   get newCode(): string {
     const source = this.rewrittenSource();
-    const indent = " ".repeat(getAdapter<T>().getIndent(this.node) + NodeMutation.tabWidth);
+    const indent = " ".repeat(getAdapter<T>().getIndent(this.node!) + NodeMutation.tabWidth);
     if (source.split("\n").length > 1) {
       return (
         source
