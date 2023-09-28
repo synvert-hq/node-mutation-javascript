@@ -61,6 +61,11 @@ mutation.replace(node: Node, selectors: string | string[], options: ReplaceOptio
 mutation.replaceWith(node: Node, code: string)
 // no operation
 mutation.noop(node: Node)
+// group actions
+mutation.group(() => {
+  mutation.delete(node: Node, selectors: string | string[])
+  mutation.insert(node: Node, code: string, options: InsertOptions)
+})
 ```
 
 3. process actions and write the new source code to file:
