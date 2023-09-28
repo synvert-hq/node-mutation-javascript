@@ -1,5 +1,12 @@
 # NodeMutation
 
+## 1.13.0 (2023-09-29)
+
+* Add `actions` attributes to `Action`
+* Do not expose `Nodemutation#actions`
+* Add `GroupAction`
+* Add `group` api
+
 ## 1.12.0 (2023-07-09)
 
 * Update `@xinminlabs/gonzales-pe` to 1.1.0
