@@ -108,6 +108,25 @@ describe("NodeMutation", () => {
         }
       `)
     });
+
+    it("groups actions", () => {
+      NodeMutation.configure({ strategy: Strategy.KEEP_RUNNING });
+      const mutation = new NodeMutation<Node>(source);
+      const node = parseCode(source);
+      mutation.group(() => {
+        mutation.insert(node, " extends Foo", { at: "end", to: "name" });
+        mutation.insert(node, " extends Bar", { at: "end", to: "name" });
+      });
+      const result = mutation.process();
+      expect(result.affected).toBeTruthy();
+      expect(result.conflicted).toBeFalsy();
+      expect(result.newSource).toEqual(dedent`
+        class FooBar extends Foo extends Bar {
+          foo() {}
+          bar() {}
+        }
+      `)
+    });
   });
 
   describe("test", () => {
@@ -179,6 +198,36 @@ describe("NodeMutation", () => {
       expect(() => {
         mutation.test();
       }).toThrowError(new ConflictActionError());
+    });
+
+    it("groups actions", () => {
+      NodeMutation.configure({ strategy: Strategy.KEEP_RUNNING });
+      const mutation = new NodeMutation<Node>(source);
+      const node = parseCode(source);
+      mutation.group(() => {
+        mutation.insert(node, " extends Foo", { at: "end", to: "name" });
+        mutation.insert(node, " extends Bar", { at: "end", to: "name" });
+      });
+      const result = mutation.test();
+      expect(result.affected).toBeTruthy();
+      expect(result.conflicted).toBeFalsy();
+      expect(result.actions).toEqual([{
+        "type": "group",
+        "start": 12,
+        "end": 12,
+        "actions": [{
+          "type": "insert",
+          "start": 12,
+          "end": 12,
+          "newCode": " extends Foo",
+        },
+        {
+          "type": "insert",
+          "start": 12,
+          "end": 12,
+          "newCode": " extends Bar",
+        }],
+      }])
     });
   });
 });
