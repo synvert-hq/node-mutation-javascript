@@ -2,6 +2,8 @@ import dedent from "dedent";
 import NodeMutation from "../src/node-mutation";
 import Strategy from "../src/strategy";
 import { ConflictActionError } from "../src/error";
+import { parseCode } from "./helper";
+import { Node } from "typescript";
 
 describe("NodeMutation", () => {
   describe("configure", () => {
@@ -28,18 +30,9 @@ describe("NodeMutation", () => {
 
     it("gets no conflict", () => {
       const mutation = new NodeMutation<Node>(source);
-      mutation.actions.push({
-        type: "insert",
-        start: 0,
-        end: 0,
-        newCode: "'use strict'\n",
-      });
-      mutation.actions.push({
-        type: "replace",
-        start: "class ".length,
-        end: "class FooBar".length,
-        newCode: "Synvert",
-      });
+      const node = parseCode(source);
+      mutation.insert(node, "'use strict'\n", { at: "beginning" });
+      mutation.replace(node, "name", { with: "Synvert" });
       const result = mutation.process();
       expect(result.affected).toBeTruthy();
       expect(result.conflicted).toBeFalsy();
@@ -55,24 +48,10 @@ describe("NodeMutation", () => {
     it("gets conflict with KEEP_RUNNING strategy", () => {
       NodeMutation.configure({ strategy: Strategy.KEEP_RUNNING });
       const mutation = new NodeMutation<Node>(source);
-      mutation.actions.push({
-        type: "replace",
-        start: "class ".length,
-        end: "class FooBar".length,
-        newCode: "Synvert",
-      });
-      mutation.actions.push({
-        type: "insert",
-        start: "class FooBar".length,
-        end: "class FooBar".length,
-        newCode: " extends Base",
-      });
-      mutation.actions.push({
-        type: "replace",
-        start: 0,
-        end: "class Foobar".length,
-        newCode: "class Foobar extends Base",
-      });
+      const node = parseCode(source);
+      mutation.replace(node, "name", { with: "Foobar extends Base" });
+      mutation.replace(node, "name", { with: "Synvert" });
+      mutation.insert(node, " extends Base", { at: "end", to: "name" });
       const result = mutation.process();
       expect(result.affected).toBeTruthy();
       expect(result.conflicted).toBeTruthy();
@@ -87,24 +66,10 @@ describe("NodeMutation", () => {
     it("gets conflict with THROW_ERROR strategy", () => {
       NodeMutation.configure({ strategy: Strategy.THROW_ERROR });
       const mutation = new NodeMutation<Node>(source);
-      mutation.actions.push({
-        type: "replace",
-        start: "class ".length,
-        end: "class FooBar".length,
-        newCode: "Synvert",
-      });
-      mutation.actions.push({
-        type: "insert",
-        start: "class FooBar".length,
-        end: "class FooBar".length,
-        newCode: " extends Base",
-      });
-      mutation.actions.push({
-        type: "replace",
-        start: 0,
-        end: "class Foobar".length,
-        newCode: "class Foobar extends Base",
-      });
+      const node = parseCode(source);
+      mutation.replace(node, "name", { with: "Foobar extends Base" });
+      mutation.replace(node, "name", { with: "Synvert" });
+      mutation.insert(node, " extends Base", { at: "end", to: "name" });
       expect(() => {
         mutation.process();
       }).toThrowError(new ConflictActionError());
@@ -113,18 +78,9 @@ describe("NodeMutation", () => {
     it("gets no conflict with insert at the same position", () => {
       NodeMutation.configure({ strategy: Strategy.KEEP_RUNNING });
       const mutation = new NodeMutation<Node>(source);
-      mutation.actions.push({
-        type: "insert",
-        start: "class Foobar".length,
-        end: "class FooBar".length,
-        newCode: " extends Foo",
-      });
-      mutation.actions.push({
-        type: "insert",
-        start: "class FooBar".length,
-        end: "class FooBar".length,
-        newCode: " extends Bar",
-      });
+      const node = parseCode(source);
+      mutation.insert(node, " extends Foo", { at: "end", to: "name" });
+      mutation.insert(node, " extends Bar", { at: "end", to: "name" });
       const result = mutation.process();
       expect(result.affected).toBeTruthy();
       expect(result.conflicted).toBeFalsy();
@@ -136,23 +92,12 @@ describe("NodeMutation", () => {
       `)
     });
 
-    it("gets no conflict with insert at the same position", () => {
+    it("gets no conflict with insert at the same position with conflictPosition", () => {
       NodeMutation.configure({ strategy: Strategy.KEEP_RUNNING });
       const mutation = new NodeMutation<Node>(source);
-      mutation.actions.push({
-        type: "insert",
-        start: "class Foobar".length,
-        end: "class FooBar".length,
-        newCode: " extends Foo",
-        conflictPosition: 2,
-      });
-      mutation.actions.push({
-        type: "insert",
-        start: "class FooBar".length,
-        end: "class FooBar".length,
-        newCode: " extends Bar",
-        conflictPosition: 1,
-      });
+      const node = parseCode(source);
+      mutation.insert(node, " extends Foo", { at: "end", to: "name", conflictPosition: 2 });
+      mutation.insert(node, " extends Bar", { at: "end", to: "name", conflictPosition: 1 });
       const result = mutation.process();
       expect(result.affected).toBeTruthy();
       expect(result.conflicted).toBeFalsy();
@@ -181,72 +126,56 @@ describe("NodeMutation", () => {
 
     it("gets no conflict", () => {
       const mutation = new NodeMutation<Node>(source);
-      mutation.actions.push({
-        type: "insert",
-        start: 0,
-        end: 0,
-        newCode: "'use strict'\n",
-      });
-      mutation.actions.push({
-        type: "replace",
-        start: "class ".length,
-        end: "class FooBar".length,
-        newCode: "Synvert",
-      });
+      const node = parseCode(source);
+      mutation.insert(node, "'use strict'\n", { at: "beginning" });
+      mutation.replace(node, "name", { with: "Synvert" });
       const result = mutation.test();
       expect(result.affected).toBeTruthy();
       expect(result.conflicted).toBeFalsy();
-      expect(result.actions).toEqual(mutation.actions);
+      expect(result.actions).toEqual([{
+        "type": "insert",
+        "actions": undefined,
+        "start": 0,
+        "end": 0,
+        "newCode": "'use strict'\n",
+      }, {
+        "type": "replace",
+        "start": 6,
+        "end": 12,
+        "newCode": "Synvert",
+      }]);
     });
 
     it("get conflict with KEEP_RUNNING strategy", () => {
       NodeMutation.configure({ strategy: Strategy.KEEP_RUNNING });
       const mutation = new NodeMutation<Node>(source);
-      mutation.actions.push({
-        type: "replace",
-        start: "class ".length,
-        end: "class FooBar".length,
-        newCode: "Synvert",
-      });
-      mutation.actions.push({
-        type: "insert",
-        start: "class FooBar".length,
-        end: "class FooBar".length,
-        newCode: " extends Base",
-      });
-      mutation.actions.push({
-        type: "replace",
-        start: 0,
-        end: "class Foobar".length,
-        newCode: "class Foobar extends Base",
-      });
+      const node = parseCode(source);
+      mutation.replace(node, "name", { with: "Foobar extends Base" });
+      mutation.replace(node, "name", { with: "Synvert" });
+      mutation.insert(node, " extends Base", { at: "end", to: "name" });
       const result = mutation.test();
       expect(result.affected).toBeTruthy();
       expect(result.conflicted).toBeTruthy();
-      expect(result.actions).toEqual(mutation.actions);
+      expect(result.actions).toEqual([{
+        "type": "replace",
+        "start": 6,
+        "end": 12,
+        "newCode": "Synvert",
+      }, {
+        "type": "insert",
+        "start": 12,
+        "end": 12,
+        "newCode": " extends Base",
+      }]);
     });
 
     it("get conflict with THROW_ERROR strategy", () => {
       NodeMutation.configure({ strategy: Strategy.THROW_ERROR });
       const mutation = new NodeMutation<Node>(source);
-      mutation.actions.push({
-        type: "replace",
-        start: "class ".length,
-        end: "class FooBar".length,
-        newCode: "Synvert",
-      });
-      mutation.actions.push({
-        type: "insert",
-        start: "class FooBar".length,
-        end: "class FooBar".length,
-        newCode: " extends Base",
-      });
-      mutation.actions.push({
-        type: "replace",
-        start: 0,
-        end: "class Foobar".length,
-        newCode: "class Foobar extends Base",
-      });
+      const node = parseCode(source);
+      mutation.replace(node, "name", { with: "Foobar extends Base" });
+      mutation.replace(node, "name", { with: "Synvert" });
+      mutation.insert(node, " extends Base", { at: "end", to: "name" });
       expect(() => {
         mutation.test();
       }).toThrowError(new ConflictActionError());
