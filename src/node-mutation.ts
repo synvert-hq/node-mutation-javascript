@@ -267,10 +267,10 @@ class NodeMutation<T> {
    * @returns {ProcessResult}
    */
   process(): ProcessResult {
+    this.actions = this.flattenActions(this.actions);
     if (this.actions.length == 0) {
       return { affected: false, conflicted: false };
     }
-    this.actions = this.flattenActions(this.actions);
     let conflictActions = [];
     this.actions = this.sortActions(this.actions);
     conflictActions = this.getConflictActions(this.actions);
@@ -311,10 +311,10 @@ class NodeMutation<T> {
    * @returns {TestResult} if actions are conflicted and the actions
    */
   test(): TestResult {
+    this.actions = this.flattenActions(this.actions);
     if (this.actions.length == 0) {
       return { affected: false, conflicted: false, actions: [] };
     }
-    this.actions = this.flattenActions(this.actions);
     let conflictActions = [];
     this.actions = this.sortActions(this.actions);
     conflictActions = this.getConflictActions(this.actions);
