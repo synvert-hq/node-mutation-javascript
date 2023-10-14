@@ -48,13 +48,13 @@ mutation = new NodeMutation<Node>(filePath: string, source: string)
 // append the code to the current node.
 mutation.append(node: Node, code: string)
 // delete source code of the child ast node
-mutation.delete(node: Node, selectors: string | string[])
+mutation.delete(node: Node, selectors: string | string[], options: DeleteOptions)
 // insert code to the ast node.
 mutation.insert(node: Node, code: string, options: InsertOptions)
 // prepend code to the ast node.
 mutation.prepend(node: Node, code: string)
 // remove source code of the ast node
-mutation.remove(node: Node)
+mutation.remove(node: Node, options: RemoveOptions)
 // replace child node of the ast node with new code
 mutation.replace(node: Node, selectors: string | string[], options: ReplaceOptions)
 // replace the ast node with new code
@@ -63,7 +63,7 @@ mutation.replaceWith(node: Node, code: string)
 mutation.noop(node: Node)
 // group actions
 mutation.group(() => {
-  mutation.delete(node: Node, selectors: string | string[])
+  mutation.delete(node: Node, selectors: string | string[], options: DeleteOptions)
   mutation.insert(node: Node, code: string, options: InsertOptions)
 })
 ```

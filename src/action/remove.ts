@@ -1,18 +1,23 @@
 import { BaseAction } from "../action";
 import { getAdapter } from "../helpers";
+import { RemoveOptions } from "../types/action";
 
 /**
  * RemoveAction to remove current node.
  * @extends BaseAction
  */
 export class RemoveAction<T> extends BaseAction<T> {
+  private options: RemoveOptions;
+
   /**
    * Create a RemoveAction
    * @param {T} node
+   * @param {DeleteOptions} options
    */
-  constructor(node: T) {
+  constructor(node: T, options: RemoveOptions = {}) {
     super(node, "");
     this.type = "delete";
+    this.options = options;
   }
 
   /**
@@ -28,7 +33,9 @@ export class RemoveAction<T> extends BaseAction<T> {
       this.end = getAdapter<T>().getEnd(this.node!);
       this.squeezeSpaces();
       this.removeBraces();
-      this.removeComma();
+      if (this.options.andComma) {
+        this.removeComma();
+      }
       this.removeSpace();
     }
   }

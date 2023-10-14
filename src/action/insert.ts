@@ -1,4 +1,4 @@
-import type { POSITION, InsertOptions } from "../types/action";
+import type { InsertOptions } from "../types/action";
 import { BaseAction } from "../action";
 import { getAdapter } from "../helpers";
 
@@ -7,8 +7,8 @@ import { getAdapter } from "../helpers";
  * @extends BaseAction
  */
 export class InsertAction<T> extends BaseAction<T> {
-  private at?: POSITION;
   private selector?: string;
+  private options: InsertOptions;
 
   /**
    * Create an InsertAction
@@ -18,8 +18,8 @@ export class InsertAction<T> extends BaseAction<T> {
    */
   constructor(node: T, code: string, options: InsertOptions) {
     super(node, code);
-    this.at = options.at;
     this.selector = options.to;
+    this.options = options;
     this.type = "insert";
     if (options.conflictPosition) {
       this.conflictPosition = options.conflictPosition;
@@ -34,7 +34,7 @@ export class InsertAction<T> extends BaseAction<T> {
     const range = this.selector
       ? getAdapter<T>().childNodeRange(this.node!, this.selector)
       : { start: getAdapter<T>().getStart(this.node!), end: getAdapter<T>().getEnd(this.node!) };
-    this.start = this.at === "beginning" ? range.start : range.end;
+    this.start = this.options.at === "beginning" ? range.start : range.end;
     this.end = this.start;
   }
 
@@ -43,6 +43,9 @@ export class InsertAction<T> extends BaseAction<T> {
    * @returns {string} rewritten code.
    */
   get newCode(): string {
+    if (this.options.andComma) {
+      return this.options.at === "end" ? `, ${this.code}` : `${this.code}, `;
+    }
     return this.rewrittenSource();
   }
 }

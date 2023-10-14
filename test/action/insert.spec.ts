@@ -22,4 +22,41 @@ describe("InsertAction", () => {
       expect(action.process()).toEqual({ type: "insert", start: "this".length, end: "this".length, newCode: ".bar" });
     });
   });
+
+  describe("andComma", () => {
+    const code = `const foobar = { foo }`;
+    const node = parseCode(code);
+
+    describe("at beginning", () => {
+      it("gets range and rewritten code", () => {
+        const action = new InsertAction<Node>(node, "bar", {
+          at: "beginning",
+          to: "declarationList.declarations.0.initializer.properties.0",
+          andComma: true,
+        });
+        expect(action.process()).toEqual({
+          type: "insert",
+          start: "const foobar = { ".length,
+          end: "const foobar = { ".length,
+          newCode: "bar, ",
+        });
+      });
+    });
+
+    describe("at end", () => {
+      it("gets range and rewritten code", () => {
+        const action = new InsertAction<Node>(node, "bar", {
+          at: "end",
+          to: "declarationList.declarations.0.initializer.properties.0",
+          andComma: true,
+        });
+        expect(action.process()).toEqual({
+          type: "insert",
+          start: "const foobar = { foo".length,
+          end: "const foobar = { foo".length,
+          newCode: ", bar",
+        });
+      });
+    });
+  });
 });

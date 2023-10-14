@@ -8,18 +8,19 @@ import { DeleteOptions } from "../types/action";
  */
 export class DeleteAction<T> extends BaseAction<T> {
   private selectors: string[];
-  private wholeLine?: boolean;
+  private options: DeleteOptions;
 
   /**
    * Create a DeleteAction
    * @param {T} node
    * @param {string|string[]} selectors - name of child nodes
+   * @param {DeleteOptions} options
    */
   constructor(node: T, selectors: string | string[], options: DeleteOptions) {
     super(node, "");
     this.selectors = Array.isArray(selectors) ? selectors : Array(selectors);
     this.type = "delete";
-    this.wholeLine = options.wholeLine;
+    this.options = options;
   }
 
   /**
@@ -39,9 +40,11 @@ export class DeleteAction<T> extends BaseAction<T> {
     );
     this.squeezeSpaces();
     this.removeBraces();
-    this.removeComma();
+    if (this.options.andComma) {
+      this.removeComma();
+    }
     this.removeSpace();
-    if (this.wholeLine) {
+    if (this.options.wholeLine) {
       this.removeNewLine();
       this.squeezeLines();
     }

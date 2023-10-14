@@ -1,4 +1,4 @@
-import type { Action, InsertOptions, ReplaceOptions, DeleteOptions } from "./types/action";
+import type { Action, InsertOptions, ReplaceOptions, DeleteOptions, RemoveOptions } from "./types/action";
 import type { ProcessResult, TestResult } from "./types/node-mutation";
 import Adapter from "./adapter";
 import TypescriptAdapter from "./adapter/typescript";
@@ -184,6 +184,7 @@ class NodeMutation<T> {
   /**
    * Remove source code of the ast node
    * @param node {T} - ast node
+   * @param options {RemoveOptions}
    * @example
    * source code of the ast node is
    * ```
@@ -195,8 +196,8 @@ class NodeMutation<T> {
    * ```
    * the source code will be completely removed
    */
-  remove(node: T) {
-    this.actions.push(new RemoveAction<T>(node).process());
+  remove(node: T, options: RemoveOptions = {}) {
+    this.actions.push(new RemoveAction<T>(node, options).process());
   }
 
   /**

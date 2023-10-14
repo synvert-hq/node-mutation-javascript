@@ -131,14 +131,28 @@ export abstract class BaseAction<T> {
    * @protected
    */
   protected removeComma(): void {
-    if (this.prevTokenIs(",")) {
-      this.start = this.start - 1;
-    } else if (this.prevTokenIs(", ")) {
-      this.start = this.start - 2;
-    } else if (this.nextTokenIs(", ") && !this.startWith(":")) {
-      this.end = this.end + 2;
-    } else if (this.nextTokenIs(",") && !this.startWith(":")) {
-      this.end = this.end + 1;
+    let leadingCount = 1;
+    while (true) {
+      if (this.source()[this.start - leadingCount] === ',') {
+        this.start -= leadingCount;
+        return;
+      } else if (['\n', '\r', '\t', ' '].includes(this.source()[this.start - leadingCount])) {
+        leadingCount += 1;
+      } else {
+        break;
+      }
+    }
+
+    let trailingCount = 0;
+    while (true) {
+      if (this.source()[this.end + trailingCount] === ',') {
+        this.end += trailingCount + 1;
+        return;
+      } else if (this.source()[this.end + trailingCount] === ' ') {
+        trailingCount += 1;
+      } else {
+        break;
+      }
     }
   }
 
