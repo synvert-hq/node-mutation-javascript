@@ -1,6 +1,6 @@
 import { Node } from "typescript";
 import { InsertAction } from "../../src/action";
-import { parseCode } from "../helper";
+import { parseCode, parseJsxCode } from "../helper";
 
 describe("InsertAction", () => {
   const node = parseCode("this.foo");
@@ -55,6 +55,43 @@ describe("InsertAction", () => {
           start: "const foobar = { foo".length,
           end: "const foobar = { foo".length,
           newCode: ", bar",
+        });
+      });
+    });
+  });
+
+  describe("andSpace", () => {
+    const code = `<Field name="email" />`;
+    const node = parseJsxCode(code);
+
+    describe("at beginning", () => {
+      it("gets range and rewritten code", () => {
+        const action = new InsertAction<Node>(node, 'autoComplete="email"', {
+          at: "beginning",
+          to: "expression.attributes.properties.0",
+          andSpace: true,
+        });
+        expect(action.process()).toEqual({
+          type: "insert",
+          start: "<Field ".length,
+          end: "<Field ".length,
+          newCode: 'autoComplete="email" ',
+        });
+      });
+    });
+
+    describe("at end", () => {
+      it("gets range and rewritten code", () => {
+        const action = new InsertAction<Node>(node, 'autoComplete="email"', {
+          at: "end",
+          to: "expression.attributes.properties.0",
+          andSpace: true,
+        });
+        expect(action.process()).toEqual({
+          type: "insert",
+          start: '<Field name="email"'.length,
+          end: '<Field name="email"'.length,
+          newCode: ' autoComplete="email"',
         });
       });
     });

@@ -13,6 +13,7 @@ export type InsertOptions = {
   at?: POSITION;
   to?: string;
   andComma?: boolean;
+  andSpace?: boolean;
   conflictPosition?: number; // insert position when insert at the same position
 }
 

@@ -46,6 +46,9 @@ export class InsertAction<T> extends BaseAction<T> {
     if (this.options.andComma) {
       return this.options.at === "end" ? `, ${this.code}` : `${this.code}, `;
     }
+    if (this.options.andSpace) {
+      return this.options.at === "end" ? ` ${this.code}` : `${this.code} `;
+    }
     return this.rewrittenSource();
   }
 }
