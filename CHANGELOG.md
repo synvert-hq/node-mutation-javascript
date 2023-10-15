@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.14.1 (2023-10-15)
+
+* Export `RemoveOptions`
+
 ## 1.14.0 (2023-10-15)
 
 * Add `andComma` to `delete`, `insert`, and `remove` options
