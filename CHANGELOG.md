@@ -1,5 +1,12 @@
 # NodeMutation
 
+## 1.14.0 (2023-10-15)
+
+* Add `andComma` to `delete`, `insert`, and `remove` options
+* Add `andSpace` to `insert` option
+* Add `xxx_property` and `xxx_initializer` to typescript adapter
+* Add `xxx_property` and `xxx_value` to espree adapter
+
 ## 1.13.0 (2023-09-29)
 
 * Add `actions` attributes to `Action`
