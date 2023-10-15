@@ -148,4 +148,26 @@ describe("TypescriptAdapter", () => {
       }).toThrow(new NotSupportedError("unknown is not supported for foobar(foo, bar)"));
     });
   });
+
+  describe("#childNodeValue", () => {
+    test("gets child node", () => {
+      const node = parseCode("foobar(foo, bar)");
+      expect(adapter.childNodeValue(node, "expression.arguments.0")).toEqual((node as any)["expression"]["arguments"][0]);
+    });
+
+    test("gets child string value", () => {
+      const node = parseCode('foobar("foo", "bar")');
+      expect(adapter.childNodeValue(node, "expression.arguments.0.text")).toEqual("foo");
+    });
+
+    test("gets xxx_property child node", () => {
+      const node = parseCode('const obj = { foo: "foo", bar: "bar" }');
+      expect(adapter.childNodeValue(node, "declarationList.declarations.0.initializer.foo_property")).toEqual((node as any)["declarationList"]["declarations"][0]["initializer"]["properties"][0]);
+    });
+
+    test("gets xxx_initializer child node", () => {
+      const node = parseCode('const obj = { foo: "foo", bar: "bar" }');
+      expect(adapter.childNodeValue(node, "declarationList.declarations.0.initializer.foo_initializer")).toEqual((node as any)["declarationList"]["declarations"][0]["initializer"]["properties"][0]["initializer"]);
+    });
+  });
 });

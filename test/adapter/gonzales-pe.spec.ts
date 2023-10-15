@@ -162,4 +162,19 @@ describe("GonzalesPeAdapter", () => {
       expect(adapter.childNodeRange(node, 'ruleset.block.rightCurlyBracket')).toEqual({ start: code.length - 1, end: code.length });
     });
   });
+
+  describe("#childNodeValue", () => {
+    test("gets child node", () => {
+      const code = dedent`
+        nav {
+          a {
+            color: red;
+          }
+        }
+      `;
+      mock({ "code.scss": code });
+      const node = parseCodeByGonzalesPe(code, 'code.scss');
+      expect(adapter.childNodeValue(node, 'ruleset.block.ruleset')).toEqual((node as any)["ruleset"]["block"]["ruleset"]);
+    });
+  });
 });

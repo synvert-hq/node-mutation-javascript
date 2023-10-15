@@ -56,7 +56,7 @@ class TypescriptAdapter implements Adapter<Node> {
     return code.replace(/{{(.+?)}}/gm, (_string, match, _offset) => {
       if (!match) return null;
 
-      const obj = this.actualValue(node, match.split("."));
+      const obj = this.childNodeValue(node, match);
       if (obj) {
         if (Array.isArray(obj)) {
           return this.fileContent(node).slice(this.getStart(obj[0]), this.getEnd(obj[obj.length - 1]));
@@ -150,6 +150,10 @@ class TypescriptAdapter implements Adapter<Node> {
     }
 
     throw new NotSupportedError(`${childName} is not supported for ${this.getSource(node)}`);
+  }
+
+  childNodeValue(node: Node, childName: string): any {
+    return this.actualValue(node, childName.split("."));
   }
 
   getStart(node: Node): number {

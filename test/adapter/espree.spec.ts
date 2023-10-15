@@ -181,4 +181,34 @@ describe("EspreeAdapter", () => {
       }).toThrow(new NotSupportedError("unknown is not supported for foobar(foo, bar)"));
     });
   });
+
+  describe("#childNodeValue", () => {
+    test("gets child node", () => {
+      const code = "foobar(foo, bar)";
+      mock({ "code.js": code });
+      const node = parseCodeByEspree(code);
+      expect(adapter.childNodeValue(node, "expression.arguments.0")).toEqual((node as any)["expression"]["arguments"][0]);
+    });
+
+    test("gets child string value", () => {
+      const code = 'foobar("foo", "bar")';
+      mock({ "code.js": code });
+      const node = parseCodeByEspree(code);
+      expect(adapter.childNodeValue(node, "expression.arguments.0.value")).toEqual("foo");
+    });
+
+    test("gets xxx_property child node", () => {
+      const code = 'const obj = { foo: "foo", bar: "bar" }';
+      mock({ "code.js": code });
+      const node = parseCodeByEspree(code);
+      expect(adapter.childNodeValue(node, "declarations.0.init.foo_property")).toEqual((node as any)["declarations"][0]["init"]["properties"][0]);
+    });
+
+    test("gets xxx_initializer child node", () => {
+      const code = 'const obj = { foo: "foo", bar: "bar" }';
+      mock({ "code.js": code });
+      const node = parseCodeByEspree(code);
+      expect(adapter.childNodeValue(node, "declarations.0.init.foo_value")).toEqual((node as any)["declarations"][0]["init"]["properties"][0]["value"]);
+    });
+  });
 });

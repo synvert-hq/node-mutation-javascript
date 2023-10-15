@@ -38,6 +38,14 @@ interface Adapter<T> {
   childNodeRange(node: T, childName: string): { start: number, end: number };
 
   /**
+   * Get the value of the child node
+   * @param node {T} ast node
+   * @param childName {string} child name selector
+   * @returns {any} child node value
+   */
+  childNodeValue(node: T, childName: string): any;
+
+  /**
    * Get start position of ast node
    * @param node {T} ast node
    * @returns {number} start position
