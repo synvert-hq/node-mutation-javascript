@@ -41,8 +41,16 @@ class TypescriptAdapter implements Adapter<Node> {
    * rewrittenSource(node, "{{expression.expression}}.slice({{expression.arguments}})") // foo.slice(1, 2)
    *
    * // index for node array
-   * node = espree.parse("foo.substring(1, 2)")
+   * node = ts.createSourceFile("code.ts", "foo.substring(1, 2)")
    * rewrittenSource(node, "{{expression.arguments.1}}") // 2
+   *
+   * // {name}_property for node who has properties
+   * node = ts.createSourceFile("code.ts", "const foobar = { foo: 'foo', bar: 'bar' }")
+   * rewritten_source(node, '{{declarationList.declarations.0.initializer.foo_property}}')) # foo: 'foo'
+   *
+   * // {name}_initializer for node who has properties
+   * node = ts.createSourceFile("code.ts", "const foobar = { foo: 'foo', bar: 'bar' }")
+   * rewritten_source(node, '{{declarationList.declarations.0.initializer.foo_initializer}}')) # 'foo'
    */
   rewrittenSource(node: Node, code: string): string {
     return code.replace(/{{(.+?)}}/gm, (_string, match, _offset) => {
@@ -175,6 +183,12 @@ class TypescriptAdapter implements Adapter<Node> {
 
       if (childNode.hasOwnProperty(key)) {
         childNode = childNode[key];
+      } else if (childNode.hasOwnProperty("properties") && key.endsWith("_property")) {
+        const property = (childNode.properties as PropertyAssignment[]).find(property => this.getSource(property.name) == key.slice(0, -"_property".length))
+        childNode = property;
+      } else if (childNode.hasOwnProperty("properties") && key.endsWith("_initializer")) {
+        const property = (childNode.properties as PropertyAssignment[]).find(property => this.getSource(property.name) == key.slice(0, -"_initializer".length))
+        childNode = property?.initializer;
       } else if (typeof childNode[key] === "function") {
         childNode = childNode[key].call(childNode);
       } else {
