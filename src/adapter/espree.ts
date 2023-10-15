@@ -45,6 +45,15 @@ class EspreeAdapter implements Adapter<Node> {
    * // index for node array
    * node = espree.parse("foo.substring(1, 2)")
    * rewrittenSource(node, "{{expression.arguments.1}}") // 2
+   *
+   * // {key}_property for node who has properties
+   * node = espree.parse("const foobar = { foo: 'foo', bar: 'bar' }")
+   * rewritten_source(node, '{{declarations.0.init.foo_property}}')) # foo: 'foo'
+   *
+   * // {key}_value for node who has properties
+   * node = espree.parse("const foobar = { foo: 'foo', bar: 'bar' }")
+   * rewritten_source(node, '{{declarations.0.init.foo_value}}')) # 'foo'
+   *
    */
   rewrittenSource(node: Node, code: string): string {
     return code.replace(/{{([a-zA-z0-9\.]+?)}}/gm, (string, match, _offset) => {
@@ -247,6 +256,12 @@ class EspreeAdapter implements Adapter<Node> {
 
       if (childNode.hasOwnProperty(key)) {
         childNode = childNode[key];
+      } else if (childNode.hasOwnProperty("properties") && key.endsWith("_property")) {
+        const property = (childNode.properties as Node[]).find(property => this.getSource((property as any).key) == key.slice(0, -"_property".length))
+        childNode = property;
+      } else if (childNode.hasOwnProperty("properties") && key.endsWith("_value")) {
+        const property = (childNode.properties as Node[]).find(property => this.getSource((property as any).key) == key.slice(0, -"_value".length))
+        childNode = (property as any)["value"];
       } else if (typeof childNode[key] === "function") {
         childNode = childNode[key].call(childNode);
       } else {
