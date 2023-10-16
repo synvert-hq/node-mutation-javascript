@@ -50,52 +50,6 @@ describe("EspreeAdapter", () => {
     });
   });
 
-  describe("rewrittenSource", () => {
-    it("rewrites with node known method", () => {
-      const code = "class Synvert {}";
-      mock({ "code.js": code });
-      const node = parseCodeByEspree(code);
-      expect(adapter.rewrittenSource(node, "{{id}}")).toEqual("Synvert");
-    });
-
-    it("rewrites for arguments", () => {
-      const code = "foobar(foo, bar)";
-      mock({ "code.js": code });
-      const node = parseCodeByEspree(code);
-      expect(adapter.rewrittenSource(node, "{{expression.arguments}}")).toEqual("foo, bar");
-    });
-
-    it("rewrites for arguments.0", () => {
-      const code = "foobar(foo, bar)";
-      mock({ "code.js": code });
-      const node = parseCodeByEspree(code);
-      expect(adapter.rewrittenSource(node, "{{expression.arguments.0}}")).toEqual("foo");
-    });
-
-    it("rewrites for object property", () => {
-      const code = "const foobar = { foo: 'foo', bar: 'bar' }";
-      mock({ "code.js": code });
-      const node = parseCodeByEspree(code);
-      expect(adapter.rewrittenSource(node, "{{declarations.0.init.foo_property}}")).toEqual("foo: 'foo'");
-    });
-
-    it("rewrites for object value", () => {
-      const code = "const foobar = { foo: 'foo', bar: 'bar' }";
-      mock({ "code.js": code });
-      const node = parseCodeByEspree(code);
-      expect(adapter.rewrittenSource(node, "{{declarations.0.init.foo_value}}")).toEqual("'foo'");
-    });
-
-    it("throws an error for unknown property", () => {
-      const code = "class Synvert {}";
-      mock({ "code.js": code });
-      const node = parseCodeByEspree(code);
-      expect(() => {
-        adapter.rewrittenSource(node, "{{foobar}}");
-      }).toThrow(new NotSupportedError("foobar is not supported for class Synvert {}"));
-    });
-  });
-
   describe("getStart", () => {
     it("gets start count", () => {
       const code = "class Synvert {\n}";

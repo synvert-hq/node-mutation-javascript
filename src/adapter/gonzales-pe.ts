@@ -17,38 +17,6 @@ class GonzalesPeAdapter implements Adapter<Node> {
   }
 
   /**
-   * Get the new source code after evaluating the node.
-   * @param {Node} node - The node to evaluate.
-   * @param {string} code - The code to evaluate.
-   * @returns {string} The new source code.
-   * @example
-   * node = gonzales.parse("a { color: red; }", { syntax: "css" })
-   * rewrittenSource(node, "{{block.declaration.value}})") // red
-   */
-  rewrittenSource(node: Node, code: string): string {
-    return code.replace(/{{([a-zA-z0-9\.]+?)}}/gm, (string, match, _offset) => {
-      if (!match) return null;
-
-      const obj = this.childNodeValue(node, match);
-      if (obj) {
-        if (Array.isArray(obj)) {
-          return this.fileContent(node).slice(
-            this.getStart(node),
-            this.getEnd(node)
-          );
-        }
-        if (obj.hasOwnProperty("type")) {
-          return this.getSource(obj);
-        } else {
-          return obj;
-        }
-      } else {
-        throw new NotSupportedError(`can not parse "${code}"`);
-      }
-    });
-  }
-
-  /**
    * Get the source code of current file.
    * @returns {string} source code of current file.
    */
@@ -63,7 +31,7 @@ class GonzalesPeAdapter implements Adapter<Node> {
    * @returns {Object} The range of the child node, e.g. { start: 0, end: 10 }
    * @throws {NotSupportedError} if we can't get the range.
    * @example
-   * node = gonzales.parse("a { color: red }")
+   * const node = gonzales.parse("a { color: red }")
    * childNodeRange(node, "{{block.declaration.value}}") // { start: "a { color:  ".length, end: "a { color: red".length }
    */
   childNodeRange(
@@ -117,6 +85,22 @@ class GonzalesPeAdapter implements Adapter<Node> {
     throw new NotSupportedError(`${childName} is not supported for ${this.getSource(node)}`);
   }
 
+  /**
+   * Get the value of child node.
+   * @param {Node} node - The node to evaluate.
+   * @param {string} childName - The name to find child node.
+   * @returns {any} The value of child node, it can be a node, an array, a string or a number.
+   * @example
+   * const code = `
+   *   nav {
+   *     a {
+   *       color: red;
+   *     }
+   *   }
+   * `;
+   * const node = gonzales.parse(code, { syntax: "scs" });
+   * childNodeValue(node, "ruleset.block.ruleset") // node["ruleset"]["block"]["ruleset"]
+   */
   childNodeValue(node: Node, childName: string): any {
     return this.actualValue(node, childName.split("."));
   }

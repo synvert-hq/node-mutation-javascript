@@ -30,55 +30,6 @@ class EspreeAdapter implements Adapter<Node> {
   }
 
   /**
-   * Get the new source code after evaluating the node.
-   * @param {Node} node - The node to evaluate.
-   * @param {string} code - The code to evaluate.
-   * @returns {string} The new source code.
-   * @example
-   * node = espree.parse("foo.substring(1, 2)")
-   * rewrittenSource(node, "{{expression.property}})") // substring
-   *
-   * // node array
-   * node = espree.parse("foo.substring(1, 2)")
-   * rewrittenSource(node, "{{expression.callee.object}}.slice({{expression.arguments}})") // foo.slice(1, 2)
-   *
-   * // index for node array
-   * node = espree.parse("foo.substring(1, 2)")
-   * rewrittenSource(node, "{{expression.arguments.1}}") // 2
-   *
-   * // {key}_property for node who has properties
-   * node = espree.parse("const foobar = { foo: 'foo', bar: 'bar' }")
-   * rewritten_source(node, '{{declarations.0.init.foo_property}}')) # foo: 'foo'
-   *
-   * // {key}_value for node who has properties
-   * node = espree.parse("const foobar = { foo: 'foo', bar: 'bar' }")
-   * rewritten_source(node, '{{declarations.0.init.foo_value}}')) # 'foo'
-   *
-   */
-  rewrittenSource(node: Node, code: string): string {
-    return code.replace(/{{([a-zA-z0-9\.]+?)}}/gm, (string, match, _offset) => {
-      if (!match) return null;
-
-      const obj = this.childNodeValue(node, match);
-      if (obj) {
-        if (Array.isArray(obj)) {
-          return this.fileContent(node).slice(
-            (obj[0] as Node).start,
-            (obj[obj.length - 1] as Node).end
-          );
-        }
-        if (obj.hasOwnProperty("type")) {
-          return this.getSource(obj);
-        } else {
-          return obj;
-        }
-      } else {
-        throw new NotSupportedError(`can not parse "${code}"`);
-      }
-    });
-  }
-
-  /**
    * Get the source code of current file.
    * @returns {string} source code of current file.
    */
@@ -93,31 +44,31 @@ class EspreeAdapter implements Adapter<Node> {
    * @returns {Object} The range of the child node, e.g. { start: 0, end: 10 }
    * @throws {NotSupportedError} if we can't get the range.
    * @example
-   * node = espree.parse("function foobar(foo, bar) {}")
+   * const node = espree.parse("function foobar(foo, bar) {}")
    * childNodeRange(node, "id") // { start: "function ".length, end: "function foobar".length }
    *
    * // node array
-   * node = espree.parse("function foobar(foo, bar) {}")
+   * const node = espree.parse("function foobar(foo, bar) {}")
    * childNodeRange(node, "params") // { start: "function foobar".length, end: "function foobar(foo, bar)".length }
    *
    * // index for node array
-   * node = espree.parse("function foobar(foo, bar) {}")
+   * const node = espree.parse("function foobar(foo, bar) {}")
    * childNodeRange(node, "params.1") // { start: "function foobar(foo, ".length, end: "function foobar(foo, bar".length }
    *
    * // async for MethodDefinition node
-   * node = espree.parse("async foobar() {}")
+   * const node = espree.parse("async foobar() {}")
    * childNodeRange(node, "async") // { start: 0, end: "async".length }
    *
    * // dot for MemberExpression node
-   * node = espree.parse("foo.bar")
+   * const node = espree.parse("foo.bar")
    * childNodeRange(node, "dot") // { start: "foo".length, end: "foo.".length }
    *
    * // class for ClassDeclaration node
-   * node = espree.parse("class FooBar {}")
+   * const node = espree.parse("class FooBar {}")
    * childNodeRange(node, "class") // { start: 0, end: "class".length }
    *
    * // semicolon for Property node
-   * node = espree.parse("{ foo: bar }");
+   * const node = espree.parse("{ foo: bar }");
    * childNodeRange(node, "semicolon") // { start: "{ foo", end: "{ foo:".length }
    */
   childNodeRange(
@@ -225,6 +176,27 @@ class EspreeAdapter implements Adapter<Node> {
     throw new NotSupportedError(`${childName} is not supported for ${this.getSource(node)}`);
   }
 
+  /**
+   * Get the value of child node.
+   * @param {Node} node - The node to evaluate.
+   * @param {string} childName - The name to find child node.
+   * @returns {any} The value of child node, it can be a node, an array, a string or a number.
+   * @example
+   * const node = espree.parse("foobar(foo, bar)")
+   * childNodeValue(node, "expression.arguments.0") // node["expression"]["arguments"][0]
+   *
+   * // node array
+   * const node = espree.parse("foobar(foo, bar)")
+   * childNodeValue(node, "expression.arguments") // node["expression"]["arguments"]
+   *
+   * // {name}_property for node who has properties
+   * const node = espree.parse('const foobar = { foo: "foo", bar: "bar" }')
+   * childNodeValue(node, "declarations.0.init.foo_property") // node["declarations"][0]["init"]["properties"][0]
+   *
+   * // {name}_initializer for node who has properties
+   * const node = espree.parse('const foobar = { foo: "foo", bar: "bar" }')
+   * childNodeValue(node, 'declarations.0.init.foo_initializer')) // node["declarations"][0]["init"]["properties"][0]["value"]
+   */
   childNodeValue(node: Node, childName: string): any {
     return this.actualValue(node, childName.split("."));
   }

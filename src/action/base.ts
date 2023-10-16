@@ -1,6 +1,7 @@
 import type { Action } from "../types/action";
 import { getAdapter } from "../helpers";
 import debug from "debug";
+import { NotSupportedError } from "../error";
 
 /**
  * Action does some real actions, e.g. insert / replace / delete code.
@@ -58,12 +59,47 @@ export abstract class BaseAction<T> {
   abstract get newCode(): string | undefined;
 
   /**
-   * The rewritten source code.
-   * @protected
-   * @returns {string} rewritten source code.
+   * Get the new source code after evaluating the node.
+   * @returns {string} The new source code.
+   * @example
+   * this.node = ts.createSourceFile("code.ts", "foo.substring(1, 2)")
+   * this.code = "{{expression.name}}"
+   * rewrittenSource() // substring
+   *
+   * // node array
+   * const node = ts.createSourceFile("code.ts", "foo.substring(1, 2)")
+   * rewrittenSource(node, "{{expression.expression.expression}}.slice({{expression.arguments}})") // foo.slice(1, 2)
+   *
+   * // index for node array
+   * const node = ts.createSourceFile("code.ts", "foo.substring(1, 2)")
+   * rewrittenSource(node, "{{expression.arguments.1}}") // 2
+   *
+   * // {name}_property for node who has properties
+   * const node = ts.createSourceFile("code.ts", "const foobar = { foo: 'foo', bar: 'bar' }")
+   * rewritten_source(node, '{{declarationList.declarations.0.initializer.foo_property}}')) # foo: 'foo'
+   *
+   * // {name}_initializer for node who has properties
+   * const node = ts.createSourceFile("code.ts", "const foobar = { foo: 'foo', bar: 'bar' }")
+   * rewritten_source(node, '{{declarationList.declarations.0.initializer.foo_initializer}}')) # 'foo'
    */
   protected rewrittenSource(): string {
-    return getAdapter<T>().rewrittenSource(this.node!, this.code);
+    return this.code.replace(/{{(.+?)}}/gm, (_string, match, _offset) => {
+      if (!match) return null;
+
+      const obj = getAdapter<T>().childNodeValue(this.node!, match);
+      if (obj) {
+        if (Array.isArray(obj)) {
+          return getAdapter<T>().fileContent(this.node!).slice(getAdapter<T>().getStart(obj[0]), getAdapter<T>().getEnd(obj[obj.length - 1]));
+        }
+        if (obj.hasOwnProperty("kind") || obj.hasOwnProperty("type")) {
+          return getAdapter<T>().getSource(obj);
+        } else {
+          return obj;
+        }
+      } else {
+        throw new NotSupportedError(`can not parse "${this.code}"`);
+      }
+    });
   }
 
   /**
@@ -193,19 +229,6 @@ export abstract class BaseAction<T> {
   private prevTokenIs(substr: string): boolean {
     return (
       this.source().slice(this.start - substr.length, this.start) ===
-      substr
-    );
-  }
-
-  /**
-   * Check if the node source starts with semicolon.
-   * @private
-   * @param {string} substr
-   * @returns {boolean} true if the node source starts with semicolon
-   */
-  private startWith(substr: string): boolean {
-    return (
-      this.source().slice(this.start, this.start + substr.length) ===
       substr
     );
   }

@@ -27,51 +27,6 @@ class TypescriptAdapter implements Adapter<Node> {
     }
   }
 
-  /**
-   * Get the new source code after evaluating the node.
-   * @param {Node} node - The node to evaluate.
-   * @param {string} code - The code to evaluate.
-   * @returns {string} The new source code.
-   * @example
-   * node = ts.createSourceFile("code.ts", "foo.substring(1, 2)")
-   * rewrittenSource(node, "{{expression.name}}") // substring
-   *
-   * // node array
-   * node = ts.createSourceFile("code.ts", "foo.substring(1, 2)")
-   * rewrittenSource(node, "{{expression.expression}}.slice({{expression.arguments}})") // foo.slice(1, 2)
-   *
-   * // index for node array
-   * node = ts.createSourceFile("code.ts", "foo.substring(1, 2)")
-   * rewrittenSource(node, "{{expression.arguments.1}}") // 2
-   *
-   * // {name}_property for node who has properties
-   * node = ts.createSourceFile("code.ts", "const foobar = { foo: 'foo', bar: 'bar' }")
-   * rewritten_source(node, '{{declarationList.declarations.0.initializer.foo_property}}')) # foo: 'foo'
-   *
-   * // {name}_initializer for node who has properties
-   * node = ts.createSourceFile("code.ts", "const foobar = { foo: 'foo', bar: 'bar' }")
-   * rewritten_source(node, '{{declarationList.declarations.0.initializer.foo_initializer}}')) # 'foo'
-   */
-  rewrittenSource(node: Node, code: string): string {
-    return code.replace(/{{(.+?)}}/gm, (_string, match, _offset) => {
-      if (!match) return null;
-
-      const obj = this.childNodeValue(node, match);
-      if (obj) {
-        if (Array.isArray(obj)) {
-          return this.fileContent(node).slice(this.getStart(obj[0]), this.getEnd(obj[obj.length - 1]));
-        }
-        if (obj.hasOwnProperty("kind")) {
-          return this.getSource(obj);
-        } else {
-          return obj;
-        }
-      } else {
-        throw new NotSupportedError(`can not parse "${code}"`);
-      }
-    });
-  }
-
   fileContent(node: Node): string {
     return node.getSourceFile().getFullText();
   }
@@ -83,23 +38,23 @@ class TypescriptAdapter implements Adapter<Node> {
    * @returns {Object} The range of the child node, e.g. { start: 0, end: 10 }
    * @throws {NotSupportedError} if we can't get the range.
    * @example
-   * node = ts.createSourceFile("code.ts", "function foobar(foo, bar) {}")
+   * const node = ts.createSourceFile("code.ts", "function foobar(foo, bar) {}")
    * childNodeRange(node, "name") // { start: "function ".length, end: "function foobar".length }
    *
    * // node array
-   * node = ts.createSourceFile("code.ts", "function foobar(foo, bar) {}")
+   * const node = ts.createSourceFile("code.ts", "function foobar(foo, bar) {}")
    * childNodeRange(node, "parameters") // { start: "function foobar".length, end: "function foobar(foo, bar)".length }
    *
    * // index for node array
-   * node = ts.createSourceFile("code.ts", "function foobar(foo, bar) {}")
+   * const node = ts.createSourceFile("code.ts", "function foobar(foo, bar) {}")
    * childNodeRange(node, "parameters.1") // { start: "function foobar(foo, ".length, end: "function foobar(foo, bar".length }
    *
    * // semicolon for PropertyAssignment node
-   * node = ts.createSourceFile("code.ts", "{ foo: bar }");
+   * const node = ts.createSourceFile("code.ts", "{ foo: bar }");
    * childNodeRange(node, "semicolon") // { start: "{ foo", end: "{ foo:".length }
    *
    * // dot for PropertyAccessExpression node
-   * node = ts.createSourceFile("code.ts", "foo.bar")
+   * const node = ts.createSourceFile("code.ts", "foo.bar")
    * childNodeRange(node, "dot") // { start: "foo".length, end: "foo.".length }
    */
   childNodeRange(node: Node, childName: string): { start: number, end: number } {
@@ -152,6 +107,27 @@ class TypescriptAdapter implements Adapter<Node> {
     throw new NotSupportedError(`${childName} is not supported for ${this.getSource(node)}`);
   }
 
+  /**
+   * Get the value of child node.
+   * @param {Node} node - The node to evaluate.
+   * @param {string} childName - The name to find child node.
+   * @returns {any} The value of child node, it can be a node, an array, a string or a number.
+   * @example
+   * const node = ts.createSourceFile("code.ts", "foobar(foo, bar)")
+   * childNodeValue(node, "expression.arguments.0") // node["expression"]["arguments"][0]
+   *
+   * // node array
+   * const node = ts.createSourceFile("code.ts", 'foobar("foo", "bar")')
+   * childNodeValue(node, "expression.arguments") // node["expression"]["arguments"]
+   *
+   * // {name}_property for node who has properties
+   * const node = ts.createSourceFile("code.ts", "const foobar = { foo: 'foo', bar: 'bar' }")
+   * childNodeValue(node, 'declarationList.declarations.0.initializer.foo_property')) // node["declarationList"]["declarations"][0]["initializer"]["properties"][0]
+   *
+   * // {name}_initializer for node who has properties
+   * const node = ts.createSourceFile("code.ts", "const foobar = { foo: 'foo', bar: 'bar' }")
+   * childNodeValue(node, 'declarationList.declarations.0.initializer.foo_initializer')) // node["declarationList"]["declarations"][0]["initializer"]["properties"][0]["value"]
+   */
   childNodeValue(node: Node, childName: string): any {
     return this.actualValue(node, childName.split("."));
   }

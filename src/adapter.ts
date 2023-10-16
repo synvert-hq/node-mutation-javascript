@@ -7,16 +7,6 @@ interface Adapter<T> {
   getSource(node: T, options?: { fixIndent: boolean }): string;
 
   /**
-   * Replace the child node selector with child node source code
-   * @param node {T} ast node
-   * @param code {string} code with child node selector, e.g. `Boolean({{expression.operand.operand}})`
-   * @returns {string} code with source code of child node selector,
-   * e.g. source code of ast node is `!!foobar`, code is `Boolean({{expression.operand.operand}})`,
-   * it will return `Boolean(foobar)`
-   */
-  rewrittenSource(node: T, code: string): string;
-
-  /**
    * The file content of the ast node file
    * @param node {T} ast node
    * @returns file content

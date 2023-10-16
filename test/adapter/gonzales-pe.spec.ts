@@ -37,26 +37,6 @@ describe("GonzalesPeAdapter", () => {
     });
   });
 
-  describe("rewrittenSource", () => {
-    it("rewrites with sub selector", () => {
-      const code = dedent`
-        nav {
-          a {
-            color: red;
-          }
-        }
-      `;
-      mock({ "code.scss": code });
-      const node = parseCodeByGonzalesPe(code, 'code.scss');
-      const expectedCode = dedent`
-        a {
-          color: red;
-        }
-      `
-      expect(adapter.rewrittenSource(node, "{{ruleset.block.ruleset}}")).toEqual(indent(expectedCode, 2));
-    });
-  });
-
   describe("getStart", () => {
     it("gets start count", () => {
       const code = dedent`

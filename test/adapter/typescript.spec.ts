@@ -42,46 +42,6 @@ describe("TypescriptAdapter", () => {
     });
   });
 
-  describe("rewrittenSource", () => {
-    it("rewrites with node known method", () => {
-      const code = "class Synvert {}";
-      const node = parseCode(code);
-      expect(adapter.rewrittenSource(node, "{{name}}")).toEqual("Synvert");
-    });
-
-    it("rewrites for arguments", () => {
-      const code = "foobar(foo, bar)";
-      const node = parseCode(code);
-      expect(adapter.rewrittenSource(node, "{{expression.arguments}}")).toEqual("foo, bar");
-    });
-
-    it("rewrites for arguments.1", () => {
-      const code = "foobar(foo, bar)";
-      const node = parseCode(code);
-      expect(adapter.rewrittenSource(node, "{{expression.arguments.1}}")).toEqual("bar");
-    });
-
-    it("rewrites for object property", () => {
-      const code = "const foobar = { foo: 'foo', bar: 'bar' }";
-      const node = parseCode(code);
-      expect(adapter.rewrittenSource(node, "{{declarationList.declarations.0.initializer.foo_property}}")).toEqual("foo: 'foo'");
-    });
-
-    it("rewrites for object initializer", () => {
-      const code = "const foobar = { foo: 'foo', bar: 'bar' }";
-      const node = parseCode(code);
-      expect(adapter.rewrittenSource(node, "{{declarationList.declarations.0.initializer.foo_initializer}}")).toEqual("'foo'");
-    });
-
-    it("throws an error for unknown property", () => {
-      const code = "class Synvert {}";
-      const node = parseCode(code);
-      expect(() => {
-        adapter.rewrittenSource(node, "{{foobar}}");
-      }).toThrow(new NotSupportedError("foobar is not supported for class Synvert {}"));
-    });
-  });
-
   describe("getStart", () => {
     it("gets start count", () => {
       const node = parseCode("class Synvert {\n}");
