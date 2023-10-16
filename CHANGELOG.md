@@ -1,5 +1,10 @@
 # NodeMutation
 
+## 1.15.0 (2023-10-16)
+
+* Add `childNodeValue` to `Adapter`
+* Move `rewrittenSource` to base action
+
 ## 1.14.1 (2023-10-15)
 
 * Export `RemoveOptions`
