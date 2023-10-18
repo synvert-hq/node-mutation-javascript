@@ -31,11 +31,11 @@ export class RemoveAction<T> extends BaseAction<T> {
     } else {
       this.start = getAdapter<T>().getStart(this.node!);
       this.end = getAdapter<T>().getEnd(this.node!);
-      this.squeezeSpaces();
       this.removeBraces();
       if (this.options.andComma) {
         this.removeComma();
       }
+      this.squeezeSpaces();
       this.removeSpace();
     }
   }
