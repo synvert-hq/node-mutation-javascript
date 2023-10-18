@@ -44,10 +44,10 @@ export class InsertAction<T> extends BaseAction<T> {
    */
   get newCode(): string {
     if (this.options.andComma) {
-      return this.options.at === "end" ? `, ${this.code}` : `${this.code}, `;
+      return this.options.at === "end" ? `, ${this.rewrittenSource()}` : `${this.rewrittenSource()}, `;
     }
     if (this.options.andSpace) {
-      return this.options.at === "end" ? ` ${this.code}` : `${this.code} `;
+      return this.options.at === "end" ? ` ${this.rewrittenSource()}` : `${this.rewrittenSource()} `;
     }
     return this.rewrittenSource();
   }
