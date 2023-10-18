@@ -51,7 +51,7 @@ describe("DeleteAction", () => {
       const action = new DeleteAction<Node>(node, ["declarationList.declarations.0.initializer.properties.0"], { andComma: true });
       expect(action.process()).toEqual({
         type: "delete",
-        start: "const foobar = { ".length,
+        start: "const foobar = {".length,
         end: "const foobar = { foo,".length,
         newCode: "",
       });
