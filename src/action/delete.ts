@@ -38,7 +38,6 @@ export class DeleteAction<T> extends BaseAction<T> {
         (selector) => getAdapter<T>().childNodeRange(this.node!, selector).end
       )
     );
-    this.removeBraces();
     if (this.options.andComma) {
       this.removeComma();
     }

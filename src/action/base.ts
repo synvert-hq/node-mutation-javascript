@@ -140,27 +140,6 @@ export abstract class BaseAction<T> {
   }
 
   /**
-   * Remove unused braces.
-   * e.g. `foobar({ foo: bar })`, if we remove `foo: bar`, braces should also be removed.
-   * @protected
-   */
-  protected removeBraces(): void {
-    if (this.prevTokenIs("{") && this.nextTokenIs("}")) {
-      this.start = this.start - 1;
-      this.end = this.end + 1;
-    } else if (this.prevTokenIs("{ ") && this.nextTokenIs(" }")) {
-      this.start = this.start - 2;
-      this.end = this.end + 2;
-    } else if (this.prevTokenIs("{") && this.nextTokenIs(" }")) {
-      this.start = this.start - 1;
-      this.end = this.end + 2;
-    } else if (this.prevTokenIs("{ ") && this.nextTokenIs("}")) {
-      this.start = this.start - 2;
-      this.end = this.end + 1;
-    }
-  }
-
-  /**
    * Rmove unused comma.
    * e.g. `foobar(foo, bar)`, if we remove `foo`, the comma should also be removed,
    * the code should be changed to `foobar(bar)`.
