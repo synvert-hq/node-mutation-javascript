@@ -1,5 +1,11 @@
 # NodeMutation
 
+## 1.15.1 (2023-10-18)
+
+* Insert with `this.rewrittenSource`
+* Squeeze spaces after removing comma
+* Remove `removeBraces`
+
 ## 1.15.0 (2023-10-16)
 
 * Add `childNodeValue` to `Adapter`
