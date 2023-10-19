@@ -52,6 +52,20 @@ describe("GonzalesPeAdapter", () => {
       const childNode = (node as any)['content'][0]['content'][2]['content'][1];
       expect(adapter.getStart(childNode)).toEqual(8);
     });
+
+    it("gets start count with childName", () => {
+      const code = dedent`
+        nav {
+          a {
+            color: red;
+          }
+        }
+      `;
+      mock({ "code.scss": code });
+      const node = parseCodeByGonzalesPe(code, 'code.scss');
+      const childNode = (node as any)['content'][0]['content'][2]['content'][1];
+      expect(adapter.getStart(childNode, "content.2")).toEqual(10);
+    });
   });
 
   describe("getEnd", () => {
@@ -68,6 +82,19 @@ describe("GonzalesPeAdapter", () => {
       expect(adapter.getEnd(node)).toEqual(code.length);
       const childNode = (node as any)['content'][0]['content'][2]['content'][1];
       expect(adapter.getEnd(childNode)).toEqual(code.length - 2);
+    });
+
+    it("gets end count with childName", () => {
+      const code = dedent`
+        nav {
+          a {
+            color: red;
+          }
+        }
+      `;
+      mock({ "code.scss": code });
+      const node = parseCodeByGonzalesPe(code, 'code.scss');
+      expect(adapter.getEnd(node, "content.0.content.2.content.1")).toEqual(code.length - 2);
     });
   });
 
@@ -86,6 +113,19 @@ describe("GonzalesPeAdapter", () => {
       const childNode = (node as any)['content'][0]['content'][2]['content'][1];
       expect(adapter.getStartLoc(childNode)).toEqual({ line: 2, column: 2 });
     });
+
+    test("gets start location with childName", () => {
+      const code = dedent`
+        nav {
+          a {
+            color: red;
+          }
+        }
+      `;
+      mock({ "code.scss": code });
+      const node = parseCodeByGonzalesPe(code, 'code.scss');
+      expect(adapter.getStartLoc(node, "content.0.content.2.content.1")).toEqual({ line: 2, column: 2 });
+    });
   });
 
   describe("getEndLoc", () => {
@@ -102,6 +142,19 @@ describe("GonzalesPeAdapter", () => {
       expect(adapter.getEndLoc(node)).toEqual({ line: 5, column: 1 });
       const childNode = (node as any)['content'][0]['content'][2]['content'][1];
       expect(adapter.getEndLoc(childNode)).toEqual({ line: 4, column: 3 });
+    });
+
+    test("gets end location with childName", () => {
+      const code = dedent`
+        nav {
+          a {
+            color: red;
+          }
+        }
+      `;
+      mock({ "code.scss": code });
+      const node = parseCodeByGonzalesPe(code, 'code.scss');
+      expect(adapter.getEndLoc(node, "content.0.content.2.content.1")).toEqual({ line: 4, column: 3 });
     });
   });
 

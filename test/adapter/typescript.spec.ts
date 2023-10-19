@@ -47,6 +47,11 @@ describe("TypescriptAdapter", () => {
       const node = parseCode("class Synvert {\n}");
       expect(adapter.getStart(node)).toEqual(0);
     });
+
+    it("gets start count with childName", () => {
+      const node = parseCode("class Synvert {\n}");
+      expect(adapter.getStart(node, "name")).toEqual("class ".length);
+    });
   });
 
   describe("getEnd", () => {
@@ -54,6 +59,11 @@ describe("TypescriptAdapter", () => {
       const code = "class Synvert {\n}";
       const node = parseCode(code);
       expect(adapter.getEnd(node)).toEqual(code.length);
+    });
+
+    it("gets end count with childName", () => {
+      const node = parseCode("class Synvert {\n}");
+      expect(adapter.getEnd(node, "name")).toEqual("class Synvert".length);
     });
   });
 
@@ -64,6 +74,13 @@ describe("TypescriptAdapter", () => {
       expect(startLoc.line).toEqual(1);
       expect(startLoc.column).toEqual(0);
     });
+
+    test("gets start location with childName", () => {
+      const node = parseCode("class Synvert {\n}");
+      const startLoc = adapter.getStartLoc(node, "name");
+      expect(startLoc.line).toEqual(1);
+      expect(startLoc.column).toEqual("class ".length);
+    });
   });
 
   describe("getEndLoc", () => {
@@ -72,6 +89,13 @@ describe("TypescriptAdapter", () => {
       const startLoc = adapter.getEndLoc(node);
       expect(startLoc.line).toEqual(2);
       expect(startLoc.column).toEqual(1);
+    });
+
+    test("gets end location with childName", () => {
+      const node = parseCode("class Synvert {\n}");
+      const startLoc = adapter.getEndLoc(node, "name");
+      expect(startLoc.line).toEqual(1);
+      expect(startLoc.column).toEqual("class Synvert".length);
     });
   });
 

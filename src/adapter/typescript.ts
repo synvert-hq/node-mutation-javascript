@@ -132,22 +132,34 @@ class TypescriptAdapter implements Adapter<Node> {
     return this.actualValue(node, childName.split("."));
   }
 
-  getStart(node: Node): number {
+  getStart(node: Node, childName?: string): number {
+    if (childName) {
+      node = this.childNodeValue(node, childName);
+    }
     return node.getStart();
   }
 
-  getEnd(node: Node): number {
+  getEnd(node: Node, childName?: string): number {
+    if (childName) {
+      node = this.childNodeValue(node, childName);
+    }
     // typescript getText() may contain trailing whitespaces and newlines.
     const trailingLength = node.getText().length - node.getText().trimEnd().length;
     return node.getEnd() - trailingLength;
   }
 
-  getStartLoc(node: Node): { line: number, column: number } {
+  getStartLoc(node: Node, childName?: string): { line: number, column: number } {
+    if (childName) {
+      node = this.childNodeValue(node, childName);
+    }
     const { line, character } = node.getSourceFile().getLineAndCharacterOfPosition(this.getStart(node));
     return { line: line + 1, column: character };
   }
 
-  getEndLoc(node: Node): { line: number, column: number } {
+  getEndLoc(node: Node, childName?: string): { line: number, column: number } {
+    if (childName) {
+      node = this.childNodeValue(node, childName);
+    }
     const { line, character } = node.getSourceFile().getLineAndCharacterOfPosition(this.getEnd(node));
     return { line: line + 1, column: character };
   }

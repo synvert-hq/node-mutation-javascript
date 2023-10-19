@@ -38,16 +38,18 @@ interface Adapter<T> {
   /**
    * Get start position of ast node
    * @param node {T} ast node
+   * @param childName {string} child name selector
    * @returns {number} start position
    */
-  getStart(node: T): number;
+  getStart(node: T, childName?: string): number;
 
   /**
    * Get end position of ast node
    * @param node {T} ast node
+   * @param childName {string} child name selector
    * @returns {number} end position
    */
-  getEnd(node: T): number;
+  getEnd(node: T, childName?: string): number;
 
   /**
    * @typedef Location
@@ -58,16 +60,18 @@ interface Adapter<T> {
   /**
    * Get start location of ast node
    * @param node {T} ast node
+   * @param childName {string} child name selector
    * @returns {Location} start location
    */
-  getStartLoc(node: T): { line: number, column: number };
+  getStartLoc(node: T, childName?: string): { line: number, column: number };
 
   /**
    * Get end location of ast node
    * @param node {T} ast node
+   * @param childName {string} child name selector
    * @returns {Location} end location
    */
-  getEndLoc(node: T): { line: number, column: number };
+  getEndLoc(node: T, childName?: string): { line: number, column: number };
 
   /**
    * Get indent of ast node

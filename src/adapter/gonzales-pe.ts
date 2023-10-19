@@ -105,25 +105,39 @@ class GonzalesPeAdapter implements Adapter<Node> {
     return this.actualValue(node, childName.split("."));
   }
 
-  getStart(node: Node): number {
+  getStart(node: Node, childName?: string): number {
+    if (childName) {
+      node = this.childNodeValue(node, childName);
+    }
     if (node.start.line === 1) {
       return node.start.column - 1;
     }
     return this.lineCharsCount(this.fileContent(node), node.start.line - 1) + node.start.column - 1;
   }
 
-  getEnd(node: Node): number {
+  getEnd(node: Node, childName?: string): number {
+    console.log('node1', node)
+    if (childName) {
+      node = this.childNodeValue(node, childName);
+    }
+    console.log('node2', node)
     if (node.end.line === 1) {
       return node.end.column;
     }
     return this.lineCharsCount(this.fileContent(node), node.end.line - 1) + node.end.column;
   }
 
-  getStartLoc(node: Node): { line: number; column: number } {
+  getStartLoc(node: Node, childName?: string): { line: number; column: number } {
+    if (childName) {
+      node = this.childNodeValue(node, childName);
+    }
     return { line: node.start.line, column: node.start.column - 1 };
   }
 
-  getEndLoc(node: Node): { line: number; column: number } {
+  getEndLoc(node: Node, childName?: string): { line: number; column: number } {
+    if (childName) {
+      node = this.childNodeValue(node, childName);
+    }
     return { line: node.end.line, column: node.end.column };
   }
 

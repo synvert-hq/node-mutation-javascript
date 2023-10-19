@@ -57,6 +57,13 @@ describe("EspreeAdapter", () => {
       const node = parseCodeByEspree(code);
       expect(adapter.getStart(node)).toEqual(0);
     });
+
+    it("gets start count with childName", () => {
+      const code = "class Synvert {\n}";
+      mock({ "code.js": code });
+      const node = parseCodeByEspree(code);
+      expect(adapter.getStart(node, "id")).toEqual("class ".length);
+    });
   });
 
   describe("getEnd", () => {
@@ -65,6 +72,13 @@ describe("EspreeAdapter", () => {
       mock({ "code.js": code });
       const node = parseCodeByEspree(code);
       expect(adapter.getEnd(node)).toEqual(code.length);
+    });
+
+    it("gets end count with childName", () => {
+      const code = "class Synvert {\n}";
+      mock({ "code.js": code });
+      const node = parseCodeByEspree(code);
+      expect(adapter.getEnd(node, "id")).toEqual("class Synvert".length);
     });
   });
 
@@ -77,6 +91,15 @@ describe("EspreeAdapter", () => {
       expect(startLoc.line).toEqual(1);
       expect(startLoc.column).toEqual(0);
     });
+
+    test("gets start location with childName", () => {
+      const code = "class Synvert {\n}";
+      mock({ "code.js": code });
+      const node = parseCodeByEspree(code);
+      const startLoc = adapter.getStartLoc(node, "id");
+      expect(startLoc.line).toEqual(1);
+      expect(startLoc.column).toEqual("class ".length);
+    });
   });
 
   describe("getEndLoc", () => {
@@ -87,6 +110,15 @@ describe("EspreeAdapter", () => {
       const startLoc = adapter.getEndLoc(node);
       expect(startLoc.line).toEqual(2);
       expect(startLoc.column).toEqual(1);
+    });
+
+    test("gets end location with childName", () => {
+      const code = "class Synvert {\n}";
+      mock({ "code.js": code });
+      const node = parseCodeByEspree(code);
+      const startLoc = adapter.getEndLoc(node, "id");
+      expect(startLoc.line).toEqual(1);
+      expect(startLoc.column).toEqual("class Synvert".length);
     });
   });
 
