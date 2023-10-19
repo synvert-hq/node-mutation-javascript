@@ -116,11 +116,9 @@ class GonzalesPeAdapter implements Adapter<Node> {
   }
 
   getEnd(node: Node, childName?: string): number {
-    console.log('node1', node)
     if (childName) {
       node = this.childNodeValue(node, childName);
     }
-    console.log('node2', node)
     if (node.end.line === 1) {
       return node.end.column;
     }
