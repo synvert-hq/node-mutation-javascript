@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.15.2 (2023-10-19)
+
+* Add `childName` option to `getStart`, `getEnd`, `getStartLoc`, and `getEndLoc`
+
 ## 1.15.1 (2023-10-18)
 
 * Insert with `this.rewrittenSource`
