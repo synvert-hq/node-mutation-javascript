@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.15.3 (2023-10-19)
+
+* Remove `console.log` code
+
 ## 1.15.2 (2023-10-19)
 
 * Add `childName` option to `getStart`, `getEnd`, `getStartLoc`, and `getEndLoc`
