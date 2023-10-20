@@ -139,6 +139,11 @@ describe("TypescriptAdapter", () => {
       expect(adapter.childNodeValue(node, "expression.arguments.0")).toEqual((node as any)["expression"]["arguments"][0]);
     });
 
+    test("gets child node by negative index", () => {
+      const node = parseCode("foobar(foo, bar)");
+      expect(adapter.childNodeValue(node, "expression.arguments.-1")).toEqual((node as any)["expression"]["arguments"][1]);
+    });
+
     test("gets child string value", () => {
       const node = parseCode('foobar("foo", "bar")');
       expect(adapter.childNodeValue(node, "expression.arguments.0.text")).toEqual("foo");

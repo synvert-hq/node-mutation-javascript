@@ -244,6 +244,8 @@ class EspreeAdapter implements Adapter<Node> {
 
       if (childNode.hasOwnProperty(key)) {
         childNode = childNode[key];
+      } else if (Array.isArray(childNode) && /-?\d+/.test(key)) {
+        childNode = childNode.at(Number.parseInt(key));
       } else if (childNode.hasOwnProperty("properties") && key.endsWith("_property")) {
         const property = (childNode.properties as Node[]).find(property => this.getSource((property as any).key) == key.slice(0, -"_property".length))
         childNode = property;

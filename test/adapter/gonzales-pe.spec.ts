@@ -209,5 +209,18 @@ describe("GonzalesPeAdapter", () => {
       const node = parseCodeByGonzalesPe(code, 'code.scss');
       expect(adapter.childNodeValue(node, 'ruleset.block.ruleset')).toEqual((node as any)["ruleset"]["block"]["ruleset"]);
     });
+
+    test("gets child node with negative index", () => {
+      const code = dedent`
+        nav {
+          a {
+            color: red;
+          }
+        }
+      `;
+      mock({ "code.scss": code });
+      const node = parseCodeByGonzalesPe(code, 'code.scss');
+      expect(adapter.childNodeValue(node, 'content.0.content.-1.content.1')).toEqual((node as any)["ruleset"]["block"]["ruleset"]);
+    });
   });
 });

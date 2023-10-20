@@ -176,6 +176,13 @@ describe("EspreeAdapter", () => {
       expect(adapter.childNodeValue(node, "expression.arguments.0")).toEqual((node as any)["expression"]["arguments"][0]);
     });
 
+    test("gets child node with negative index", () => {
+      const code = "foobar(foo, bar)";
+      mock({ "code.js": code });
+      const node = parseCodeByEspree(code);
+      expect(adapter.childNodeValue(node, "expression.arguments.-1")).toEqual((node as any)["expression"]["arguments"][1]);
+    });
+
     test("gets child string value", () => {
       const code = 'foobar("foo", "bar")';
       mock({ "code.js": code });

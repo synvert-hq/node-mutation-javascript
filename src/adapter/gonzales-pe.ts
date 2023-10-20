@@ -150,6 +150,8 @@ class GonzalesPeAdapter implements Adapter<Node> {
 
       if ((childNode as any)[key]) {
         childNode = (childNode as any)[key];
+      } else if (Array.isArray(childNode) && /-?\d+/.test(key)) {
+        childNode = childNode.at(Number.parseInt(key));
       } else {
         throw `${key} is not supported for ${this.getSource(childNode)}`;
       }
