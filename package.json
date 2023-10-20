@@ -1,6 +1,6 @@
 {
   "name": "@xinminlabs/node-mutation",
-  "version": "1.15.3",
+  "version": "1.15.4",
   "description": "ast node mutation apis",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

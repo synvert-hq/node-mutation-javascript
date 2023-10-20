@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.15.4 (2023-10-20)
+
+* Get child node by negative index
+
 ## 1.15.3 (2023-10-19)
 
 * Remove `console.log` code
