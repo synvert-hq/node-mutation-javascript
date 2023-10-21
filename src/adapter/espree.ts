@@ -189,13 +189,13 @@ class EspreeAdapter implements Adapter<Node> {
    * const node = espree.parse("foobar(foo, bar)")
    * childNodeValue(node, "expression.arguments") // node["expression"]["arguments"]
    *
-   * // {name}_property for node who has properties
+   * // {name}Property for node who has properties
    * const node = espree.parse('const foobar = { foo: "foo", bar: "bar" }')
-   * childNodeValue(node, "declarations.0.init.foo_property") // node["declarations"][0]["init"]["properties"][0]
+   * childNodeValue(node, "declarations.0.init.fooProperty") // node["declarations"][0]["init"]["properties"][0]
    *
-   * // {name}_initializer for node who has properties
+   * // {name}Value for node who has properties
    * const node = espree.parse('const foobar = { foo: "foo", bar: "bar" }')
-   * childNodeValue(node, 'declarations.0.init.foo_initializer')) // node["declarations"][0]["init"]["properties"][0]["value"]
+   * childNodeValue(node, 'declarations.0.init.fooValue')) // node["declarations"][0]["init"]["properties"][0]["value"]
    */
   childNodeValue(node: Node, childName: string): any {
     return this.actualValue(node, childName.split("."));
@@ -246,11 +246,11 @@ class EspreeAdapter implements Adapter<Node> {
         childNode = childNode[key];
       } else if (Array.isArray(childNode) && /-?\d+/.test(key)) {
         childNode = childNode.at(Number.parseInt(key));
-      } else if (childNode.hasOwnProperty("properties") && key.endsWith("_property")) {
-        const property = (childNode.properties as Node[]).find(property => this.getSource((property as any).key) == key.slice(0, -"_property".length))
+      } else if (childNode.hasOwnProperty("properties") && key.endsWith("Property")) {
+        const property = (childNode.properties as Node[]).find(property => this.getSource((property as any).key) == key.slice(0, -"Property".length))
         childNode = property;
-      } else if (childNode.hasOwnProperty("properties") && key.endsWith("_value")) {
-        const property = (childNode.properties as Node[]).find(property => this.getSource((property as any).key) == key.slice(0, -"_value".length))
+      } else if (childNode.hasOwnProperty("properties") && key.endsWith("Value")) {
+        const property = (childNode.properties as Node[]).find(property => this.getSource((property as any).key) == key.slice(0, -"Value".length))
         childNode = (property as any)["value"];
       } else if (typeof childNode[key] === "function") {
         childNode = childNode[key].call(childNode);

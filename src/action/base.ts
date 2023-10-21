@@ -74,13 +74,13 @@ export abstract class BaseAction<T> {
    * const node = ts.createSourceFile("code.ts", "foo.substring(1, 2)")
    * rewrittenSource(node, "{{expression.arguments.1}}") // 2
    *
-   * // {name}_property for node who has properties
+   * // {name}Property for node who has properties
    * const node = ts.createSourceFile("code.ts", "const foobar = { foo: 'foo', bar: 'bar' }")
-   * rewritten_source(node, '{{declarationList.declarations.0.initializer.foo_property}}')) # foo: 'foo'
+   * rewritten_source(node, '{{declarationList.declarations.0.initializer.fooProperty}}')) # foo: 'foo'
    *
-   * // {name}_initializer for node who has properties
+   * // {name}Initializer for node who has properties
    * const node = ts.createSourceFile("code.ts", "const foobar = { foo: 'foo', bar: 'bar' }")
-   * rewritten_source(node, '{{declarationList.declarations.0.initializer.foo_initializer}}')) # 'foo'
+   * rewritten_source(node, '{{declarationList.declarations.0.initializer.fooInitializer}}')) # 'foo'
    */
   protected rewrittenSource(): string {
     return this.code.replace(/{{(.+?)}}/gm, (_string, match, _offset) => {

@@ -120,13 +120,13 @@ class TypescriptAdapter implements Adapter<Node> {
    * const node = ts.createSourceFile("code.ts", 'foobar("foo", "bar")')
    * childNodeValue(node, "expression.arguments") // node["expression"]["arguments"]
    *
-   * // {name}_property for node who has properties
+   * // {name}Property for node who has properties
    * const node = ts.createSourceFile("code.ts", "const foobar = { foo: 'foo', bar: 'bar' }")
-   * childNodeValue(node, 'declarationList.declarations.0.initializer.foo_property')) // node["declarationList"]["declarations"][0]["initializer"]["properties"][0]
+   * childNodeValue(node, 'declarationList.declarations.0.initializer.fooProperty')) // node["declarationList"]["declarations"][0]["initializer"]["properties"][0]
    *
-   * // {name}_initializer for node who has properties
+   * // {name}Initializer for node who has properties
    * const node = ts.createSourceFile("code.ts", "const foobar = { foo: 'foo', bar: 'bar' }")
-   * childNodeValue(node, 'declarationList.declarations.0.initializer.foo_initializer')) // node["declarationList"]["declarations"][0]["initializer"]["properties"][0]["value"]
+   * childNodeValue(node, 'declarationList.declarations.0.initializer.fooInitializer')) // node["declarationList"]["declarations"][0]["initializer"]["properties"][0]["initalizer"]
    */
   childNodeValue(node: Node, childName: string): any {
     return this.actualValue(node, childName.split("."));
@@ -177,11 +177,11 @@ class TypescriptAdapter implements Adapter<Node> {
         childNode = childNode[key];
       } else if (Array.isArray(childNode) && /-?\d+/.test(key)) {
         childNode = childNode.at(Number.parseInt(key));
-      } else if (childNode.hasOwnProperty("properties") && key.endsWith("_property")) {
-        const property = (childNode.properties as PropertyAssignment[]).find(property => this.getSource(property.name) == key.slice(0, -"_property".length))
+      } else if (childNode.hasOwnProperty("properties") && key.endsWith("Property")) {
+        const property = (childNode.properties as PropertyAssignment[]).find(property => this.getSource(property.name) == key.slice(0, -"Property".length))
         childNode = property;
-      } else if (childNode.hasOwnProperty("properties") && key.endsWith("_initializer")) {
-        const property = (childNode.properties as PropertyAssignment[]).find(property => this.getSource(property.name) == key.slice(0, -"_initializer".length))
+      } else if (childNode.hasOwnProperty("properties") && key.endsWith("Initializer")) {
+        const property = (childNode.properties as PropertyAssignment[]).find(property => this.getSource(property.name) == key.slice(0, -"Initializer".length))
         childNode = property?.initializer;
       } else if (typeof childNode[key] === "function") {
         childNode = childNode[key].call(childNode);

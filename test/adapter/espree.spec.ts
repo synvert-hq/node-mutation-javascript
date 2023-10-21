@@ -190,18 +190,18 @@ describe("EspreeAdapter", () => {
       expect(adapter.childNodeValue(node, "expression.arguments.0.value")).toEqual("foo");
     });
 
-    test("gets xxx_property child node", () => {
+    test("gets xxxProperty child node", () => {
       const code = 'const obj = { foo: "foo", bar: "bar" }';
       mock({ "code.js": code });
       const node = parseCodeByEspree(code);
-      expect(adapter.childNodeValue(node, "declarations.0.init.foo_property")).toEqual((node as any)["declarations"][0]["init"]["properties"][0]);
+      expect(adapter.childNodeValue(node, "declarations.0.init.fooProperty")).toEqual((node as any)["declarations"][0]["init"]["properties"][0]);
     });
 
     test("gets xxx_initializer child node", () => {
       const code = 'const obj = { foo: "foo", bar: "bar" }';
       mock({ "code.js": code });
       const node = parseCodeByEspree(code);
-      expect(adapter.childNodeValue(node, "declarations.0.init.foo_value")).toEqual((node as any)["declarations"][0]["init"]["properties"][0]["value"]);
+      expect(adapter.childNodeValue(node, "declarations.0.init.fooValue")).toEqual((node as any)["declarations"][0]["init"]["properties"][0]["value"]);
     });
   });
 });

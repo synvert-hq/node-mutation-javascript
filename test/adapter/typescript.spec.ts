@@ -149,14 +149,14 @@ describe("TypescriptAdapter", () => {
       expect(adapter.childNodeValue(node, "expression.arguments.0.text")).toEqual("foo");
     });
 
-    test("gets xxx_property child node", () => {
+    test("gets xxxProperty child node", () => {
       const node = parseCode('const obj = { foo: "foo", bar: "bar" }');
-      expect(adapter.childNodeValue(node, "declarationList.declarations.0.initializer.foo_property")).toEqual((node as any)["declarationList"]["declarations"][0]["initializer"]["properties"][0]);
+      expect(adapter.childNodeValue(node, "declarationList.declarations.0.initializer.fooProperty")).toEqual((node as any)["declarationList"]["declarations"][0]["initializer"]["properties"][0]);
     });
 
-    test("gets xxx_initializer child node", () => {
+    test("gets xxxInitializer child node", () => {
       const node = parseCode('const obj = { foo: "foo", bar: "bar" }');
-      expect(adapter.childNodeValue(node, "declarationList.declarations.0.initializer.foo_initializer")).toEqual((node as any)["declarationList"]["declarations"][0]["initializer"]["properties"][0]["initializer"]);
+      expect(adapter.childNodeValue(node, "declarationList.declarations.0.initializer.fooInitializer")).toEqual((node as any)["declarationList"]["declarations"][0]["initializer"]["properties"][0]["initializer"]);
     });
   });
 });
