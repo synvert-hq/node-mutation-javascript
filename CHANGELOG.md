@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.15.5 (2023-10-21)
+
+* Follow camelCase convention for xxxPropery and xxxValue
+
 ## 1.15.4 (2023-10-20)
 
 * Get child node by negative index
