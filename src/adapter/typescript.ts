@@ -49,6 +49,14 @@ class TypescriptAdapter implements Adapter<Node> {
    * const node = ts.createSourceFile("code.ts", "function foobar(foo, bar) {}")
    * childNodeRange(node, "parameters.1") // { start: "function foobar(foo, ".length, end: "function foobar(foo, bar".length }
    *
+   * // {name}Property for node who has properties
+   * const node = ts.createSourceFile("code.ts", "const foobar = { foo: 'foo', bar: 'bar' }")
+   * childNodeRange(node, "declarationList.declarations.0.initializer.fooProperty") // { start: "const foobar = { ".length, end: 'const foobar = { foo: "foo"'.length }
+   *
+   * // {name}Value for node who has properties
+   * const node = ts.createSourceFile("code.ts", "const foobar = { foo: 'foo', bar: 'bar' }")
+   * childNodeRange(node, "declarationList.declarations.0.initializer.fooValue") // { start: "const foobar = { foo: ".length, end: 'const foobar = { foo: "foo"'.length }
+   *
    * // semicolon for PropertyAssignment node
    * const node = ts.createSourceFile("code.ts", "{ foo: bar }");
    * childNodeRange(node, "semicolon") // { start: "{ foo", end: "{ foo:".length }
@@ -65,6 +73,12 @@ class TypescriptAdapter implements Adapter<Node> {
       return { start: this.getEnd((node as PropertyAssignment).name), end: this.getEnd((node as PropertyAssignment).name) + 1 };
     } else if (node.kind === SyntaxKind.PropertyAccessExpression && childName === "dot") {
       return { start: this.getStart((node as PropertyAccessExpression).name) - 1, end: this.getStart((node as PropertyAccessExpression).name) };
+    } else if (node.hasOwnProperty("properties") && childName.endsWith("Property")) {
+      const property = ((node as any)["properties"] as PropertyAssignment[]).find(property => this.getSource(property.name) == childName.slice(0, -"Property".length))
+      return { start: this.getStart(property!), end: this.getEnd(property!) };
+    } else if (node.hasOwnProperty("properties") && childName.endsWith("Initializer")) {
+      const property = ((node as any)["properties"] as PropertyAssignment[]).find(property => this.getSource(property.name) == childName.slice(0, -"Initializer".length))
+      return { start: this.getStart(property?.initializer!), end: this.getEnd(property?.initializer!) };
     } else {
       const [directChildName, ...nestedChildName] = childName.split(".");
       if ((node as any)[directChildName]) {

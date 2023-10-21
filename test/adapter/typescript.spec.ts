@@ -125,6 +125,16 @@ describe("TypescriptAdapter", () => {
       expect(adapter.childNodeRange(node, "expression.dot")).toEqual({ start: 3, end: 4 });
     });
 
+    test("xxxProperty", () => {
+      const node = parseCode('const obj = { foo: "foo", bar: "bar" }');
+      expect(adapter.childNodeRange(node, "declarationList.declarations.0.initializer.fooProperty")).toEqual({ start: "const obj = { ".length, end: 'const obj = { foo: "foo"'.length });
+    });
+
+    test("xxxInitializer", () => {
+      const node = parseCode('const obj = { foo: "foo", bar: "bar" }');
+      expect(adapter.childNodeRange(node, "declarationList.declarations.0.initializer.fooInitializer")).toEqual({ start: "const obj = { foo: ".length, end: 'const obj = { foo: "foo"'.length});
+    });
+
     test("CallExpression unknown", () => {
       const node = parseCode("foobar(foo, bar)");
       expect(() => {
