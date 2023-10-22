@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.15.7 (2023-10-22)
+
+* Support `xxxAttribute` in `childNodeRange` and `childNodeValue`
+
 ## 1.15.6 (2023-10-21)
 
 * Support `xxxProperty` and `xxxValue` in `childNodeRange`
