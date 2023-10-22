@@ -1,7 +1,7 @@
 import dedent from "dedent";
 import { NotSupportedError } from "../../src/error";
 import EspreeAdapter from "../../src/adapter/espree";
-import { parseCodeByEspree } from "../helper";
+import { parseCodeByEspree, parseJsxCodeByEspree } from "../helper";
 import mock from "mock-fs";
 
 describe("EspreeAdapter", () => {
@@ -165,6 +165,13 @@ describe("EspreeAdapter", () => {
       expect(adapter.childNodeRange(node, "declarations.0.init.fooProperty")).toEqual({ start: "const obj = { ".length, end: 'const obj = { foo: "foo"'.length });
     });
 
+    test("gets xxxAttribute child node", () => {
+      const code = '<Field name="email" autoComplete="email" />';
+      mock({ "code.jsx": code });
+      const node = parseJsxCodeByEspree(code);
+      expect(adapter.childNodeRange(node, "expression.openingElement.autoCompleteAttribute")).toEqual({ start: '<Field name="email" '.length, end: '<Field name="email" autoComplete="email"'.length });
+    });
+
     test("gets xxxValue child node", () => {
       const code = 'const obj = { foo: "foo", bar: "bar" }';
       mock({ "code.js": code });
@@ -209,6 +216,13 @@ describe("EspreeAdapter", () => {
       mock({ "code.js": code });
       const node = parseCodeByEspree(code);
       expect(adapter.childNodeValue(node, "declarations.0.init.fooProperty")).toEqual((node as any)["declarations"][0]["init"]["properties"][0]);
+    });
+
+    test("gets xxxAttribute child node", () => {
+      const code = '<Field name="email" autoComplete="email" />';
+      mock({ "code.jsx": code });
+      const node = parseJsxCodeByEspree(code);
+      expect(adapter.childNodeValue(node, "expression.openingElement.autoCompleteAttribute")).toEqual((node as any)["expression"]["openingElement"]["attributes"][1]);
     });
 
     test("gets xxxValue child node", () => {

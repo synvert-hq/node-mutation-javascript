@@ -63,6 +63,10 @@ class EspreeAdapter implements Adapter<Node> {
    * const node = espree.parse('const foobar = { foo: "foo", bar: "bar" }')
    * childNodeRange(node, 'declarations.0.init.fooValue')) // { start: "const foobar = { foo: ".length, end: "const foobar = { foo: "foo".length }
    *
+   * // {name}Attribute for node who has attributes
+   * const node = espree.parse('<Field name="email" autoComplete="email" />')
+   * childNodeRange(node, "expression.openingElement.autoCompleteAttribute") // { start: '<Field name="email" '.length, end: '<Field name="email" autoComplete="email"'.length }
+   *
    * // async for MethodDefinition node
    * const node = espree.parse("async foobar() {}")
    * childNodeRange(node, "async") // { start: 0, end: "async".length }
@@ -135,6 +139,9 @@ class EspreeAdapter implements Adapter<Node> {
     } else if (node.hasOwnProperty("properties") && childName.endsWith("Property")) {
       const property = ((node as any)["properties"] as Node[]).find(property => this.getSource((property as any).key) == childName.slice(0, -"Property".length))
       return { start: property!.start, end: property!.end };
+    } else if (node.hasOwnProperty("attributes") && childName.endsWith("Attribute")) {
+      const attribute = ((node as any)["attributes"] as Node[]).find(attribute => this.getSource((attribute as any).name) == childName.slice(0, -"Attribute".length))
+      return { start: attribute!.start, end: attribute!.end };
     } else if (node.hasOwnProperty("properties") && childName.endsWith("Value")) {
       const property = ((node as any)["properties"] as Node[]).find(property => this.getSource((property as any).key) == childName.slice(0, -"Value".length))
       return { start: (property as any)["value"].start, end: (property as any)["value"].end };
@@ -210,6 +217,10 @@ class EspreeAdapter implements Adapter<Node> {
    * // {name}Value for node who has properties
    * const node = espree.parse('const foobar = { foo: "foo", bar: "bar" }')
    * childNodeValue(node, 'declarations.0.init.fooValue')) // node["declarations"][0]["init"]["properties"][0]["value"]
+   *
+   * // {name}Attribute for node who has attributes
+   * const node = espree.parse('<Field name="email" autoComplete="email" />')
+   * childNodeValue(node, "expression.openingElement.autoCompleteAttribute") // node["expression"]["openingElement"]["attributes"][1]
    */
   childNodeValue(node: Node, childName: string): any {
     return this.actualValue(node, childName.split("."));
@@ -261,8 +272,9 @@ class EspreeAdapter implements Adapter<Node> {
       } else if (Array.isArray(childNode) && /-?\d+/.test(key)) {
         childNode = childNode.at(Number.parseInt(key));
       } else if (childNode.hasOwnProperty("properties") && key.endsWith("Property")) {
-        const property = (childNode.properties as Node[]).find(property => this.getSource((property as any).key) == key.slice(0, -"Property".length))
-        childNode = property;
+        childNode = (childNode.properties as Node[]).find(property => this.getSource((property as any).key) == key.slice(0, -"Property".length))
+      } else if (childNode.hasOwnProperty("attributes") && key.endsWith("Attribute")) {
+        childNode = (childNode.attributes as Node[]).find(attribute => this.getSource((attribute as any).name) == key.slice(0, -"Attribute".length))
       } else if (childNode.hasOwnProperty("properties") && key.endsWith("Value")) {
         const property = (childNode.properties as Node[]).find(property => this.getSource((property as any).key) == key.slice(0, -"Value".length))
         childNode = (property as any)["value"];

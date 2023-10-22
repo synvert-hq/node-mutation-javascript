@@ -23,6 +23,15 @@ export const parseCodeByEspree = (code: string): EspreeNode => {
   }).body[0];
 }
 
+export const parseJsxCodeByEspree = (code: string): EspreeNode => {
+  return espree.parse(code, {
+    ecmaVersion: "latest",
+    loc: true,
+    sourceFile: "code.jsx",
+    ecmaFeatures: { jsx: true },
+  }).body[0];
+}
+
 export const parseCodeByGonzalesPe = (code: string, sourceFile: string = 'code.css'): gonzales.Node => {
   return gonzales.parse(code, {
     syntax: path.extname(sourceFile).slice(1),

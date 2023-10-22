@@ -1,7 +1,7 @@
 import dedent from "dedent";
 import { NotSupportedError } from "../../src/error";
 import TypescriptAdapter from "../../src/adapter/typescript";
-import { parseCode } from "../helper";
+import { parseCode, parseJsxCode } from "../helper";
 
 describe("TypescriptAdapter", () => {
   const adapter = new TypescriptAdapter();
@@ -130,6 +130,11 @@ describe("TypescriptAdapter", () => {
       expect(adapter.childNodeRange(node, "declarationList.declarations.0.initializer.fooProperty")).toEqual({ start: "const obj = { ".length, end: 'const obj = { foo: "foo"'.length });
     });
 
+    test("xxxAttribute", () => {
+      const node = parseJsxCode('<Field name="email" autoComplete="email" />');
+      expect(adapter.childNodeRange(node, "expression.attributes.autoCompleteAttribute")).toEqual({ start: '<Field name="email" '.length, end: '<Field name="email" autoComplete="email"'.length });
+    });
+
     test("xxxInitializer", () => {
       const node = parseCode('const obj = { foo: "foo", bar: "bar" }');
       expect(adapter.childNodeRange(node, "declarationList.declarations.0.initializer.fooInitializer")).toEqual({ start: "const obj = { foo: ".length, end: 'const obj = { foo: "foo"'.length});
@@ -162,6 +167,11 @@ describe("TypescriptAdapter", () => {
     test("gets xxxProperty child node", () => {
       const node = parseCode('const obj = { foo: "foo", bar: "bar" }');
       expect(adapter.childNodeValue(node, "declarationList.declarations.0.initializer.fooProperty")).toEqual((node as any)["declarationList"]["declarations"][0]["initializer"]["properties"][0]);
+    });
+
+    test("gets xxxAttribute child node", () => {
+      const node = parseJsxCode('<Field name="email" autoComplete="email" />');
+      expect(adapter.childNodeValue(node, "expression.attributes.autoCompleteAttribute")).toEqual((node as any)["expression"]["attributes"]["properties"][1]);
     });
 
     test("gets xxxInitializer child node", () => {

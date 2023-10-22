@@ -57,6 +57,10 @@ class TypescriptAdapter implements Adapter<Node> {
    * const node = ts.createSourceFile("code.ts", "const foobar = { foo: 'foo', bar: 'bar' }")
    * childNodeRange(node, "declarationList.declarations.0.initializer.fooValue") // { start: "const foobar = { foo: ".length, end: 'const foobar = { foo: "foo"'.length }
    *
+   * // {name}Attribute for jsx node who has properties
+   * const node = ts.createSourceFile("code.tsx", '<Field name="email" autoComplete="email" />')
+   * childNodeRange(node, "expression.attriutes.autoCompleteAttribute") // { start: '<Field name="email" '.length, end: '<Field name="email" autoComplete="email"'.length }
+   *
    * // semicolon for PropertyAssignment node
    * const node = ts.createSourceFile("code.ts", "{ foo: bar }");
    * childNodeRange(node, "semicolon") // { start: "{ foo", end: "{ foo:".length }
@@ -75,6 +79,9 @@ class TypescriptAdapter implements Adapter<Node> {
       return { start: this.getStart((node as PropertyAccessExpression).name) - 1, end: this.getStart((node as PropertyAccessExpression).name) };
     } else if (node.hasOwnProperty("properties") && childName.endsWith("Property")) {
       const property = ((node as any)["properties"] as PropertyAssignment[]).find(property => this.getSource(property.name) == childName.slice(0, -"Property".length))
+      return { start: this.getStart(property!), end: this.getEnd(property!) };
+    } else if (node.hasOwnProperty("properties") && childName.endsWith("Attribute")) {
+      const property = ((node as any)["properties"] as PropertyAssignment[]).find(property => this.getSource(property.name) == childName.slice(0, -"Attribute".length))
       return { start: this.getStart(property!), end: this.getEnd(property!) };
     } else if (node.hasOwnProperty("properties") && childName.endsWith("Initializer")) {
       const property = ((node as any)["properties"] as PropertyAssignment[]).find(property => this.getSource(property.name) == childName.slice(0, -"Initializer".length))
@@ -141,6 +148,10 @@ class TypescriptAdapter implements Adapter<Node> {
    * // {name}Initializer for node who has properties
    * const node = ts.createSourceFile("code.ts", "const foobar = { foo: 'foo', bar: 'bar' }")
    * childNodeValue(node, 'declarationList.declarations.0.initializer.fooInitializer')) // node["declarationList"]["declarations"][0]["initializer"]["properties"][0]["initalizer"]
+   *
+   * // {name}Attribute for jsx node who has properties
+   * const node = ts.createSourceFile("code.tsx", '<Field name="email" autoComplete="email" />')
+   * childNodeValue(node, 'expression.attributes.autoCompleteAttribute')) // node["exression"]["attributes"]["properties"][1]
    */
   childNodeValue(node: Node, childName: string): any {
     return this.actualValue(node, childName.split("."));
@@ -192,11 +203,12 @@ class TypescriptAdapter implements Adapter<Node> {
       } else if (Array.isArray(childNode) && /-?\d+/.test(key)) {
         childNode = childNode.at(Number.parseInt(key));
       } else if (childNode.hasOwnProperty("properties") && key.endsWith("Property")) {
-        const property = (childNode.properties as PropertyAssignment[]).find(property => this.getSource(property.name) == key.slice(0, -"Property".length))
-        childNode = property;
+        childNode = (childNode.properties as PropertyAssignment[]).find(property => this.getSource(property.name) == key.slice(0, -"Property".length))
+      } else if (childNode.hasOwnProperty("properties") && key.endsWith("Attribute")) {
+        childNode = (childNode.properties as PropertyAssignment[]).find(property => this.getSource(property.name) == key.slice(0, -"Attribute".length))
       } else if (childNode.hasOwnProperty("properties") && key.endsWith("Initializer")) {
         const property = (childNode.properties as PropertyAssignment[]).find(property => this.getSource(property.name) == key.slice(0, -"Initializer".length))
-        childNode = property?.initializer;
+        childNode = property!.initializer;
       } else if (typeof childNode[key] === "function") {
         childNode = childNode[key].call(childNode);
       } else {
