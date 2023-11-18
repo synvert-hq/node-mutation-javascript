@@ -1,5 +1,10 @@
 # NodeMutation
 
+## 1.15.9 (2023-11-18)
+
+* Sort actions before filtering them when testing
+* Flat and sort actions before filtering them when processing
+
 ## 1.15.8 (2023-11-18)
 
 * Check conflict in flatten actions
