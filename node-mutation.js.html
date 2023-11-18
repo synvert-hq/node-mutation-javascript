@@ -297,12 +297,12 @@ class NodeMutation {
         if (flattenActions.length == 0) {
             return { affected: false, conflicted: false };
         }
-        const sortedActions = this.sortActions(flattenActions);
+        const sortedActions = this.sortFlattenActions(flattenActions);
         const conflictActions = this.getConflictActions(sortedActions);
         if (conflictActions.length > 0 &amp;&amp; this.isStrategry(strategy_1.default.THROW_ERROR)) {
             throw new error_1.ConflictActionError();
         }
-        const newSource = this.rewriteSource(this.source, this.getFilteredActions(conflictActions));
+        const newSource = this.rewriteSource(this.source, this.getFilteredActions(sortedActions, conflictActions));
         return {
             affected: true,
             conflicted: conflictActions.length !== 0,
@@ -336,12 +336,13 @@ class NodeMutation {
         if (flattenActions.length == 0) {
             return { affected: false, conflicted: false, actions: [] };
         }
-        const sortedActions = this.sortActions(flattenActions);
+        const sortedActions = this.sortFlattenActions(flattenActions);
         const conflictActions = this.getConflictActions(sortedActions);
         if (conflictActions.length > 0 &amp;&amp; this.isStrategry(strategy_1.default.THROW_ERROR)) {
             throw new error_1.ConflictActionError();
         }
-        return { affected: true, conflicted: conflictActions.length !== 0, actions: this.getFilteredActions(conflictActions) };
+        const actions = this.getFilteredActions(this.sortActions(this.actions), conflictActions);
+        return { affected: true, conflicted: conflictActions.length !== 0, actions };
     }
     /**
      * It flattens a series of actions by removing any GroupAction objects that contain only a single action. This is done recursively.
@@ -364,27 +365,44 @@ class NodeMutation {
     /**
      * Sort actions by start position and end position.
      * @private
-     * @param {Action[]} actions
+     * @param {Action[]} flattenActions
      * @returns {Action[]} sorted actions
      */
+    sortFlattenActions(flattenActions) {
+        return flattenActions.sort(this.compareActions);
+    }
     sortActions(actions) {
-        return actions.sort((actionA, actionB) => {
-            if (actionA.start > actionB.start)
-                return 1;
-            if (actionA.start &lt; actionB.start)
-                return -1;
-            if (actionA.end > actionB.end)
-                return 1;
-            if (actionA.end &lt; actionB.end)
-                return -1;
-            if (actionA.conflictPosition &amp;&amp; actionB.conflictPosition) {
-                if (actionA.conflictPosition > actionB.conflictPosition)
-                    return 1;
-                if (actionA.conflictPosition &lt; actionB.conflictPosition)
-                    return -1;
+        actions.sort(this.compareActions);
+        actions.forEach(action => {
+            if (action.type === "group") {
+                this.sortActions(action.actions);
             }
-            return 0;
         });
+        return actions;
+    }
+    /**
+     * Action sort function.
+     * @private
+     * @param {Action} actionA
+     * @param {Action} actionB
+     * @returns {number} returns 1 if actionA goes before actionB, -1 if actionA goes after actionB
+     */
+    compareActions(actionA, actionB) {
+        if (actionA.start > actionB.start)
+            return 1;
+        if (actionA.start &lt; actionB.start)
+            return -1;
+        if (actionA.end > actionB.end)
+            return 1;
+        if (actionA.end &lt; actionB.end)
+            return -1;
+        if (actionA.conflictPosition &amp;&amp; actionB.conflictPosition) {
+            if (actionA.conflictPosition > actionB.conflictPosition)
+                return 1;
+            if (actionA.conflictPosition &lt; actionB.conflictPosition)
+                return -1;
+        }
+        return 0;
     }
     /**
      * Rewrite source code with actions.
@@ -424,7 +442,7 @@ class NodeMutation {
         while (j > -1) {
             if (beginPos &lt; actions[j].end) {
                 conflictActions.push(actions[j]);
-                (0, debug_1.default)("node-mutation")(`${actions[j].constructor.name}[${actions[j].start}-${actions[j].end}]:${actions[j].newCode}`);
+                (0, debug_1.default)("node-mutation")(`Conflict ${actions[j].type}[${actions[j].start}-${actions[j].end}]:${actions[j].newCode}`);
             }
             else {
                 i = j;
@@ -435,8 +453,8 @@ class NodeMutation {
         }
         return conflictActions;
     }
-    getFilteredActions(conflictActions) {
-        const actions = this.actions.filter(action => {
+    getFilteredActions(sortedActions, conflictActions) {
+        const actions = sortedActions.filter(action => {
             if (action.type === 'group') {
                 // If all child-actions of a group action are conflicted, remove the group action
                 return !action.actions.every(childAction => conflictActions.includes(childAction));
@@ -466,7 +484,7 @@ exports.default = NodeMutation;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Sat Nov 18 2023 01:31:44 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Sat Nov 18 2023 12:47:49 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
