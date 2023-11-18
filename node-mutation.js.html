@@ -293,17 +293,16 @@ class NodeMutation {
      * @returns {ProcessResult}
      */
     process() {
-        this.actions = this.flattenActions(this.actions);
-        if (this.actions.length == 0) {
+        const flattenActions = this.flatActions(this.actions);
+        if (flattenActions.length == 0) {
             return { affected: false, conflicted: false };
         }
-        let conflictActions = [];
-        this.actions = this.sortActions(this.actions);
-        conflictActions = this.getConflictActions(this.actions);
+        const sortedActions = this.sortActions(flattenActions);
+        const conflictActions = this.getConflictActions(sortedActions);
         if (conflictActions.length > 0 &amp;&amp; this.isStrategry(strategy_1.default.THROW_ERROR)) {
             throw new error_1.ConflictActionError();
         }
-        const newSource = this.rewriteSource(this.source, this.actions);
+        const newSource = this.rewriteSource(this.source, this.getFilteredActions(conflictActions));
         return {
             affected: true,
             conflicted: conflictActions.length !== 0,
@@ -333,17 +332,16 @@ class NodeMutation {
      * @returns {TestResult} if actions are conflicted and the actions
      */
     test() {
-        this.actions = this.flattenActions(this.actions);
-        if (this.actions.length == 0) {
+        const flattenActions = this.flatActions(this.actions);
+        if (flattenActions.length == 0) {
             return { affected: false, conflicted: false, actions: [] };
         }
-        let conflictActions = [];
-        this.actions = this.sortActions(this.actions);
-        conflictActions = this.getConflictActions(this.actions);
+        const sortedActions = this.sortActions(flattenActions);
+        const conflictActions = this.getConflictActions(sortedActions);
         if (conflictActions.length > 0 &amp;&amp; this.isStrategry(strategy_1.default.THROW_ERROR)) {
             throw new error_1.ConflictActionError();
         }
-        return { affected: true, conflicted: conflictActions.length !== 0, actions: this.actions };
+        return { affected: true, conflicted: conflictActions.length !== 0, actions: this.getFilteredActions(conflictActions) };
     }
     /**
      * It flattens a series of actions by removing any GroupAction objects that contain only a single action. This is done recursively.
@@ -351,40 +349,17 @@ class NodeMutation {
      * @param {Action[]} actions
      * @returns {Action[]} sorted actions
      */
-    flattenActions(actions) {
-        const newActions = [];
+    flatActions(actions) {
+        const flattenActions = [];
         actions.forEach(action => {
             if (action.type === "group") {
-                newActions.push(this.flattenGroupAction(action));
+                flattenActions.push(...this.flatActions(action.actions));
             }
             else {
-                newActions.push(action);
+                flattenActions.push(action);
             }
         });
-        return newActions.filter(action => action !== null);
-    }
-    /**
-     * It flattens a group action.
-     * @private
-     * @param action {Action}
-     * @returns {Action | null}
-     */
-    flattenGroupAction(action) {
-        if (action.actions.length === 0) {
-            return null;
-        }
-        else if (action.actions.length === 1) {
-            if (action.actions[0].type === "group") {
-                return this.flattenGroupAction(action.actions[0]);
-            }
-            else {
-                return action.actions[0];
-            }
-        }
-        else {
-            action.actions = this.flattenActions(action.actions);
-            return action;
-        }
+        return flattenActions;
     }
     /**
      * Sort actions by start position and end position.
@@ -393,13 +368,23 @@ class NodeMutation {
      * @returns {Action[]} sorted actions
      */
     sortActions(actions) {
-        actions.sort(this.compareActions);
-        actions.forEach(action => {
-            if (action.type === "group") {
-                this.sortActions(action.actions);
+        return actions.sort((actionA, actionB) => {
+            if (actionA.start > actionB.start)
+                return 1;
+            if (actionA.start &lt; actionB.start)
+                return -1;
+            if (actionA.end > actionB.end)
+                return 1;
+            if (actionA.end &lt; actionB.end)
+                return -1;
+            if (actionA.conflictPosition &amp;&amp; actionB.conflictPosition) {
+                if (actionA.conflictPosition > actionB.conflictPosition)
+                    return 1;
+                if (actionA.conflictPosition &lt; actionB.conflictPosition)
+                    return -1;
             }
+            return 0;
         });
-        return actions;
     }
     /**
      * Rewrite source code with actions.
@@ -422,30 +407,6 @@ class NodeMutation {
         return source;
     }
     /**
-     * Action sort function.
-     * @private
-     * @param {Action} actionA
-     * @param {Action} actionB
-     * @returns {number} returns 1 if actionA goes before actionB, -1 if actionA goes after actionB
-     */
-    compareActions(actionA, actionB) {
-        if (actionA.start > actionB.start)
-            return 1;
-        if (actionA.start &lt; actionB.start)
-            return -1;
-        if (actionA.end > actionB.end)
-            return 1;
-        if (actionA.end &lt; actionB.end)
-            return -1;
-        if (actionA.conflictPosition &amp;&amp; actionB.conflictPosition) {
-            if (actionA.conflictPosition > actionB.conflictPosition)
-                return 1;
-            if (actionA.conflictPosition &lt; actionB.conflictPosition)
-                return -1;
-        }
-        return 0;
-    }
-    /**
      * It changes source code from bottom to top, and it can change source code twice at the same time,
      * So if there is an overlap between two actions, it removes the conflict actions and operate them in the next loop.
      * @private
@@ -462,7 +423,8 @@ class NodeMutation {
         let endPos = actions[i].end;
         while (j > -1) {
             if (beginPos &lt; actions[j].end) {
-                conflictActions.push(actions.splice(j, 1)[0]);
+                conflictActions.push(actions[j]);
+                (0, debug_1.default)("node-mutation")(`${actions[j].constructor.name}[${actions[j].start}-${actions[j].end}]:${actions[j].newCode}`);
             }
             else {
                 i = j;
@@ -471,15 +433,19 @@ class NodeMutation {
             }
             j--;
         }
-        actions.forEach(action => {
-            if (action.type === "group") {
-                conflictActions.push(...this.getConflictActions(action.actions));
+        return conflictActions;
+    }
+    getFilteredActions(conflictActions) {
+        const actions = this.actions.filter(action => {
+            if (action.type === 'group') {
+                // If all child-actions of a group action are conflicted, remove the group action
+                return !action.actions.every(childAction => conflictActions.includes(childAction));
+            }
+            else {
+                return !conflictActions.includes(action);
             }
         });
-        conflictActions.forEach(conflictAction => {
-            (0, debug_1.default)("node-mutation")(`${conflictAction.constructor.name}[${conflictAction.start}-${conflictAction.end}]:${conflictAction.newCode}`);
-        });
-        return conflictActions;
+        return actions;
     }
     isStrategry(strategy) {
         return !!NodeMutation.strategy &amp;&amp; (NodeMutation.strategy &amp; strategy) === strategy;
@@ -500,7 +466,7 @@ exports.default = NodeMutation;
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Sun Oct 22 2023 00:32:32 GMT+0000 (Coordinated Universal Time) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Sat Nov 18 2023 01:31:44 GMT+0000 (Coordinated Universal Time) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
