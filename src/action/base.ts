@@ -38,7 +38,7 @@ export abstract class BaseAction<T> {
   process(): Action {
     this.calculatePositions();
 
-    debug("node-mutation")(`${this.constructor.name}[${this.start}-${this.end}]:${this.newCode}`);
+    debug("node-mutation")(`Process ${this.constructor.name}[${this.start}-${this.end}]:${this.newCode}`);
     const result: Action = {
       type: this.type,
       start: this.start,
