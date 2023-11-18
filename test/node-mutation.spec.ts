@@ -102,7 +102,7 @@ describe("NodeMutation", () => {
       expect(result.affected).toBeTruthy();
       expect(result.conflicted).toBeFalsy();
       expect(result.newSource).toEqual(dedent`
-        class FooBar extends Foo extends Bar {
+        class FooBar extends Bar extends Foo {
           foo() {}
           bar() {}
         }

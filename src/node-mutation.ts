@@ -277,7 +277,7 @@ class NodeMutation<T> {
     if (conflictActions.length > 0  && this.isStrategry(Strategy.THROW_ERROR)) {
       throw new ConflictActionError();
     }
-    const newSource = this.rewriteSource(this.source, this.getFilteredActions(conflictActions));
+    const newSource = this.rewriteSource(this.source, this.getFilteredActions(sortedActions, conflictActions));
 
     return {
       affected: true,
@@ -320,7 +320,8 @@ class NodeMutation<T> {
     if (conflictActions.length > 0  && this.isStrategry(Strategy.THROW_ERROR)) {
       throw new ConflictActionError();
     }
-    return { affected: true, conflicted: conflictActions.length !== 0, actions: this.getFilteredActions(conflictActions) };
+    const actions = this.getFilteredActions(this.sortActions(this.actions), conflictActions)
+    return { affected: true, conflicted: conflictActions.length !== 0, actions };
   }
 
   /**
@@ -429,8 +430,8 @@ class NodeMutation<T> {
     return conflictActions;
   }
 
-  private getFilteredActions(conflictActions: Action[]): Action[] {
-    const actions = this.sortActions(this.actions).filter(action => {
+  private getFilteredActions(sortedActions: Action[], conflictActions: Action[]): Action[] {
+    const actions = sortedActions.filter(action => {
       if (action.type === 'group') {
         // If all child-actions of a group action are conflicted, remove the group action
         return !action.actions!.every(childAction => conflictActions.includes(childAction));
