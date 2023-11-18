@@ -272,7 +272,7 @@ class NodeMutation<T> {
     if (flattenActions.length == 0) {
       return { affected: false, conflicted: false };
     }
-    const sortedActions = this.sortActions(flattenActions);
+    const sortedActions = this.sortFlattenActions(flattenActions);
     const conflictActions = this.getConflictActions(sortedActions);
     if (conflictActions.length > 0  && this.isStrategry(Strategy.THROW_ERROR)) {
       throw new ConflictActionError();
@@ -315,7 +315,7 @@ class NodeMutation<T> {
     if (flattenActions.length == 0) {
       return { affected: false, conflicted: false, actions: [] };
     }
-    const sortedActions = this.sortActions(flattenActions);
+    const sortedActions = this.sortFlattenActions(flattenActions);
     const conflictActions = this.getConflictActions(sortedActions);
     if (conflictActions.length > 0  && this.isStrategry(Strategy.THROW_ERROR)) {
       throw new ConflictActionError();
@@ -344,21 +344,40 @@ class NodeMutation<T> {
   /**
    * Sort actions by start position and end position.
    * @private
-   * @param {Action[]} actions
+   * @param {Action[]} flattenActions
    * @returns {Action[]} sorted actions
    */
+  private sortFlattenActions(flattenActions: Action[]): Action[] {
+    return flattenActions.sort(this.compareActions);
+  }
+
   private sortActions(actions: Action[]): Action[] {
-    return actions.sort((actionA: Action, actionB: Action) => {
-      if (actionA.start > actionB.start) return 1;
-      if (actionA.start < actionB.start) return -1;
-      if (actionA.end > actionB.end) return 1;
-      if (actionA.end < actionB.end) return -1;
-      if (actionA.conflictPosition && actionB.conflictPosition) {
-        if (actionA.conflictPosition > actionB.conflictPosition) return 1;
-        if (actionA.conflictPosition < actionB.conflictPosition) return -1;
+    actions.sort(this.compareActions);
+    actions.forEach(action => {
+      if (action.type === "group") {
+        this.sortActions(action.actions!);
       }
-      return 0;
     });
+    return actions;
+   }
+
+  /**
+   * Action sort function.
+   * @private
+   * @param {Action} actionA
+   * @param {Action} actionB
+   * @returns {number} returns 1 if actionA goes before actionB, -1 if actionA goes after actionB
+   */
+   private compareActions(actionA: Action, actionB: Action): 0 | 1 | -1 {
+    if (actionA.start > actionB.start) return 1;
+    if (actionA.start < actionB.start) return -1;
+    if (actionA.end > actionB.end) return 1;
+    if (actionA.end < actionB.end) return -1;
+    if (actionA.conflictPosition && actionB.conflictPosition) {
+      if (actionA.conflictPosition > actionB.conflictPosition) return 1;
+      if (actionA.conflictPosition < actionB.conflictPosition) return -1;
+    }
+    return 0;
   }
 
   /**
@@ -411,7 +430,7 @@ class NodeMutation<T> {
   }
 
   private getFilteredActions(conflictActions: Action[]): Action[] {
-    const actions = this.actions.filter(action => {
+    const actions = this.sortActions(this.actions).filter(action => {
       if (action.type === 'group') {
         // If all child-actions of a group action are conflicted, remove the group action
         return !action.actions!.every(childAction => conflictActions.includes(childAction));
