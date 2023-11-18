@@ -418,7 +418,7 @@ class NodeMutation<T> {
     while (j > -1) {
       if (beginPos < actions[j].end) {
         conflictActions.push(actions[j]);
-        debug("node-mutation")(`Conflict ${actions[j].constructor.name}[${actions[j].start}-${actions[j].end}]:${actions[j].newCode}`);
+        debug("node-mutation")(`Conflict ${actions[j].type}[${actions[j].start}-${actions[j].end}]:${actions[j].newCode}`);
       } else {
         i = j;
         beginPos = actions[i].start;
