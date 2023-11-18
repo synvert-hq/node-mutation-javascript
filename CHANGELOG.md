@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.15.8 (2023-11-18)
+
+* Check conflict in flatten actions
+
 ## 1.15.7 (2023-10-22)
 
 * Support `xxxAttribute` in `childNodeRange` and `childNodeValue`
