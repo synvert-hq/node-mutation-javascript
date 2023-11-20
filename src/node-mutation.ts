@@ -278,7 +278,8 @@ class NodeMutation<T> {
     if (conflictActions.length > 0  && this.isStrategy(Strategy.THROW_ERROR)) {
       throw new ConflictActionError();
     }
-    const newSource = this.rewriteSource(this.source, this.sortActions(this.getFilteredActions(conflictActions)));
+    const actions = this.sortFlattenActions(this.flatActions(this.getFilteredActions(conflictActions)));
+    const newSource = this.rewriteSource(this.source, actions);
 
     return {
       affected: true,
