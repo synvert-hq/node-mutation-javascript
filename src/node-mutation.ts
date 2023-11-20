@@ -434,7 +434,7 @@ class NodeMutation<T> {
     const actions = sortedActions.filter(action => {
       if (action.type === 'group') {
         // If all child-actions of a group action are conflicted, remove the group action
-        return !action.actions!.every(childAction => conflictActions.includes(childAction));
+        return action.actions!.every(childAction => !conflictActions.includes(childAction));
       } else {
         return !conflictActions.includes(action);
       }
