@@ -275,7 +275,7 @@ class NodeMutation<T> {
     }
     const sortedActions = this.sortFlattenActions(flattenActions);
     const conflictActions = this.getConflictActions(sortedActions);
-    if (conflictActions.length > 0  && this.isStrategry(Strategy.THROW_ERROR)) {
+    if (conflictActions.length > 0  && this.isStrategy(Strategy.THROW_ERROR)) {
       throw new ConflictActionError();
     }
     const newSource = this.rewriteSource(this.source, this.sortActions(this.getFilteredActions(conflictActions)));
@@ -319,7 +319,7 @@ class NodeMutation<T> {
     }
     const sortedActions = this.sortFlattenActions(flattenActions);
     const conflictActions = this.getConflictActions(sortedActions);
-    if (conflictActions.length > 0  && this.isStrategry(Strategy.THROW_ERROR)) {
+    if (conflictActions.length > 0  && this.isStrategy(Strategy.THROW_ERROR)) {
       throw new ConflictActionError();
     }
     const actions = this.sortActions(this.getFilteredActions(conflictActions));
@@ -477,7 +477,7 @@ class NodeMutation<T> {
     })
   }
 
-  private isStrategry(strategy: Strategy): boolean {
+  private isStrategy(strategy: Strategy): boolean {
     return !!NodeMutation.strategy && (NodeMutation.strategy & strategy) === strategy;
   }
 }

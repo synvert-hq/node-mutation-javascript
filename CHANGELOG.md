@@ -25,7 +25,7 @@
 
 ## 1.15.5 (2023-10-21)
 
-* Follow camelCase convention for `xxxPropery` and `xxxValue`
+* Follow camelCase convention for `xxxProperty` and `xxxValue`
 
 ## 1.15.4 (2023-10-20)
 
@@ -64,7 +64,7 @@
 ## 1.13.0 (2023-09-29)
 
 * Add `actions` attributes to `Action`
-* Do not expose `Nodemutation#actions`
+* Do not expose `NodeMutation#actions`
 * Add `GroupAction`
 * Add `group` api
 
@@ -194,7 +194,7 @@
 
 ## 1.1.5 (2022-08-23)
 
-* Fix "typescript getText() may contain trailing whitespaces and newlines"
+* Fix "typescript getText() may contain trailing whitespace and newlines"
 
 ## 1.1.4 (2022-08-18)
 
