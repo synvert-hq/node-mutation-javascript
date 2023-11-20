@@ -1,5 +1,11 @@
 # NodeMutation
 
+## 1.15.10 (2023-11-20)
+
+* Optimize group actions
+* Filter actions base on this.actions and then sort
+* Filter group action if none of child action is conflicted
+
 ## 1.15.9 (2023-11-18)
 
 * Sort actions before filtering them when testing
