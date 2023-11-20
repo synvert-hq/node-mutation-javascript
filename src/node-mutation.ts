@@ -278,7 +278,7 @@ class NodeMutation<T> {
     if (conflictActions.length > 0  && this.isStrategry(Strategy.THROW_ERROR)) {
       throw new ConflictActionError();
     }
-    const newSource = this.rewriteSource(this.source, this.getFilteredActions(sortedActions, conflictActions));
+    const newSource = this.rewriteSource(this.source, this.sortActions(this.getFilteredActions(conflictActions)));
 
     return {
       affected: true,
@@ -322,7 +322,7 @@ class NodeMutation<T> {
     if (conflictActions.length > 0  && this.isStrategry(Strategy.THROW_ERROR)) {
       throw new ConflictActionError();
     }
-    const actions = this.getFilteredActions(this.sortActions(this.actions), conflictActions)
+    const actions = this.sortActions(this.getFilteredActions(conflictActions));
     return { affected: true, conflicted: conflictActions.length !== 0, actions };
   }
 
@@ -376,6 +376,12 @@ class NodeMutation<T> {
     return flattenActions.sort(this.compareActions);
   }
 
+  /**
+   * Recursively sort actions by start position and end position.
+   * @private
+   * @param {Action[]} flattenActions
+   * @returns {Action[]} sorted actions
+   */
   private sortActions(actions: Action[]): Action[] {
     actions.sort(this.compareActions);
     actions.forEach(action => {
@@ -384,7 +390,7 @@ class NodeMutation<T> {
       }
     });
     return actions;
-   }
+  }
 
   /**
    * Action sort function.
@@ -454,8 +460,14 @@ class NodeMutation<T> {
     return conflictActions;
   }
 
-  private getFilteredActions(sortedActions: Action[], conflictActions: Action[]): Action[] {
-    const actions = sortedActions.filter(action => {
+  /**
+   * It filters conflict actions from actions.
+   * @private
+   * @param {Action[]} conflictActions
+   * @returns {Action[]} filtered actions
+   */
+  private getFilteredActions(conflictActions: Action[]): Action[] {
+    return this.actions.filter(action => {
       if (action.type === 'group') {
         // If all child-actions of a group action are conflicted, remove the group action
         return action.actions!.every(childAction => !conflictActions.includes(childAction));
@@ -463,7 +475,6 @@ class NodeMutation<T> {
         return !conflictActions.includes(action);
       }
     })
-    return actions;
   }
 
   private isStrategry(strategy: Strategy): boolean {
