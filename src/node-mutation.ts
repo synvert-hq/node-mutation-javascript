@@ -268,6 +268,7 @@ class NodeMutation<T> {
    * @returns {ProcessResult}
    */
   process(): ProcessResult {
+    this.actions = this.optimizeGroupActions(this.actions);
     const flattenActions = this.flatActions(this.actions);
     if (flattenActions.length == 0) {
       return { affected: false, conflicted: false };
@@ -311,6 +312,7 @@ class NodeMutation<T> {
    * @returns {TestResult} if actions are conflicted and the actions
    */
   test(): TestResult {
+    this.actions = this.optimizeGroupActions(this.actions);
     const flattenActions = this.flatActions(this.actions);
     if (flattenActions.length == 0) {
       return { affected: false, conflicted: false, actions: [] };
@@ -322,6 +324,28 @@ class NodeMutation<T> {
     }
     const actions = this.getFilteredActions(this.sortActions(this.actions), conflictActions)
     return { affected: true, conflicted: conflictActions.length !== 0, actions };
+  }
+
+  /**
+   * Optimizes a group of actions by recursively optimizing its sub-actions.
+   * If a group action contains only one action, it replaces the group action with that action.
+   * If a group action contains more than one action, it optimizes its sub-actions.
+   * @private
+   * @param {Action[]} actions
+   * @returns {Action[]} optimized actions
+   */
+  private optimizeGroupActions(actions: Action[]): Action[] {
+    return actions.flatMap(action => {
+      if (action.type === 'group') {
+        // If the group action contains only one action, replace the group action with that action
+        if (action.actions!.length === 1) {
+          return this.optimizeGroupActions(action.actions!);
+        }
+        // If the group action contains more than one action, optimize its sub-actions
+        action.actions = this.optimizeGroupActions(action.actions!);
+      }
+      return action;
+    });
   }
 
   /**
