@@ -1,5 +1,10 @@
 # NodeMutation
 
+## 1.15.11 (2023-11-20)
+
+* Flat and sort actions after filtering actions when processing
+* Fix typos
+
 ## 1.15.10 (2023-11-20)
 
 * Optimize group actions
