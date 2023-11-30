@@ -18,6 +18,8 @@ export abstract class BaseAction<T> {
    * Create an Action.
    * @param {T} node
    * @param {string} code - new code to insert, replace or delete
+   * @param {object} options
+   * @param {Adapter<T>} options.adapter - adapter to parse the node
    */
   constructor(protected node: T | undefined, protected code: string, { adapter }: { adapter: Adapter<T> }) {
     this.start = -1;

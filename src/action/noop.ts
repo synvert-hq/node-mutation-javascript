@@ -9,6 +9,8 @@ export class NoopAction<T> extends BaseAction<T> {
   /**
    * Create a NoopAction
    * @param {T} node
+   * @param {object} options
+   * @param {Adapter<T>} options.adapter - adapter to parse the node
    */
   constructor(node: T, { adapter }: { adapter: Adapter<T> }) {
     super(node, "", { adapter });

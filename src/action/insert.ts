@@ -15,6 +15,7 @@ export class InsertAction<T> extends BaseAction<T> {
    * @param {T} node
    * @param {string} code - new code to be inserted
    * @param {InsertOptions} options
+   * @param options.adapter - adapter to parse the node
    */
   constructor(node: T, code: string, options: InsertOptions & { adapter: Adapter<T> }) {
     super(node, code, { adapter: options.adapter });

@@ -15,6 +15,7 @@ export class DeleteAction<T> extends BaseAction<T> {
    * @param {T} node
    * @param {string|string[]} selectors - name of child nodes
    * @param {DeleteOptions} options
+   * @param options.adapter - adapter to parse the node
    */
   constructor(node: T, selectors: string | string[], options: DeleteOptions & { adapter: Adapter<T> }) {
     super(node, "", { adapter: options.adapter });

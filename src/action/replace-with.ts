@@ -10,6 +10,8 @@ export class ReplaceWithAction<T> extends BaseAction<T> {
    * Create an ReplaceAction
    * @param {T} node
    * @param {string} code
+   * @param {object} options
+   * @param {Adapter<T>} options.adapter - adapter to parse the node
    */
   constructor(node: T, code: string, { adapter }: { adapter: Adapter<T> }) {
     super(node, code, { adapter });

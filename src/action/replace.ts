@@ -14,6 +14,7 @@ export class ReplaceAction<T> extends BaseAction<T> {
    * @param {T} node
    * @param {string|string[]} selectors - name of child nodes
    * @param {ReplaceOptions} options
+   * @param options.adapter - adapter to parse the node
    */
   constructor(
     node: T,

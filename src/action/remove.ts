@@ -13,6 +13,7 @@ export class RemoveAction<T> extends BaseAction<T> {
    * Create a RemoveAction
    * @param {T} node
    * @param {DeleteOptions} options
+   * @param options.adapter - adapter to parse the node
    */
   constructor(node: T, options: RemoveOptions & { adapter: Adapter<T> }) {
     super(node, "", { adapter: options.adapter });

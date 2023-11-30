@@ -15,6 +15,8 @@ export class GroupAction<T> extends BaseAction<T> {
 
   /**
    * Create a GroupAction
+   * @param {object} options
+   * @param {Adapter<T>} options.adapter - adapter to parse the node
    */
   constructor({ adapter }: { adapter: Adapter<T> }) {
     super(undefined, "", { adapter });
