@@ -11,9 +11,9 @@ import { ConflictActionError } from "./error";
 
 class NodeMutation<T> {
   private static strategy: Strategy = Strategy.THROW_ERROR;
-  private actions: Action[] = [];
   public static tabWidth: number = 2;
-  private adapter: Adapter<T>;
+  public adapter: Adapter<T>;
+  private actions: Action[] = [];
 
   /**
    * Configure NodeMutation
