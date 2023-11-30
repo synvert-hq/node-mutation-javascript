@@ -10,7 +10,6 @@ import { AppendAction, DeleteAction, GroupAction, InsertAction, NoopAction, Prep
 import { ConflictActionError } from "./error";
 
 class NodeMutation<T> {
-  private static adapter?: Adapter<any>;
   private static strategy: Strategy = Strategy.THROW_ERROR;
   private actions: Action[] = [];
   public static tabWidth: number = 2;
@@ -20,27 +19,16 @@ class NodeMutation<T> {
    * Configure NodeMutation
    * @static
    * @param options {Object}
-   * @param options.adapter {Adapter} - adapter, default is TypescriptAdapter
    * @param options.strategy {Strategy} - strategy, default is Strategy.THROW_ERROR
    * @param options.tabWidth {Number} - tab width, default is 2
    */
   static configure(options: { adapter?: Adapter<any>, strategy?: Strategy, tabWidth?: number }) {
-    if (options.adapter) {
-      this.adapter = options.adapter;
-    }
     if (options.strategy) {
       this.strategy = options.strategy;
     }
     if (options.tabWidth) {
       this.tabWidth = options.tabWidth;
     }
-  }
-
-  static getAdapter(): Adapter<any> {
-    if (!this.adapter) {
-      this.adapter = new TypescriptAdapter();
-    }
-    return this.adapter!;
   }
 
   /**
