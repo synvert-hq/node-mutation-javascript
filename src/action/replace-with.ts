@@ -1,5 +1,5 @@
 import { BaseAction } from "../action";
-import { getAdapter } from "../helpers";
+import Adapter from "../adapter";
 
 /**
  * ReplaceWithAction to replace code.
@@ -11,8 +11,8 @@ export class ReplaceWithAction<T> extends BaseAction<T> {
    * @param {T} node
    * @param {string} code
    */
-  constructor(node: T, code: string) {
-    super(node, code);
+  constructor(node: T, code: string, { adapter }: { adapter: Adapter<T> }) {
+    super(node, code, { adapter });
     this.type = "replace";
   }
 
@@ -21,8 +21,8 @@ export class ReplaceWithAction<T> extends BaseAction<T> {
    * @protected
    */
   calculatePositions(): void {
-    this.start = getAdapter<T>().getStart(this.node!);
-    this.end = getAdapter<T>().getEnd(this.node!);
+    this.start = this.adapter.getStart(this.node!);
+    this.end = this.adapter.getEnd(this.node!);
   }
 
   /**

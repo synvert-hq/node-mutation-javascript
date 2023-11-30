@@ -2,8 +2,11 @@ import dedent from "dedent";
 import { Node } from "typescript";
 import { DeleteAction } from "../../src/action";
 import { parseCode, parseJsxCode } from "../helper";
+import TypescriptAdapter from "../../src/adapter/typescript";
 
 describe("DeleteAction", () => {
+  const adapter = new TypescriptAdapter();
+
   describe("no wholeLine", () => {
     const code = "this.foo.bind(this)";
     const node = parseCode(code);
@@ -13,7 +16,7 @@ describe("DeleteAction", () => {
         "expression.expression.dot",
         "expression.expression.name",
         "expression.arguments",
-      ], {});
+      ], { adapter });
       expect(action.process()).toEqual({
         type: "delete",
         start: "this.foo".length,
@@ -33,7 +36,7 @@ describe("DeleteAction", () => {
     const node = parseCode(code);
 
     it("gets range and rewritten code", () => {
-      const action = new DeleteAction<Node>(node, ["members.0"], { wholeLine: true });
+      const action = new DeleteAction<Node>(node, ["members.0"], { wholeLine: true, adapter });
       expect(action.process()).toEqual({
         type: "delete",
         start: "class Synvert {\n".length,
@@ -48,7 +51,7 @@ describe("DeleteAction", () => {
     const node = parseCode(code);
 
     it("gets range and rewritten code for first property", () => {
-      const action = new DeleteAction<Node>(node, ["declarationList.declarations.0.initializer.properties.0"], { andComma: true });
+      const action = new DeleteAction<Node>(node, ["declarationList.declarations.0.initializer.properties.0"], { andComma: true, adapter });
       expect(action.process()).toEqual({
         type: "delete",
         start: "const foobar = {".length,
@@ -58,7 +61,7 @@ describe("DeleteAction", () => {
     });
 
     it("gets range and rewritten code for last property", () => {
-      const action = new DeleteAction<Node>(node, ["declarationList.declarations.0.initializer.properties.-1"], { andComma: true });
+      const action = new DeleteAction<Node>(node, ["declarationList.declarations.0.initializer.properties.-1"], { andComma: true, adapter });
       expect(action.process()).toEqual({
         type: "delete",
         start: "const foobar = { foo".length,
@@ -73,7 +76,7 @@ describe("DeleteAction", () => {
     const node = parseJsxCode(code);
 
     it("gets range and rewritten code for first property", () => {
-      const action = new DeleteAction<Node>(node, ["expression.attributes.properties.0"], {});
+      const action = new DeleteAction<Node>(node, ["expression.attributes.properties.0"], { adapter });
       expect(action.process()).toEqual({
         type: "delete",
         start: "<Field".length,
@@ -83,7 +86,7 @@ describe("DeleteAction", () => {
     });
 
     it("gets range and rewritten code for last property", () => {
-      const action = new DeleteAction<Node>(node, ["expression.attributes.properties.-1"], {});
+      const action = new DeleteAction<Node>(node, ["expression.attributes.properties.-1"], { adapter });
       expect(action.process()).toEqual({
         type: "delete",
         start: '<Field name="email"'.length,

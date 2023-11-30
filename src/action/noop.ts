@@ -1,5 +1,5 @@
 import { BaseAction } from "../action";
-import { getAdapter } from "../helpers";
+import Adapter from "../adapter";
 
 /**
  * NoopAction to do no operation.
@@ -10,8 +10,8 @@ export class NoopAction<T> extends BaseAction<T> {
    * Create a NoopAction
    * @param {T} node
    */
-  constructor(node: T) {
-    super(node, "");
+  constructor(node: T, { adapter }: { adapter: Adapter<T> }) {
+    super(node, "", { adapter });
   }
 
   /**
@@ -19,8 +19,8 @@ export class NoopAction<T> extends BaseAction<T> {
    * @protected
    */
   calculatePositions(): void {
-    this.start = getAdapter<T>().getStart(this.node!);
-    this.end = getAdapter<T>().getEnd(this.node!);
+    this.start = this.adapter.getStart(this.node!);
+    this.end = this.adapter.getEnd(this.node!);
   }
 
   get newCode() {

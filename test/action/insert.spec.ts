@@ -1,14 +1,17 @@
 import { Node } from "typescript";
 import { InsertAction } from "../../src/action";
 import { parseCode, parseJsxCode } from "../helper";
+import TypescriptAdapter from "../../src/adapter/typescript";
 
 describe("InsertAction", () => {
+  const adapter = new TypescriptAdapter();
   const node = parseCode("this.foo");
 
   describe("at beginning", () => {
     it("get range and rewritten code", () => {
       const action = new InsertAction<Node>(node, "::", {
         at: "beginning",
+        adapter,
       });
       expect(action.process()).toEqual({ type: "insert", start: 0, end: 0, newCode: "::" });
     });
@@ -17,7 +20,8 @@ describe("InsertAction", () => {
   describe("at end of object", () => {
     it("get range and rewritten code", () => {
       const action = new InsertAction<Node>(node, ".bar", {
-        to: "expression.expression"
+        to: "expression.expression",
+        adapter,
       });
       expect(action.process()).toEqual({ type: "insert", start: "this".length, end: "this".length, newCode: ".bar" });
     });
@@ -33,6 +37,7 @@ describe("InsertAction", () => {
           at: "beginning",
           to: "declarationList.declarations.0.initializer.properties.0",
           andComma: true,
+          adapter,
         });
         expect(action.process()).toEqual({
           type: "insert",
@@ -49,6 +54,7 @@ describe("InsertAction", () => {
           at: "end",
           to: "declarationList.declarations.0.initializer.properties.0",
           andComma: true,
+          adapter,
         });
         expect(action.process()).toEqual({
           type: "insert",
@@ -70,6 +76,7 @@ describe("InsertAction", () => {
           at: "beginning",
           to: "expression.attributes.properties.0",
           andSpace: true,
+          adapter,
         });
         expect(action.process()).toEqual({
           type: "insert",
@@ -86,6 +93,7 @@ describe("InsertAction", () => {
           at: "end",
           to: "expression.attributes.properties.0",
           andSpace: true,
+          adapter,
         });
         expect(action.process()).toEqual({
           type: "insert",

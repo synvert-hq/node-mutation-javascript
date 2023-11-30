@@ -1,5 +1,5 @@
 import { BaseAction } from "../action";
-import { getAdapter } from "../helpers";
+import Adapter from "../adapter";
 import { DeleteOptions } from "../types/action";
 
 /**
@@ -16,8 +16,8 @@ export class DeleteAction<T> extends BaseAction<T> {
    * @param {string|string[]} selectors - name of child nodes
    * @param {DeleteOptions} options
    */
-  constructor(node: T, selectors: string | string[], options: DeleteOptions) {
-    super(node, "");
+  constructor(node: T, selectors: string | string[], options: DeleteOptions & { adapter: Adapter<T> }) {
+    super(node, "", { adapter: options.adapter });
     this.selectors = Array.isArray(selectors) ? selectors : Array(selectors);
     this.type = "delete";
     this.options = options;
@@ -30,12 +30,12 @@ export class DeleteAction<T> extends BaseAction<T> {
   calculatePositions(): void {
     this.start = Math.min(
       ...this.selectors.map(
-        (selector) => getAdapter<T>().childNodeRange(this.node!, selector).start
+        (selector) => this.adapter.childNodeRange(this.node!, selector).start
       )
     );
     this.end = Math.max(
       ...this.selectors.map(
-        (selector) => getAdapter<T>().childNodeRange(this.node!, selector).end
+        (selector) => this.adapter.childNodeRange(this.node!, selector).end
       )
     );
     if (this.options.andComma) {
@@ -63,7 +63,7 @@ export class DeleteAction<T> extends BaseAction<T> {
   private removeNewLine(): void {
     const lines = this.source().split("\n");
     const beginLine = this.beginLine();
-    const endLine = this.endLiine();
+    const endLine = this.endLine();
     this.start =
       lines.slice(0, beginLine - 1).join("\n").length +
       (beginLine === 1 ? 0 : "\n".length);
@@ -74,11 +74,11 @@ export class DeleteAction<T> extends BaseAction<T> {
   }
 
   private beginLine(): number {
-    return getAdapter<T>().fileContent(this.node!).slice(0, this.start).split("\n").length;
+    return this.adapter.fileContent(this.node!).slice(0, this.start).split("\n").length;
   }
 
-  private endLiine(): number {
-    return getAdapter<T>().fileContent(this.node!).slice(0, this.end).split("\n").length;
+  private endLine(): number {
+    return this.adapter.fileContent(this.node!).slice(0, this.end).split("\n").length;
   }
 }
 

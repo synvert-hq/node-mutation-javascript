@@ -1,7 +1,7 @@
 import type { Action } from "../types/action";
-import { getAdapter } from "../helpers";
 import debug from "debug";
 import { NotSupportedError } from "../error";
+import Adapter from "../adapter";
 
 /**
  * Action does some real actions, e.g. insert / replace / delete code.
@@ -12,16 +12,18 @@ export abstract class BaseAction<T> {
   protected end: number;
   protected conflictPosition?: number;
   protected actions?: Action[];
+  protected adapter: Adapter<T>;
 
   /**
    * Create an Action.
    * @param {T} node
    * @param {string} code - new code to insert, replace or delete
    */
-  constructor(protected node: T | undefined, protected code: string) {
+  constructor(protected node: T | undefined, protected code: string, { adapter }: { adapter: Adapter<T> }) {
     this.start = -1;
     this.end = -1;
     this.type = "";
+    this.adapter = adapter;
   }
 
   /**
@@ -86,13 +88,13 @@ export abstract class BaseAction<T> {
     return this.code.replace(/{{(.+?)}}/gm, (_string, match, _offset) => {
       if (!match) return null;
 
-      const obj = getAdapter<T>().childNodeValue(this.node!, match);
+      const obj = this.adapter.childNodeValue(this.node!, match);
       if (obj) {
         if (Array.isArray(obj)) {
-          return getAdapter<T>().fileContent(this.node!).slice(getAdapter<T>().getStart(obj[0]), getAdapter<T>().getEnd(obj[obj.length - 1]));
+          return this.adapter.fileContent(this.node!).slice(this.adapter.getStart(obj[0]), this.adapter.getEnd(obj[obj.length - 1]));
         }
         if (obj.hasOwnProperty("kind") || obj.hasOwnProperty("type")) {
-          return getAdapter<T>().getSource(obj);
+          return this.adapter.getSource(obj);
         } else {
           return obj;
         }
@@ -108,7 +110,7 @@ export abstract class BaseAction<T> {
    * @returns source code of this node.
    */
   protected source(): string {
-    return getAdapter<T>().fileContent(this.node!);
+    return this.adapter.fileContent(this.node!);
   }
 
   /**
@@ -130,8 +132,8 @@ export abstract class BaseAction<T> {
    */
   protected squeezeLines(): void {
     const lines = this.source().split("\n");
-    const beginLine = getAdapter<T>().getStartLoc(this.node!).line;
-    const endLine = getAdapter<T>().getEndLoc(this.node!).line;
+    const beginLine = this.adapter.getStartLoc(this.node!).line;
+    const endLine = this.adapter.getEndLoc(this.node!).line;
     const beforeLineIsBlank = endLine === 1 || lines[beginLine - 2] === "";
     const afterLineIsBlank = lines[endLine] === "";
     if (lines.length > 1 && beforeLineIsBlank && afterLineIsBlank) {
@@ -140,7 +142,7 @@ export abstract class BaseAction<T> {
   }
 
   /**
-   * Rmove unused comma.
+   * Remove unused comma.
    * e.g. `foobar(foo, bar)`, if we remove `foo`, the comma should also be removed,
    * the code should be changed to `foobar(bar)`.
    * @protected
@@ -174,7 +176,7 @@ export abstract class BaseAction<T> {
   /**
    * Remove unused space.
    * e.g. `<div foo='bar'>foobar</div>`, if we remove `foo='bar`, the space should also be removed,
-   * the code shoulde be changed to `<div>foobar</div>`.
+   * the code should be changed to `<div>foobar</div>`.
    * @protected
    */
   protected removeSpace(): void {

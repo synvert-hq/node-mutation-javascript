@@ -1,5 +1,5 @@
 import { BaseAction } from "../action";
-import { getAdapter } from "../helpers";
+import Adapter from "../adapter";
 import { RemoveOptions } from "../types/action";
 
 /**
@@ -14,8 +14,8 @@ export class RemoveAction<T> extends BaseAction<T> {
    * @param {T} node
    * @param {DeleteOptions} options
    */
-  constructor(node: T, options: RemoveOptions = {}) {
-    super(node, "");
+  constructor(node: T, options: RemoveOptions & { adapter: Adapter<T> }) {
+    super(node, "", { adapter: options.adapter });
     this.type = "delete";
     this.options = options;
   }
@@ -29,8 +29,8 @@ export class RemoveAction<T> extends BaseAction<T> {
       this.removeNewLine();
       this.squeezeLines();
     } else {
-      this.start = getAdapter<T>().getStart(this.node!);
-      this.end = getAdapter<T>().getEnd(this.node!);
+      this.start = this.adapter.getStart(this.node!);
+      this.end = this.adapter.getEnd(this.node!);
       if (this.options.andComma) {
         this.removeComma();
       }
@@ -52,8 +52,8 @@ export class RemoveAction<T> extends BaseAction<T> {
    */
   private removeNewLine(): void {
     const lines = this.source().split("\n");
-    const beginLine = getAdapter<T>().getStartLoc(this.node!).line;
-    const endLine = getAdapter<T>().getEndLoc(this.node!).line;
+    const beginLine = this.adapter.getStartLoc(this.node!).line;
+    const endLine = this.adapter.getEndLoc(this.node!).line;
     this.start =
       lines.slice(0, beginLine - 1).join("\n").length +
       (beginLine === 1 ? 0 : "\n".length);
@@ -69,14 +69,14 @@ export class RemoveAction<T> extends BaseAction<T> {
    * @returns {boolean}
    */
   private takeWholeLine(): boolean {
-    const beginLine = getAdapter<T>().getStartLoc(this.node!).line;
-    const endLine = getAdapter<T>().getEndLoc(this.node!).line;
+    const beginLine = this.adapter.getStartLoc(this.node!).line;
+    const endLine = this.adapter.getEndLoc(this.node!).line;
     const sourceFromFile = this.source()
       .split("\n")
       .slice(beginLine - 1, endLine)
       .join("\n")
       .trim();
-    const source = getAdapter<T>().getSource(this.node!);
+    const source = this.adapter.getSource(this.node!);
     return (
       source === sourceFromFile ||
       source + ";" === sourceFromFile ||

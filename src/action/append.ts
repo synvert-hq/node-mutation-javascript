@@ -1,5 +1,5 @@
 import { BaseAction } from "../action";
-import { getAdapter } from "../helpers";
+import Adapter from "../adapter";
 import NodeMutation from "../node-mutation";
 
 /**
@@ -12,8 +12,8 @@ export class AppendAction<T> extends BaseAction<T> {
    * @param {T} node
    * @param {string} code
    */
-  constructor(node: T, code: string) {
-    super(node, code);
+  constructor(node: T, code: string, { adapter }: { adapter: Adapter<T> }) {
+    super(node, code, { adapter });
     this.type = "insert";
   }
 
@@ -22,7 +22,7 @@ export class AppendAction<T> extends BaseAction<T> {
    * @protected
    */
   calculatePositions() {
-    this.start = getAdapter<T>().getEnd(this.node!) - getAdapter<T>().getIndent(this.node!) - "}".length;
+    this.start = this.adapter.getEnd(this.node!) - this.adapter.getIndent(this.node!) - "}".length;
     this.end = this.start;
   }
 
@@ -32,7 +32,7 @@ export class AppendAction<T> extends BaseAction<T> {
    */
   get newCode() {
     const source = this.rewrittenSource();
-    const indent = " ".repeat(getAdapter<T>().getIndent(this.node!) + NodeMutation.tabWidth);
+    const indent = " ".repeat(this.adapter.getIndent(this.node!) + NodeMutation.tabWidth);
     if (source.split("\n").length > 1) {
       return (
         source

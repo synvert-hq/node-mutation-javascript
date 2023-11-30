@@ -1,6 +1,6 @@
 import type { ReplaceOptions } from "../types/action";
 import { BaseAction } from "../action";
-import { getAdapter } from "../helpers";
+import Adapter from "../adapter";
 
 /**
  * ReplaceAction to replace child node with code.
@@ -18,9 +18,9 @@ export class ReplaceAction<T> extends BaseAction<T> {
   constructor(
     node: T,
     selectors: string | string[],
-    options: ReplaceOptions
+    options: ReplaceOptions & { adapter: Adapter<T> },
   ) {
-    super(node, options.with);
+    super(node, options.with, { adapter: options.adapter });
     this.selectors = Array.isArray(selectors) ? selectors : Array(selectors);
     this.type = "replace";
   }
@@ -32,12 +32,12 @@ export class ReplaceAction<T> extends BaseAction<T> {
   calculatePositions(): void {
     this.start = Math.min(
       ...this.selectors.map(
-        (selector) => getAdapter<T>().childNodeRange(this.node!, selector).start
+        (selector) => this.adapter.childNodeRange(this.node!, selector).start
       )
     );
     this.end = Math.max(
       ...this.selectors.map(
-        (selector) => getAdapter<T>().childNodeRange(this.node!, selector).end
+        (selector) => this.adapter.childNodeRange(this.node!, selector).end
       )
     );
   }

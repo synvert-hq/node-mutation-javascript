@@ -1,6 +1,6 @@
 import type { InsertOptions } from "../types/action";
 import { BaseAction } from "../action";
-import { getAdapter } from "../helpers";
+import Adapter from "../adapter";
 
 /**
  * InsertAction to add code to the node.
@@ -16,8 +16,8 @@ export class InsertAction<T> extends BaseAction<T> {
    * @param {string} code - new code to be inserted
    * @param {InsertOptions} options
    */
-  constructor(node: T, code: string, options: InsertOptions) {
-    super(node, code);
+  constructor(node: T, code: string, options: InsertOptions & { adapter: Adapter<T> }) {
+    super(node, code, { adapter: options.adapter });
     this.selector = options.to;
     this.options = options;
     this.type = "insert";
@@ -32,8 +32,8 @@ export class InsertAction<T> extends BaseAction<T> {
    */
   calculatePositions(): void {
     const range = this.selector
-      ? getAdapter<T>().childNodeRange(this.node!, this.selector)
-      : { start: getAdapter<T>().getStart(this.node!), end: getAdapter<T>().getEnd(this.node!) };
+      ? this.adapter.childNodeRange(this.node!, this.selector)
+      : { start: this.adapter.getStart(this.node!), end: this.adapter.getEnd(this.node!) };
     this.start = this.options.at === "beginning" ? range.start : range.end;
     this.end = this.start;
   }

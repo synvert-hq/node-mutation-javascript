@@ -1,3 +1,4 @@
+import Adapter from "../adapter";
 import { iterateActions } from "../helpers";
 import { Action } from "../types/action";
 import { BaseAction } from "./base";
@@ -15,8 +16,8 @@ export class GroupAction<T> extends BaseAction<T> {
   /**
    * Create a GroupAction
    */
-  constructor() {
-    super(undefined, "");
+  constructor({ adapter }: { adapter: Adapter<T> }) {
+    super(undefined, "", { adapter });
     this.actions = [];
     this.type = "group";
     this.start = DEFAULT_START;

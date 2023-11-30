@@ -2,14 +2,17 @@ import dedent from "dedent";
 import { Node } from "typescript";
 import { RemoveAction } from "../../src/action";
 import { parseCode } from "../helper";
+import TypescriptAdapter from "../../src/adapter/typescript";
 
 describe("RemoveAction", () => {
+  const adapter = new TypescriptAdapter();
+
   describe("single line", () => {
     const code = "this.foo.bind(this);";
     const node = parseCode(code);
 
     it("gets range and rewritten code", () => {
-      const action = new RemoveAction<Node>(node);
+      const action = new RemoveAction<Node>(node, { adapter });
       expect(action.process()).toEqual({ type: "delete", start: 0, end: code.length, newCode: "" });
     });
   });
@@ -23,7 +26,7 @@ describe("RemoveAction", () => {
     const node = parseCode(code);
 
     it("gets range and rewritten code", () => {
-      const action = new RemoveAction<Node>((node as any).body.statements[0]);
+      const action = new RemoveAction<Node>((node as any).body.statements[0], { adapter });
       expect(action.process()).toEqual({
         type: "delete",
         start: code.indexOf("{") + "{\n".length,
@@ -43,7 +46,7 @@ describe("RemoveAction", () => {
     const node = parseCode(code);
 
     it("gets range and rewritten code for first property", () => {
-      const action = new RemoveAction<Node>((node as any).declarationList.declarations[0].initializer.properties[0], { andComma: true });
+      const action = new RemoveAction<Node>((node as any).declarationList.declarations[0].initializer.properties[0], { andComma: true, adapter });
       expect(action.process()).toEqual({
         type: "delete",
         start: code.indexOf("{") + "{\n".length,
@@ -53,7 +56,7 @@ describe("RemoveAction", () => {
     });
 
     it("gets range and rewritten code for last property", () => {
-      const action = new RemoveAction<Node>((node as any).declarationList.declarations[0].initializer.properties[1], { andComma: true });
+      const action = new RemoveAction<Node>((node as any).declarationList.declarations[0].initializer.properties[1], { andComma: true, adapter });
       expect(action.process()).toEqual({
         type: "delete",
         start: code.indexOf(",") + ",\n".length,
