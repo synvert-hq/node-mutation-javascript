@@ -1,5 +1,12 @@
 # NodeMutation
 
+## 1.16.0 (2023-12-01)
+
+* Add `adapter` parameter to `Action`
+* Add `adapter` parameter to `NodeMutation`
+* Do not allow configure an `adapter` globally
+* Do no expose `TypescriptAdapter`, `EspreeAdapter` and `GonzalesAdapter`
+
 ## 1.15.11 (2023-11-20)
 
 * Flat and sort actions after filtering actions when processing
