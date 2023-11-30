@@ -1,17 +1,20 @@
+import debug from "debug";
 import type { Action, InsertOptions, ReplaceOptions, DeleteOptions, RemoveOptions } from "./types/action";
 import type { ProcessResult, TestResult } from "./types/node-mutation";
 import Adapter from "./adapter";
 import TypescriptAdapter from "./adapter/typescript";
+import EspreeAdapter from "./adapter/espree";
+import GonzalesPeAdapter from "./adapter/gonzales-pe";
 import Strategy from "./strategy";
 import { AppendAction, DeleteAction, GroupAction, InsertAction, NoopAction, PrependAction, RemoveAction, ReplaceWithAction, ReplaceAction } from "./action";
 import { ConflictActionError } from "./error";
-import debug from "debug";
 
 class NodeMutation<T> {
   private static adapter?: Adapter<any>;
   private static strategy: Strategy = Strategy.THROW_ERROR;
   private actions: Action[] = [];
   public static tabWidth: number = 2;
+  private adapter: Adapter<T>;
 
   /**
    * Configure NodeMutation
@@ -43,8 +46,12 @@ class NodeMutation<T> {
   /**
    * Initialize a NodeMutation
    * @param source {string} - file source.
+   * @param {object} options
+   * @param {Adapter<T>} options.adapter - adapter to parse the node
    */
-  constructor(private source: string) {}
+  constructor(private source: string, { adapter }: { adapter: string }) {
+    this.adapter = this.getAdapterInstance(adapter);
+  }
 
   /**
    * Append code to the ast node.
@@ -70,7 +77,7 @@ class NodeMutation<T> {
    * ```
    */
   append(node: T, code: string) {
-    this.actions.push(new AppendAction<T>(node, code).process());
+    this.actions.push(new AppendAction<T>(node, code, { adapter: this.adapter }).process());
   }
 
   /**
@@ -93,7 +100,7 @@ class NodeMutation<T> {
    * ```
    */
   delete(node: T, selectors: string | string[], options: DeleteOptions = {}) {
-    this.actions.push(new DeleteAction<T>(node, selectors, options).process());
+    this.actions.push(new DeleteAction<T>(node, selectors, { ...options, adapter: this.adapter }).process());
   }
 
   /**
@@ -101,7 +108,7 @@ class NodeMutation<T> {
    */
   group(func: () => void) {
     const currentActions = this.actions;
-    const groupAction = new GroupAction();
+    const groupAction = new GroupAction({ adapter: this.adapter });
     this.actions = groupAction.actions;
     func.call(this);
     this.actions = currentActions;
@@ -143,7 +150,7 @@ class NodeMutation<T> {
    * ```
    */
   insert(node: T, code: string, options: InsertOptions = { at: "end" }) {
-    this.actions.push(new InsertAction<T>(node, code, options).process());
+    this.actions.push(new InsertAction<T>(node, code, { ...options, adapter: this.adapter }).process());
   }
 
   /**
@@ -151,7 +158,7 @@ class NodeMutation<T> {
    * @param node {T} - ast node
    */
   noop(node: T) {
-    this.actions.push(new NoopAction<T>(node).process());
+    this.actions.push(new NoopAction<T>(node, { adapter: this.adapter }).process());
   }
 
   /**
@@ -178,7 +185,7 @@ class NodeMutation<T> {
    * ```
    */
   prepend(node: T, code: string) {
-    this.actions.push(new PrependAction<T>(node, code).process());
+    this.actions.push(new PrependAction<T>(node, code, { adapter: this.adapter }).process());
   }
 
   /**
@@ -197,7 +204,7 @@ class NodeMutation<T> {
    * the source code will be completely removed
    */
   remove(node: T, options: RemoveOptions = {}) {
-    this.actions.push(new RemoveAction<T>(node, options).process());
+    this.actions.push(new RemoveAction<T>(node, { ...options, adapter: this.adapter }).process());
   }
 
   /**
@@ -226,7 +233,7 @@ class NodeMutation<T> {
    * ```
    */
   replace(node: T, selectors: string | string[], options: ReplaceOptions) {
-    this.actions.push(new ReplaceAction<T>(node, selectors, options).process());
+    this.actions.push(new ReplaceAction<T>(node, selectors, { ...options, adapter: this.adapter }).process());
   }
 
   /**
@@ -248,7 +255,7 @@ class NodeMutation<T> {
    * ```
    */
   replaceWith(node: T, code: string) {
-    this.actions.push(new ReplaceWithAction<T>(node, code).process());
+    this.actions.push(new ReplaceWithAction<T>(node, code, { adapter: this.adapter }).process());
   }
 
   /**
@@ -480,6 +487,19 @@ class NodeMutation<T> {
 
   private isStrategy(strategy: Strategy): boolean {
     return !!NodeMutation.strategy && (NodeMutation.strategy & strategy) === strategy;
+  }
+
+  private getAdapterInstance(adapter: string): Adapter<any> {
+    switch (adapter) {
+      case "espree":
+        return new EspreeAdapter();
+      case "typescript":
+        return new TypescriptAdapter();
+      case "gonzales-pe":
+        return new GonzalesPeAdapter();
+      default:
+        throw new Error(`Adapter "${adapter}" is not supported.`);
+    }
   }
 }
 

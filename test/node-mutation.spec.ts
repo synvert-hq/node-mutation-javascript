@@ -4,6 +4,7 @@ import Strategy from "../src/strategy";
 import { ConflictActionError } from "../src/error";
 import { parseCode } from "./helper";
 import { Node } from "typescript";
+import TypescriptAdapter from "../src/adapter/typescript";
 
 describe("NodeMutation", () => {
   describe("configure", () => {
@@ -23,13 +24,13 @@ describe("NodeMutation", () => {
     `;
 
     it("gets no action", () => {
-      const mutation = new NodeMutation<Node>(source);
+      const mutation = new NodeMutation<Node>(source, { adapter: "typescript" });
       const result = mutation.process();
       expect(result.affected).toBeFalsy();
     });
 
     it("gets no conflict", () => {
-      const mutation = new NodeMutation<Node>(source);
+      const mutation = new NodeMutation<Node>(source, { adapter: "typescript" });
       const node = parseCode(source);
       mutation.insert(node, "'use strict'\n", { at: "beginning" });
       mutation.replace(node, "name", { with: "Synvert" });
@@ -47,7 +48,7 @@ describe("NodeMutation", () => {
 
     it("gets conflict with KEEP_RUNNING strategy", () => {
       NodeMutation.configure({ strategy: Strategy.KEEP_RUNNING });
-      const mutation = new NodeMutation<Node>(source);
+      const mutation = new NodeMutation<Node>(source, { adapter: "typescript" });
       const node = parseCode(source);
       mutation.replace(node, "name", { with: "Foobar extends Base" });
       mutation.replace(node, "name", { with: "Synvert" });
@@ -65,7 +66,7 @@ describe("NodeMutation", () => {
 
     it("gets conflict with THROW_ERROR strategy", () => {
       NodeMutation.configure({ strategy: Strategy.THROW_ERROR });
-      const mutation = new NodeMutation<Node>(source);
+      const mutation = new NodeMutation<Node>(source, { adapter: "typescript" });
       const node = parseCode(source);
       mutation.replace(node, "name", { with: "Foobar extends Base" });
       mutation.replace(node, "name", { with: "Synvert" });
@@ -77,7 +78,7 @@ describe("NodeMutation", () => {
 
     it("gets no conflict with insert at the same position", () => {
       NodeMutation.configure({ strategy: Strategy.KEEP_RUNNING });
-      const mutation = new NodeMutation<Node>(source);
+      const mutation = new NodeMutation<Node>(source, { adapter: "typescript" });
       const node = parseCode(source);
       mutation.insert(node, " extends Foo", { at: "end", to: "name" });
       mutation.insert(node, " extends Bar", { at: "end", to: "name" });
@@ -94,7 +95,7 @@ describe("NodeMutation", () => {
 
     it("gets no conflict with insert at the same position with conflictPosition", () => {
       NodeMutation.configure({ strategy: Strategy.KEEP_RUNNING });
-      const mutation = new NodeMutation<Node>(source);
+      const mutation = new NodeMutation<Node>(source, { adapter: "typescript" });
       const node = parseCode(source);
       mutation.insert(node, " extends Foo", { at: "end", to: "name", conflictPosition: 2 });
       mutation.insert(node, " extends Bar", { at: "end", to: "name", conflictPosition: 1 });
@@ -111,7 +112,7 @@ describe("NodeMutation", () => {
 
     it("groups actions", () => {
       NodeMutation.configure({ strategy: Strategy.KEEP_RUNNING });
-      const mutation = new NodeMutation<Node>(source);
+      const mutation = new NodeMutation<Node>(source, { adapter: "typescript" });
       const node = parseCode(source);
       mutation.group(() => {
         mutation.insert(node, " extends Foo", { at: "end", to: "name" });
@@ -138,13 +139,13 @@ describe("NodeMutation", () => {
     `;
 
     it("gets no action", () => {
-      const mutation = new NodeMutation<Node>(source);
+      const mutation = new NodeMutation<Node>(source, { adapter: "typescript" });
       const result = mutation.test();
       expect(result.affected).toBeFalsy();
     });
 
     it("gets no conflict", () => {
-      const mutation = new NodeMutation<Node>(source);
+      const mutation = new NodeMutation<Node>(source, { adapter: "typescript" });
       const node = parseCode(source);
       mutation.insert(node, "'use strict'\n", { at: "beginning" });
       mutation.replace(node, "name", { with: "Synvert" });
@@ -167,7 +168,7 @@ describe("NodeMutation", () => {
 
     it("get conflict with KEEP_RUNNING strategy", () => {
       NodeMutation.configure({ strategy: Strategy.KEEP_RUNNING });
-      const mutation = new NodeMutation<Node>(source);
+      const mutation = new NodeMutation<Node>(source, { adapter: "typescript" });
       const node = parseCode(source);
       mutation.replace(node, "name", { with: "Foobar extends Base" });
       mutation.replace(node, "name", { with: "Synvert" });
@@ -190,7 +191,7 @@ describe("NodeMutation", () => {
 
     it("get conflict with THROW_ERROR strategy", () => {
       NodeMutation.configure({ strategy: Strategy.THROW_ERROR });
-      const mutation = new NodeMutation<Node>(source);
+      const mutation = new NodeMutation<Node>(source, { adapter: "typescript" });
       const node = parseCode(source);
       mutation.replace(node, "name", { with: "Foobar extends Base" });
       mutation.replace(node, "name", { with: "Synvert" });
@@ -202,7 +203,7 @@ describe("NodeMutation", () => {
 
     it("groups actions", () => {
       NodeMutation.configure({ strategy: Strategy.KEEP_RUNNING });
-      const mutation = new NodeMutation<Node>(source);
+      const mutation = new NodeMutation<Node>(source, { adapter: "typescript" });
       const node = parseCode(source);
       mutation.group(() => {
         mutation.insert(node, " extends Foo", { at: "end", to: "name" });
