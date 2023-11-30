@@ -39,7 +39,7 @@ yarn add @xinminlabs/node-mutation
 ```typescript
 import { Node } from "typescript"
 
-mutation = new NodeMutation<Node>(filePath: string, source: string)
+mutation = new NodeMutation<Node>(filePath: string, source: string, { adapter: "typescript" | "espree" | "gonzales-pe" })
 ```
 
 2. call the rewrite apis:
