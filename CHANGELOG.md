@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.16.1 (2023-12-01)
+
+* Expose `TypescriptAdapter`, `EspreeAdapter` and `GonzalesAdapter`
+
 ## 1.16.0 (2023-12-01)
 
 * Add `adapter` parameter to `Action`
