@@ -92,13 +92,19 @@ class NodeMutation<T> {
   }
 
   /**
-   * Group actions
+   * Group actions, it works both sync and async.
+   * @param func {Function} - actions in the function will be grouped
    */
-  group(func: () => void) {
+  async group(func: () => void | Promise<void>) {
     const currentActions = this.actions;
     const groupAction = new GroupAction({ adapter: this.adapter });
-    this.actions = groupAction.actions;
-    func.call(this);
+    this.actions = [];
+    if (func.constructor.name === "AsyncFunction") {
+      await func.call(this);
+    } else {
+      func.call(this);
+    }
+    groupAction.actions = this.actions;
     this.actions = currentActions;
     this.actions.push(groupAction.process());
   }

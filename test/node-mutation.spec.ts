@@ -230,5 +230,35 @@ describe("NodeMutation", () => {
         }],
       }])
     });
+
+    it("async groups actions", async () => {
+      NodeMutation.configure({ strategy: Strategy.KEEP_RUNNING });
+      const mutation = new NodeMutation<Node>(source, { adapter: "typescript" });
+      const node = parseCode(source);
+      await mutation.group(async () => {
+        mutation.insert(node, " extends Foo", { at: "end", to: "name" });
+        mutation.insert(node, " extends Bar", { at: "end", to: "name" });
+      });
+      const result = mutation.test();
+      expect(result.affected).toBeTruthy();
+      expect(result.conflicted).toBeFalsy();
+      expect(result.actions).toEqual([{
+        "type": "group",
+        "start": 12,
+        "end": 12,
+        "actions": [{
+          "type": "insert",
+          "start": 12,
+          "end": 12,
+          "newCode": " extends Foo",
+        },
+        {
+          "type": "insert",
+          "start": 12,
+          "end": 12,
+          "newCode": " extends Bar",
+        }],
+      }])
+    });
   });
 });
