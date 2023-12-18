@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.17.0 (2023-12-18)
+
+* Make `group` work both sync and async
+
 ## 1.16.1 (2023-12-01)
 
 * Expose `TypescriptAdapter`, `EspreeAdapter` and `GonzalesAdapter`
