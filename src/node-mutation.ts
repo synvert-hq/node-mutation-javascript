@@ -99,10 +99,9 @@ class NodeMutation<T> {
     const currentActions = this.actions;
     const groupAction = new GroupAction({ adapter: this.adapter });
     this.actions = [];
-    if (func.constructor.name === "AsyncFunction") {
-      await func.call(this);
-    } else {
-      func.call(this);
+    const result = func.call(this);
+    if (result instanceof Promise) {
+      await result;
     }
     groupAction.actions = this.actions;
     this.actions = currentActions;
