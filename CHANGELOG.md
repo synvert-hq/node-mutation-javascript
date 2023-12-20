@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.17.1 (2023-12-20)
+
+* Check if function result is Promise
+
 ## 1.17.0 (2023-12-18)
 
 * Make `group` work both sync and async
