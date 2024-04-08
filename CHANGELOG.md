@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.17.2 (2024-04-08)
+
+* Moving from `@xinminlabs` to `@synvert-hq`
+
 ## 1.17.1 (2023-12-20)
 
 * Check if function result is Promise
