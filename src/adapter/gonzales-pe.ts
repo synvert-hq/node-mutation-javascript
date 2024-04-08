@@ -1,6 +1,6 @@
 import fs from "fs";
 
-import type { Node } from "@xinminlabs/gonzales-pe";
+import type { Node } from "@synvert-hq/gonzales-pe";
 
 import Adapter from "../adapter";
 import { NotSupportedError } from "../error";

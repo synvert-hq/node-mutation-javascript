@@ -1,8 +1,8 @@
 import path from "path";
 import ts from "typescript";
 import { Node as EspreeNode } from "acorn";
-import * as espree from "@xinminlabs/espree";
-import gonzales from "@xinminlabs/gonzales-pe";
+import * as espree from "@synvert-hq/espree";
+import gonzales from "@synvert-hq/gonzales-pe";
 
 // Parse source code and return the first typescript statement.
 // @param code [String] source code.

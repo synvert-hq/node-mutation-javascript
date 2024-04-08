@@ -1,5 +1,5 @@
-[![npm version](https://badge.fury.io/js/@xinminlabs%2Fnode-mutation.svg)](https://badge.fury.io/js/@xinminlabs%2Fnode-mutation)
-[![CI](https://github.com/xinminlabs/node-mutation-javascript/actions/workflows/main.yml/badge.svg)](https://github.com/xinminlabs/node-mutation-javascript/actions/workflows/main.yml)
+[![npm version](https://badge.fury.io/js/@synvert-hq%2Fnode-mutation.svg)](https://badge.fury.io/js/@synvert-hq%2Fnode-mutation)
+[![CI](https://github.com/synvert-hq/node-mutation-javascript/actions/workflows/main.yml/badge.svg)](https://github.com/synvert-hq/node-mutation-javascript/actions/workflows/main.yml)
 
 # NodeMutation
 
@@ -23,13 +23,13 @@ NodeMutation provides a set of APIs to rewrite node source code.
 Install NodeMutation using npm:
 
 ```
-npm install --save @xinminlabs/node-mutation
+npm install --save @synvert-hq/node-mutation
 ```
 
 Or yarn;
 
 ```
-yarn add @xinminlabs/node-mutation
+yarn add @synvert-hq/node-mutation
 ```
 
 ## Usage
@@ -85,14 +85,14 @@ mutation.replace node, '{{id}}', with: 'Foobar'
 source # class Foobar {}
 ```
 
-See more in [TypescriptAdapter](https://xinminlabs.github.io/node-mutation-javascript/TypescriptAdapter.html), [SyntaxTreeAdapter](https://xinminlabs.github.io/node-mutation-javascript/EspreeAdapter.html), and [GonzalesPeAdapter](https://xinminlabs.github.io/node-mutation-javascript/GonzalesPeAdapter.html)
+See more in [TypescriptAdapter](https://synvert-hq.github.io/node-mutation-javascript/TypescriptAdapter.html), [SyntaxTreeAdapter](https://synvert-hq.github.io/node-mutation-javascript/EspreeAdapter.html), and [GonzalesPeAdapter](https://synvert-hq.github.io/node-mutation-javascript/GonzalesPeAdapter.html)
 
 ## Configuration
 
 ### adapter
 
 Different parsers, like typescript and espree, will generate different AST nodes, to make NodeMutation work for them all,
-we define an [Adapter](https://github.com/xinminlabs/node-mutation-javascript/blob/main/src/adapter.ts) interface,
+we define an [Adapter](https://github.com/synvert-hq/node-mutation-javascript/blob/main/src/adapter.ts) interface,
 if you implement the Adapter interface, you can set it as NodeMutation's adapter.
 
 It provides 3 adapters:
