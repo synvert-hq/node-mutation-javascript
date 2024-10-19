@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.17.3 (2024-10-19)
+
+* Support node v22 on github actions
+
 ## 1.17.2 (2024-04-08)
 
 * Moving from `@xinminlabs` to `@synvert-hq`

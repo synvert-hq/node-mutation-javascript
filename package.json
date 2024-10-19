@@ -1,6 +1,6 @@
 {
   "name": "@synvert-hq/node-mutation",
-  "version": "1.17.2",
+  "version": "1.17.3",
   "description": "ast node mutation apis",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
