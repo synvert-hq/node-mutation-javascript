@@ -33,3 +33,9 @@ export type DeleteOptions = {
 export type RemoveOptions = {
   andComma?: boolean;
 }
+
+export type WrapOptions = {
+  prefix: string;
+  suffix: string;
+  newLine: boolean;
+}

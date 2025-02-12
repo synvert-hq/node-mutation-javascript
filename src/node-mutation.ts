@@ -1,5 +1,5 @@
 import debug from "debug";
-import type { Action, IndentOptions, InsertOptions, ReplaceOptions, DeleteOptions, RemoveOptions } from "./types/action";
+import type { Action, IndentOptions, InsertOptions, ReplaceOptions, DeleteOptions, RemoveOptions, WrapOptions } from "./types/action";
 import type { ProcessResult, TestResult } from "./types/node-mutation";
 import Adapter from "./adapter";
 import TypescriptAdapter from "./adapter/typescript";
@@ -273,6 +273,44 @@ class NodeMutation<T> {
    */
   replaceWith(node: T, code: string) {
     this.actions.push(new ReplaceWithAction<T>(node, code, { adapter: this.adapter }).process());
+  }
+
+  /**
+   * Wrap the ast node with prefix and suffix.
+   * @param node {T} - ast node
+   * @param prefix {string} - prefix
+   * @param suffix {string} - suffix
+   * @param newLine {boolean} - if true, the prefix and suffix will be wrapped in a new line
+   * @example
+   * source code of the ast node is
+   * ```
+   * console.log('foo)
+   * ```
+   * then we call
+   * ```
+   * mutation.wrap(node, { prefix: "function logFoo() {", suffix: "}", newLine: true });
+   * ```
+   * the source code will be rewritten to
+   * ```
+   * function logFoo() {
+   *   console.log('foo')
+   * }
+   * ```
+   */
+  wrap(node: T, { prefix, suffix, newLine }: WrapOptions) {
+    if (newLine) {
+      const indentation = this.adapter.getStartLoc(node).column;
+      this.group(() => {
+        this.insert(node, prefix + "\n" + (' '.repeat(indentation)), { at: "beginning" });
+        this.insert(node, "\n" + (' '.repeat(indentation)) + suffix, { at: "end" });
+        this.indent(node);
+      });
+    } else {
+      this.group(() => {
+        this.insert(node, prefix, { at: "beginning" });
+        this.insert(node, suffix, { at: "end" });
+      });
+    }
   }
 
   /**

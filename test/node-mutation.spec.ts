@@ -4,10 +4,13 @@ import Strategy from "../src/strategy";
 import { ConflictActionError } from "../src/error";
 import { parseCode } from "./helper";
 import { Node } from "typescript";
-import TypescriptAdapter from "../src/adapter/typescript";
 
 describe("NodeMutation", () => {
   describe("configure", () => {
+    afterEach(() => {
+      NodeMutation.configure({ tabWidth: 2 });
+    });
+
     it("sets tabWidth", () => {
       expect(NodeMutation.tabWidth).toEqual(2);
       NodeMutation.configure({ tabWidth: 4 });
@@ -127,6 +130,24 @@ describe("NodeMutation", () => {
           bar() {}
         }
       `)
+    });
+
+    it("wraps the ast node", () => {
+      const source1 = dedent`
+        console.log('foo');
+      `;
+      NodeMutation.configure({ strategy: Strategy.KEEP_RUNNING });
+      const mutation = new NodeMutation<Node>(source1, { adapter: "typescript" });
+      const node = parseCode(source1);
+      mutation.wrap(node, { prefix: "function logFoo() {", suffix: "}", newLine: true });
+      const result = mutation.process();
+      expect(result.affected).toBeTruthy();
+      expect(result.conflicted).toBeFalsy();
+      expect(result.newSource).toEqual(dedent`
+        function logFoo() {
+          console.log('foo');
+        }
+      `);
     });
   });
 
@@ -259,6 +280,48 @@ describe("NodeMutation", () => {
           "newCode": " extends Bar",
         }],
       }])
+    });
+
+    it("wraps the ast node", () => {
+      const source1 = dedent`
+        console.log('foo');
+      `;
+      NodeMutation.configure({ strategy: Strategy.KEEP_RUNNING });
+      const mutation = new NodeMutation<Node>(source1, { adapter: "typescript" });
+      const node = parseCode(source1);
+      mutation.wrap(node, { prefix: "function logFoo() {", suffix: "}", newLine: true });
+      const result = mutation.test();
+      expect(result.affected).toBeTruthy();
+      expect(result.conflicted).toBeFalsy();
+      expect(result.actions).toEqual([{
+        "actions": [
+          {
+            "actions": undefined,
+            "end": 0,
+            "newCode": `function logFoo() {\n`,
+            "start": 0,
+            "type": "insert",
+          },
+          {
+            "actions": undefined,
+            "end": 19,
+            "newCode": "  console.log('foo');",
+            "start": 0,
+            "type": "replace",
+          },
+          {
+            "actions": undefined,
+            "end": 19,
+            "newCode": `\n}`,
+            "start": 19,
+            "type": "insert",
+          },
+        ],
+        "end": 19,
+        "newCode": undefined,
+        "start": 0,
+        "type": "group",
+      }]);
     });
   });
 });

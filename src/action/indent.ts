@@ -8,7 +8,7 @@ import NodeMutation from "../node-mutation";
  * @extends BaseAction
  */
 export class IndentAction<T> extends BaseAction<T> {
-  private options: IndentOptions;
+  private tabSize: number;
 
   /**
    * Create an IndentAction
@@ -16,9 +16,9 @@ export class IndentAction<T> extends BaseAction<T> {
    * @param {IndentOptions} options
    * @param options.adapter - adapter to parse the node
    */
-  constructor(node: T, options: IndentOptions & { adapter: Adapter<T> }) {
-    super(node, "", { adapter: options.adapter });
-    this.options = { tabSize: 1, ...options };
+  constructor(node: T, { tabSize, adapter }: IndentOptions & { adapter: Adapter<T> }) {
+    super(node, "", { adapter });
+    this.tabSize = tabSize || 1;
     this.type = "replace";
   }
 
@@ -37,6 +37,6 @@ export class IndentAction<T> extends BaseAction<T> {
    */
   get newCode(): string {
     const source = this.adapter.getSource(this.node!);
-    return source.split("\n").map(line => ' '.repeat(NodeMutation.tabWidth * this.options.tabSize!) + line).join("\n");
+    return source.split("\n").map(line => ' '.repeat(NodeMutation.tabWidth * this.tabSize) + line).join("\n");
   }
 }

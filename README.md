@@ -68,6 +68,8 @@ mutation.group(() => {
   mutation.delete(node: Node, selectors: string | string[], options: DeleteOptions)
   mutation.insert(node: Node, code: string, options: InsertOptions)
 })
+// wrap the ast node
+mutation.wrap(node: Node, options: WrapOptions)
 ```
 
 3. process actions and write the new source code to file:
