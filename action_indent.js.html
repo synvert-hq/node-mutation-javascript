@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>action/insert.js - Documentation</title>
+    <title>action/indent.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">action/insert.js</h1>
+    <h1 class="page-title">action/indent.js</h1>
     
 
     
@@ -40,56 +40,47 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>"use strict";
+var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
+    return (mod &amp;&amp; mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.InsertAction = void 0;
+exports.IndentAction = void 0;
 const action_1 = require("../action");
+const node_mutation_1 = __importDefault(require("../node-mutation"));
 /**
- * InsertAction to add code to the node.
+ * IndentAction to indent the node.
  * @extends BaseAction
  */
-class InsertAction extends action_1.BaseAction {
+class IndentAction extends action_1.BaseAction {
     /**
-     * Create an InsertAction
+     * Create an IndentAction
      * @param {T} node
-     * @param {string} code - new code to be inserted
-     * @param {InsertOptions} options
+     * @param {IndentOptions} options
      * @param options.adapter - adapter to parse the node
      */
-    constructor(node, code, options) {
-        super(node, code, { adapter: options.adapter });
-        this.selector = options.to;
-        this.options = options;
-        this.type = "insert";
-        if (options.conflictPosition) {
-            this.conflictPosition = options.conflictPosition;
-        }
+    constructor(node, { tabSize, adapter }) {
+        super(node, "", { adapter });
+        this.tabSize = tabSize || 1;
+        this.type = "replace";
     }
     /**
      * Calculate the begin and end positions.
      * @protected
      */
     calculatePositions() {
-        const range = this.selector
-            ? this.adapter.childNodeRange(this.node, this.selector)
-            : { start: this.adapter.getStart(this.node), end: this.adapter.getEnd(this.node) };
-        this.start = this.options.at === "beginning" ? range.start : range.end;
-        this.end = this.start;
+        this.start = this.adapter.getStart(this.node);
+        this.end = this.adapter.getEnd(this.node);
     }
     /**
      * The rewritten source code.
      * @returns {string} rewritten code.
      */
     get newCode() {
-        if (this.options.andComma) {
-            return this.options.at === "end" ? `, ${this.rewrittenSource()}` : `${this.rewrittenSource()}, `;
-        }
-        if (this.options.andSpace) {
-            return this.options.at === "end" ? ` ${this.rewrittenSource()}` : `${this.rewrittenSource()} `;
-        }
-        return this.rewrittenSource();
+        const source = this.adapter.getSource(this.node);
+        return source.split("\n").map(line => ' '.repeat(node_mutation_1.default.tabWidth * this.tabSize) + line).join("\n");
     }
 }
-exports.InsertAction = InsertAction;
+exports.IndentAction = IndentAction;
 </code></pre>
         </article>
     </section>
