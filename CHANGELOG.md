@@ -1,5 +1,10 @@
 # NodeMutation
 
+## 1.18.0 (2025-02-12)
+
+* Add `indent` api
+* Add `wrap` api
+
 ## 1.17.3 (2024-10-19)
 
 * Support node v22 on github actions
