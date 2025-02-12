@@ -59,6 +59,8 @@ mutation.remove(node: Node, options: RemoveOptions)
 mutation.replace(node: Node, selectors: string | string[], options: ReplaceOptions)
 // replace the ast node with new code
 mutation.replaceWith(node: Node, code: string)
+// indent the ast node.
+mutation.indent(node: Node, options: IndentOptions)
 // no operation
 mutation.noop(node: Node)
 // group actions

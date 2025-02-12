@@ -17,6 +17,10 @@ export type InsertOptions = {
   conflictPosition?: number; // insert position when insert at the same position
 }
 
+export type IndentOptions = {
+  tabSize?: number;
+}
+
 export type ReplaceOptions = {
   with: string;
 }

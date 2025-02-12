@@ -1,12 +1,12 @@
 import debug from "debug";
-import type { Action, InsertOptions, ReplaceOptions, DeleteOptions, RemoveOptions } from "./types/action";
+import type { Action, IndentOptions, InsertOptions, ReplaceOptions, DeleteOptions, RemoveOptions } from "./types/action";
 import type { ProcessResult, TestResult } from "./types/node-mutation";
 import Adapter from "./adapter";
 import TypescriptAdapter from "./adapter/typescript";
 import EspreeAdapter from "./adapter/espree";
 import GonzalesPeAdapter from "./adapter/gonzales-pe";
 import Strategy from "./strategy";
-import { AppendAction, DeleteAction, GroupAction, InsertAction, NoopAction, PrependAction, RemoveAction, ReplaceWithAction, ReplaceAction } from "./action";
+import { AppendAction, DeleteAction, GroupAction, IndentAction, InsertAction, NoopAction, PrependAction, RemoveAction, ReplaceWithAction, ReplaceAction } from "./action";
 import { ConflictActionError } from "./error";
 
 class NodeMutation<T> {
@@ -144,6 +144,30 @@ class NodeMutation<T> {
    */
   insert(node: T, code: string, options: InsertOptions = { at: "end" }) {
     this.actions.push(new InsertAction<T>(node, code, { ...options, adapter: this.adapter }).process());
+  }
+
+  /**
+   * Indent the ast node.
+   * @param node {T} - ast node
+   * @param options {IndentOptions}
+   * @example
+   * source code of the ast node is
+   * ```
+   * class FooBar {
+   * }
+   * ```
+   * then we call
+   * ```
+   * mutation.indent(node, { tabSize: 1 });
+   * ```
+   * the source code will be rewritten to
+   * ```
+   *   class FooBar {
+   *   }
+   * ```
+   */
+  indent(node: T, options: IndentOptions = { tabSize: 1 }) {
+    this.actions.push(new IndentAction<T>(node, { ...options, adapter: this.adapter }).process());
   }
 
   /**
