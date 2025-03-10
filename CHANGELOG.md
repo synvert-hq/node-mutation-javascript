@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.18.1 (2025-03-10)
+
+* Fix empty lines to insert'
+
 ## 1.18.0 (2025-02-12)
 
 * Add `indent` api
