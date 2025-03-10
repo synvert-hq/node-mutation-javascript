@@ -1,5 +1,9 @@
 # NodeMutation
 
+## 1.18.2 (2025-03-10)
+
+* Get `childNodeRange` of empty parameters
+
 ## 1.18.1 (2025-03-10)
 
 * Fix empty lines to insert'
