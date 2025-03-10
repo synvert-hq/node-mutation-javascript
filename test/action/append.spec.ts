@@ -22,12 +22,12 @@ describe("AppendAction", () => {
 
   describe("multiple lines", () => {
     it("gets range and rewritten code", () => {
-      const action = new AppendAction<Node>(node, "foo() {}\nbar() {}", { adapter });
+      const action = new AppendAction<Node>(node, "foo() {}\n\nbar() {}", { adapter });
       expect(action.process()).toEqual({
         type: "insert",
         start: "class FooBar {\n".length,
         end: "class FooBar {\n".length,
-        newCode: `  foo() {}\n  bar() {}\n`,
+        newCode: `  foo() {}\n\n  bar() {}\n`,
       });
     });
   });

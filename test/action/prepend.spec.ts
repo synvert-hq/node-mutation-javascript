@@ -22,12 +22,12 @@ describe("PrependAction", () => {
 
   describe("multiple lines", () => {
     it("gets range and rewritten code", () => {
-      const action = new PrependAction<Node>(node, "foo() {}\nbar() {}", { adapter });
+      const action = new PrependAction<Node>(node, "foo() {}\n\nbar() {}", { adapter });
       expect(action.process()).toEqual({
         type: "insert",
         start: "class Foobar {\n".length,
         end: "class Foobar {\n".length,
-        newCode: `  foo() {}\n  bar() {}\n`,
+        newCode: `  foo() {}\n\n  bar() {}\n`,
       });
     });
   });

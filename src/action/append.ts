@@ -34,16 +34,7 @@ export class AppendAction<T> extends BaseAction<T> {
    */
   get newCode() {
     const source = this.rewrittenSource();
-    const indent = " ".repeat(this.adapter.getIndent(this.node!) + NodeMutation.tabWidth);
-    if (source.split("\n").length > 1) {
-      return (
-        source
-          .split("\n")
-          .map((line) => indent + line)
-          .join("\n") + "\n"
-      );
-    } else {
-      return indent + source + "\n";
-    }
+    const indent = this.adapter.getIndent(this.node!) + NodeMutation.tabWidth;
+    return this.addIndentToCode(source, indent);
   }
 }

@@ -192,6 +192,17 @@ export abstract class BaseAction<T> {
   }
 
   /**
+   * Add indent to code.
+   * @param code {string} - code to add indent
+   * @param indent {number} - indent level
+   * @returns {string} - code with indent
+   */
+  protected addIndentToCode(code: string, indent: number): string {
+    const spaces = " ".repeat(indent);
+    return code.split("\n").map((line) => line.length > 0 ? spaces + line : line).join("\n") + "\n";
+  }
+
+  /**
    * Check if next token is substr.
    * @private
    * @param {string} substr
