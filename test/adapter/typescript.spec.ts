@@ -100,6 +100,11 @@ describe("TypescriptAdapter", () => {
   });
 
   describe("#childNodeRange", () => {
+    test("ArrowFunction parameters", () => {
+      const node = (parseCode("const foobar = () => {}") as any)['declarationList']['declarations'][0]['initializer'];
+      expect(adapter.childNodeRange(node, "parameters")).toEqual({ start: 15, end: 17 });
+    });
+
     test("FunctionDeclaration parameters", () => {
       const node = parseCode("function foobar(foo, bar) {}");
       expect(adapter.childNodeRange(node, "parameters")).toEqual({ start: 15, end: 25 });

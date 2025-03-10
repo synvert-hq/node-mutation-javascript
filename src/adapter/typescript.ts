@@ -72,7 +72,11 @@ class TypescriptAdapter implements Adapter<Node> {
   childNodeRange(node: Node, childName: string): { start: number, end: number } {
     if (["arguments", "parameters"].includes(childName)) {
       const elements = (node as any)[childName];
-      return { start: this.getStart(elements[0] as Node) - 1, end: this.getEnd(elements[elements.length - 1] as Node) + 1 };
+      if (Array.isArray(elements) && elements.hasOwnProperty('0')) {
+        return { start: this.getStart(elements[0] as Node) - 1, end: this.getEnd(elements[elements.length - 1] as Node) + 1 };
+      } else {
+        return { start: elements['pos'] - 1, end: elements['pos'] + 1 };
+      }
     } else if (node.kind === SyntaxKind.PropertyAssignment && childName === "semicolon") {
       return { start: this.getEnd((node as PropertyAssignment).name), end: this.getEnd((node as PropertyAssignment).name) + 1 };
     } else if (node.kind === SyntaxKind.PropertyAccessExpression && childName === "dot") {
